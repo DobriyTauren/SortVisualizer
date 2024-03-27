@@ -1,0 +1,116 @@
+﻿@page "/SortVisualizator"
+@rendermode InteractiveWebAssembly
+
+
+<div class="vis-container">
+
+    <div>
+        <div class="sort-item-container">
+            @foreach (var element in ArrayElements)
+            {
+                <div class="sort-item" style="--sort-item-color: @element.Color;
+                                              --sort-item-height: @element.Height;">@element.Text</div>
+            }
+        </div>
+
+        <div class="btn-container">
+            <button class="btn btn-primary" @onclick="GenerateArray" disabled="@_isSorting">Сгенерировать</button>
+            <button class="btn btn-primary" @onclick="SortArray" disabled="@(_isEmpty || _isSorting)">Сортировать</button>
+        </div>
+    </div>
+
+</div>
+
+
+@code
+{
+    private List<ArrayElement> ArrayElements { get; set; } = new List<ArrayElement>();
+
+    private SortService _sortService = new SortService();
+    private bool _isSorting = false;
+    private bool _isEmpty = true;
+
+    protected override void OnInitialized()
+    {
+        _sortService.StyleChanged += HandleStateChanged;
+    }
+
+    private async Task GenerateArray()
+    {
+        ArrayElements.Clear();
+        ArrayElements = _sortService.GenerateArray();
+
+        _isEmpty = false;
+    }
+
+    private async Task SortArray()
+    {
+        _isSorting = true;
+        await _sortService.BubbleSort(ArrayElements);
+        _isSorting = false;
+        StateHasChanged();
+    }
+
+    private void  HandleStateChanged(object sender, EventArgs e)
+    {
+        StateHasChanged(); // обновление состояния компонента
+    }
+}
+
+
+<style>
+
+    .btn-container {
+        padding: 10px 0 0 10px;
+    }
+
+    .sort-item-container {
+        padding-left: 10px;
+
+        margin-top: 10px;
+
+        min-height: 310px;
+        min-width: 57vw;
+
+        display: flex;
+    }
+
+    .sort-item {
+        width: 1.2vw;
+        height: var(--sort-item-height);
+        background-color: var(--sort-item-color);
+        
+
+        margin-right: 0.2vw;
+
+
+        display: inline-block;
+        transition: height 0.25s ease-in-out;
+        display: inline-block;
+
+        align-self: flex-end;
+        color: whitesmoke;
+        font-size: 12px;
+        text-align: center;
+    }
+
+    .vis-container {
+        background: rgb(225,229,237);
+        background: linear-gradient(180deg, rgba(0,120,255,1) 0%, rgba(0,0,50,1) 100%);
+        
+        height: 55vh;
+        width: 60vw;
+        
+        min-height: 380px;        
+        
+        min-width: 350px;
+        max-width: 1200px;
+
+        border-radius: 20px 20px 20px 20px;
+        padding-right: 10px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
