@@ -1,10 +1,12 @@
-﻿public class SortService
+﻿public static class SortService
 {
-    public event EventHandler StyleChanged;
+    public static event EventHandler StyleChanged;
 
-    private int _delay = 10;
+    private static int _delay = 10;
 
-    public List<ArrayElement> GenerateArray()
+    public static int Delay { get => _delay; set => _delay = value; }
+
+    public static List<ArrayElement> GenerateArray()
     {
         var arrayElements = new List<ArrayElement>();
 
@@ -26,7 +28,7 @@
         return arrayElements;
     }
 
-    public async Task BubbleSort(List<ArrayElement> arrayElements)
+    public static async Task BubbleSort(List<ArrayElement> arrayElements)
     {
         for (int i = 0; i < arrayElements.Count; i++)
         {
@@ -56,7 +58,7 @@
         }
     }
 
-    private async Task Swap(int index1, int index2, List<ArrayElement> arrayElements)
+    private static async Task Swap(int index1, int index2, List<ArrayElement> arrayElements)
     {
         var temp = arrayElements[index1];
         arrayElements[index1] = arrayElements[index2];
@@ -65,9 +67,9 @@
         OnStyleChanged();
     }
 
-    protected virtual void OnStyleChanged()
+    public static void OnStyleChanged()
     {
-        StyleChanged?.Invoke(this, EventArgs.Empty);
+        StyleChanged?.Invoke(null, EventArgs.Empty);
     }
 }
 
