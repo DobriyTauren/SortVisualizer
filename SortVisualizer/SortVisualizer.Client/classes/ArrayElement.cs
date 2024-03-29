@@ -6,6 +6,8 @@
 
     public string Color { get; set; }
 
+    public string Width { get; set; }
+
     //public void ChangeStyle(string attribute, string value)
     //{
     //    int attributeIndex = _style.IndexOf(attribute);

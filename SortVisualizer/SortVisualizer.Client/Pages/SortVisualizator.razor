@@ -1,27 +1,31 @@
-﻿@page "/SortVisualizator"
-@rendermode InteractiveWebAssembly
+﻿@rendermode InteractiveWebAssembly
 
-<div class="vis-container">
-    <div style="min-width: 70%;">
+<link href="/css/style.css" rel="stylesheet" />
+
+<div class="main-container">
+    <div class="sort-block-container">
         <div class="container">
             <div class="row">
                 <div class="col-sm mb-2 mx-2 bg-primary bg-gradient rounded border border-info">
-                    <p class="text-light text-center my-auto">Обращений к массиву: @SortService.ArrayAccessCount</p>
+                    <p class="text-light text-center my-auto">Обращений к массиву: @SortServiceObject.ArrayAccessCount</p>
                 </div>
                 <div class="col mb-2 mx-2 bg-primary bg-gradient rounded border border-info">
-                    <p class="text-light text-center my-auto">Перестановок: @SortService.SwapCount</p>
+                    <p class="text-light text-center my-auto">Перестановок: @SortServiceObject.SwapCount</p>
                 </div>
                 <div class="col mb-2 mx-2 bg-primary bg-gradient rounded border border-info">
-                    <p class="text-light text-center my-auto">Сравнений: @SortService.CompareCount </p>
+                    <p class="text-light text-center my-auto">Сравнений: @SortServiceObject.CompareCount </p>
                 </div>
             </div>
         </div>
 
         <div class="sort-item-container">
-            @foreach (var element in ArrayElements)
+            @foreach (var element in _arrayElements)
             {
                 <div class="sort-item" style="--sort-item-color: @element.Color;
-                                              --sort-item-height: @element.Height;">
+                                              --sort-item-height: @element.Height;
+                                              --sort-item-width: @element.Width; 
+                                              --sort-item-margin: @($"{Generator.MARGIN_WIDTH}%");
+                                              --sort-item-delay: @($"{SortServiceObject.Delay * 0.5}ms")">
                     @element.Text
                 </div>
             }
@@ -34,12 +38,19 @@
             <div class="col-auto mb-2">
                 <button class="btn btn-primary" @onclick="SortArray" disabled="@(_isEmpty || _isSorting)">Сортировать</button>
             </div>
+            
             <div class="col-auto pt-2">
                 <p class="text-light text-center">Задержка (мс)</p>>
             </div>
-
             <div class="col-3 mb-2 w-7">
-                <input @bind="_delay" disabled="@_isSorting" type="text" class="form-control" id="inlineFormInputGroup" placeholder="Задержка">
+                <input @bind="SortServiceObject.Delay" disabled="@_isSorting" type="text" class="form-control" id="inlineFormInputGroup" placeholder="Задержка">
+            </div>
+            
+            <div class="col-auto pt-2">
+                <p class="text-light text-center">Элементов</p>>
+            </div>
+            <div class="col-3 mb-2 w-7">
+                <input @bind="@_generator.ItemsCount" disabled="@_isSorting" type="text" class="form-control" id="inlineFormInputGroup" placeholder="Элементов">
             </div>
         </div>
     </div>
@@ -50,35 +61,35 @@
 {
     [Parameter]
     public SortAlgorithm Algorithm { get; set; }
-
-    private List<ArrayElement> ArrayElements { get; set; } = new List<ArrayElement>();
-
     public delegate Task SortAlgorithm(List<ArrayElement> arrayElements);
 
-    private int _delay = 10;
+    [Parameter]
+    public SortService SortServiceObject { get; set; }
+    
+    private Generator _generator = new Generator();
+
+    private List<ArrayElement> _arrayElements = new List<ArrayElement>();
 
     private bool _isSorting = false;
     private bool _isEmpty = true;
 
     protected override void OnInitialized()
     {
-        SortService.StyleChanged += HandleStateChanged;
+        SortServiceObject.StyleChanged += HandleStateChanged;
     }
 
     private void GenerateArray()
     {
-        ArrayElements.Clear();
-        ArrayElements = SortService.GenerateArray();
+        _arrayElements.Clear();
+        _arrayElements = _generator.GenerateRandomArray();
 
         _isEmpty = false;
     }
 
     private async Task SortArray()
     {
-        SortService.Delay = _delay;
-
         _isSorting = true;
-        await Algorithm(ArrayElements);
+        await Algorithm(_arrayElements);
 
         _isSorting = false;
         StateHasChanged();
@@ -89,66 +100,3 @@
         StateHasChanged(); // обновление состояния компонента
     }
 }
-
-
-<style>
-
-    .btn-container {
-        padding: 12px 0 0 10px;
-    }
-
-    .w-10 {
-        width: 10%;
-        min-width: 68px;
-    }
-
-    .w-7 {
-        width: 7%;
-        min-width: 68px;
-    }
-
-
-    .w-15 {
-        width: 15%;
-    }
-
-    .w-30 {
-        width: 30%;
-    }
-
-    .sort-item-container {
-        padding-left: 10px;
-        margin-top: 10px;
-        min-height: 310px;
-        display: flex;
-    }
-
-    .sort-item {
-        width: 1.2vw;
-        height: var(--sort-item-height);
-        background-color: var(--sort-item-color);
-        margin-right: 0.2vw;
-        display: inline-block;
-        transition: height 0.25s ease-in-out;
-        display: inline-block;
-        align-self: flex-end;
-        color: whitesmoke;
-        font-size: 12px;
-        text-align: center;
-        min-width: 7.1px;
-    }
-
-    .vis-container {
-        background: rgb(225,229,237);
-        background: linear-gradient(180deg, rgba(0,120,255,1) 0%, rgba(0,0,50,1) 100%);
-        height: 55vh;
-        width: 100%;
-        min-height: 560px;
-        min-width: 350px;
-        border-radius: 20px 20px 20px 20px;
-        padding-right: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-</style>

@@ -4,7 +4,11 @@
 
 <PageTitle>Пузырьковая сортировка</PageTitle>
 
-<h3>Bubble Sort Visualization</h3>
+<Info/>
 
+<SortVisualizator SortServiceObject="@_sortService" Algorithm="@_sortService.BubbleSort"/>
 
-<SortVisualizator Algorithm="@SortService.BubbleSort"/>
+@code 
+{
+    private SortService _sortService = new SortService();
+}
