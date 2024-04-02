@@ -4,6 +4,10 @@
 
 <PageTitle>Сортировка перемешиванием</PageTitle>
 
-@code {
+<Info />
 
+<SortVisualizator SortServiceObject="@_sortService" Algorithm="@_sortService.ShakerSort" />
+
+@code {
+    SortService _sortService = new SortService();
 }

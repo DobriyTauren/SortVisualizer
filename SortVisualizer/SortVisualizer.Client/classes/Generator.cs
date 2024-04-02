@@ -4,7 +4,7 @@
     private const double SORT_PANEL_WIDTH = 100;
     private const int HEIGHT_MODIFICATOR = 3;
 
-    private int _itemsCount = 10;
+    private int _itemsCount = 100;
 
     public int ItemsCount { get => _itemsCount; set => _itemsCount = value; }
 
@@ -23,7 +23,7 @@
 
             var arrayElement = new ArrayElement
             {
-                Text = value,
+                Value = value,
                 Height = $"{value * HEIGHT_MODIFICATOR}px",
                 Color = "blue",
                 Width = $"{itemWidth}%",
