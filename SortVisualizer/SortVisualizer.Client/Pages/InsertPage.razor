@@ -1,0 +1,13 @@
+﻿@page "/insert"
+
+@rendermode InteractiveWebAssembly
+
+<PageTitle>Сортировка вставками</PageTitle>
+
+<InfoComponent/>
+<VisualizatorComponent Algorithm="_insert" />
+
+@code 
+{
+    Insert _insert = new Insert();
+}

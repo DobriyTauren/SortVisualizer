@@ -1,0 +1,13 @@
+﻿@page "/fast"
+
+@rendermode InteractiveWebAssembly
+
+<PageTitle>Быстрая сортировка</PageTitle>
+
+<InfoComponent />
+<VisualizatorComponent Algorithm="_quick" />
+
+@code 
+{
+    Quick _quick = new Quick();
+}

@@ -1,0 +1,13 @@
+﻿@page "/bubble"
+
+@rendermode InteractiveWebAssembly
+
+<PageTitle>Пузырьковая сортировка</PageTitle>
+
+<InfoComponent/>
+<VisualizatorComponent Algorithm="@_bubble" />
+
+@code 
+{
+    private Bubble _bubble = new Bubble();
+}

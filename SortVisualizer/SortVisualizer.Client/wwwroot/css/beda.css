@@ -39,12 +39,13 @@
     margin-right: var(--sort-item-margin);
     background-color: var(--sort-item-color);
     transition: height var(--sort-item-delay) ease-in-out;
+    font-size: var(--sort-item-font-size);
+
     display: inline-block;
     align-self: flex-end;
     color: whitesmoke;
     text-align: center;
     /*         min-width: 7.1px; */
-    font-size: 12px;
 }
 
 .main-container {

@@ -1,6 +1,7 @@
 ﻿public class ArrayElement
 {
     public int Value { get; set; }
+    public string FontSize { get; set; }
     
     public string Height { get; set; }
 

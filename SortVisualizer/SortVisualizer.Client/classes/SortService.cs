@@ -2,211 +2,194 @@
 {
     public event EventHandler StyleChanged;
 
-    private int _delay = 1;
+    //public async Task BubbleSort(List<ArrayElement> arrayElements)
+    //{
+    //    _arrayAccessCount = 0;
+    //    _swapCount = 0;
+    //    _compareCount = 0;
 
-    private int _arrayAccessCount = 0;
-    private int _swapCount = 0;
-    private int _compareCount = 0;
+    //    for (int i = 0; i < arrayElements.Count; i++)
+    //    {
+    //        for (int j = 0; j < arrayElements.Count - i - 1; j++)
+    //        {
+    //            #region color red
 
-    public int Delay { get => _delay; set => _delay = value; }
-    public int SwapCount { get => _swapCount; }
-    public int ArrayAccessCount { get => _arrayAccessCount; }
-    public int CompareCount { get => _compareCount; }
+    //            arrayElements[j].Color = "red";
+    //            OnStyleChanged();
+    //            await Task.Delay(_delay);
 
-    public async Task BubbleSort(List<ArrayElement> arrayElements)
-    {
-        _arrayAccessCount = 0;
-        _swapCount = 0;
-        _compareCount = 0;
+    //            #endregion
 
-        for (int i = 0; i < arrayElements.Count; i++)
-        {
-            for (int j = 0; j < arrayElements.Count - i - 1; j++)
-            {
-                #region color red
+    //            var value1 = arrayElements[j].Value;
+    //            var value2 = arrayElements[j + 1].Value;
 
-                arrayElements[j].Color = "red";
-                OnStyleChanged();
-                await Task.Delay(_delay);
-
-                #endregion
-
-                var value1 = arrayElements[j].Value;
-                var value2 = arrayElements[j + 1].Value;
-
-                _arrayAccessCount += 2;
-                _compareCount++;
+    //            _arrayAccessCount += 2;
+    //            _compareCount++;
 
                 
-                if (value1 > value2)
-                {
-                    Swap(j, j + 1, arrayElements);
+    //            if (value1 > value2)
+    //            {
+    //                Swap(j, j + 1, arrayElements);
 
-                    arrayElements[j + 1].Color = "blue";
-                }
-                else
-                {
-                    arrayElements[j].Color = "blue";
-                }
-            }
+    //                arrayElements[j + 1].Color = "blue";
+    //            }
+    //            else
+    //            {
+    //                arrayElements[j].Color = "blue";
+    //            }
+    //        }
+    //    }
 
-            #region color green
+    //    ArrayCheck(arrayElements);
+    //}
 
-            //arrayElements[arrayElements.Count - i - 1].Color = "green";
+    //public async Task InsertSort(List<ArrayElement> arrayElements)
+    //{
+    //    _arrayAccessCount = 0;
+    //    _swapCount = 0;
+    //    _compareCount = 0;
 
-            #endregion
-        }
+    //    int n = arrayElements.Count;
+    //    for (int i = 1; i < n; ++i)
+    //    {
+    //        _arrayAccessCount++;
+    //        ArrayElement key = arrayElements[i];
+    //        int j = i - 1;
 
-        ArrayCheck(arrayElements);
-    }
+    //        _compareCount++;
 
-    public async Task InsertSort(List<ArrayElement> arrayElements)
-    {
-        _arrayAccessCount = 0;
-        _swapCount = 0;
-        _compareCount = 0;
+    //        while (j >= 0 && arrayElements[j].Value > key.Value)
+    //        {
+    //            _compareCount++;
 
-        int n = arrayElements.Count;
-        for (int i = 1; i < n; ++i)
-        {
-            _arrayAccessCount++;
-            ArrayElement key = arrayElements[i];
-            int j = i - 1;
+    //            Swap(j + 1, j, arrayElements);
 
-            _compareCount++;
+    //            arrayElements[j].Color = "red";
+    //            OnStyleChanged();
+    //            await Task.Delay(_delay);
 
-            while (j >= 0 && arrayElements[j].Value > key.Value)
-            {
-                _compareCount++;
+    //            arrayElements[j].Color = "blue";
 
-                Swap(j + 1, j, arrayElements);
+    //            j--;
+    //        }
 
-                arrayElements[j].Color = "red";
-                OnStyleChanged();
-                await Task.Delay(_delay);
+    //        arrayElements[j + 1] = key;
+    //    }
 
-                arrayElements[j].Color = "blue";
+    //    ArrayCheck(arrayElements);
+    //}
 
-                j--;
-            }
+    //public async Task QuickSort(List<ArrayElement> arrayElements)
+    //{
+    //    _arrayAccessCount = 0;
+    //    _swapCount = 0;
+    //    _compareCount = 0;
 
-            arrayElements[j + 1] = key;
-        }
+    //    await QuickSort(arrayElements, 0, arrayElements.Count - 1);
 
-        ArrayCheck(arrayElements);
-    }
+    //    ArrayCheck(arrayElements);
+    //}
 
-    public async Task QuickSort(List<ArrayElement> arrayElements)
-    {
-        _arrayAccessCount = 0;
-        _swapCount = 0;
-        _compareCount = 0;
+    //public async Task ShakerSort(List<ArrayElement> arrayElements)
+    //{
+    //    _arrayAccessCount = 0;
+    //    _swapCount = 0;
+    //    _compareCount = 0;
 
-        await QuickSort(arrayElements, 0, arrayElements.Count - 1);
+    //    bool swapped;
+    //    int start = 0;
+    //    int end = arrayElements.Count - 1;
 
-        ArrayCheck(arrayElements);
-    }
+    //    do
+    //    {
+    //        swapped = false;
 
-    public async Task ShakerSort(List<ArrayElement> arrayElements)
-    {
-        _arrayAccessCount = 0;
-        _swapCount = 0;
-        _compareCount = 0;
+    //        for (int i = start; i < end; i++)
+    //        {
+    //            arrayElements[i].Color = "red";
+    //            OnStyleChanged();
+    //            await Task.Delay(_delay);
+    //            arrayElements[i].Color = "blue";
 
-        bool swapped;
-        int start = 0;
-        int end = arrayElements.Count - 1;
+    //            if (arrayElements[i].Value > arrayElements[i + 1].Value)
+    //            {
+    //                _compareCount += 2;
+    //                Swap(i, i + 1, arrayElements);
+    //                swapped = true;
+    //            }
+    //        }
 
-        do
-        {
-            swapped = false;
+    //        if (!swapped)
+    //            break;
 
-            for (int i = start; i < end; i++)
-            {
-                arrayElements[i].Color = "red";
-                OnStyleChanged();
-                await Task.Delay(_delay);
-                arrayElements[i].Color = "blue";
+    //        swapped = false;
+    //        end--;
 
-                if (arrayElements[i].Value > arrayElements[i + 1].Value)
-                {
-                    _compareCount += 2;
-                    Swap(i, i + 1, arrayElements);
-                    swapped = true;
-                }
-            }
+    //        for (int i = end - 1; i >= start; i--)
+    //        {
+    //            arrayElements[i].Color = "red";
+    //            OnStyleChanged();
+    //            await Task.Delay(_delay);
+    //            arrayElements[i].Color = "blue";
 
-            if (!swapped)
-                break;
+    //            if (arrayElements[i].Value > arrayElements[i + 1].Value)
+    //            {
+    //                _compareCount += 2;
+    //                Swap(i, i + 1, arrayElements);
+    //                swapped = true;
+    //            }
+    //        }
 
-            swapped = false;
-            end--;
+    //        start++;
+    //    }
+    //    while (swapped);
 
-            for (int i = end - 1; i >= start; i--)
-            {
-                arrayElements[i].Color = "red";
-                OnStyleChanged();
-                await Task.Delay(_delay);
-                arrayElements[i].Color = "blue";
+    //    ArrayCheck(arrayElements);
+    //}
 
-                if (arrayElements[i].Value > arrayElements[i + 1].Value)
-                {
-                    _compareCount += 2;
-                    Swap(i, i + 1, arrayElements);
-                    swapped = true;
-                }
-            }
+    //private async Task QuickSort(List<ArrayElement> arrayElements, int low, int high)
+    //{
+    //    if (low < high)
+    //    {
+    //        int pi = await Partition(arrayElements, low, high);
 
-            start++;
-        }
-        while (swapped);
+    //        await QuickSort(arrayElements, low, pi - 1);
+    //        await QuickSort(arrayElements, pi + 1, high);
+    //    }
+    //}
 
-        ArrayCheck(arrayElements);
-    }
+    //private async Task<int> Partition(List<ArrayElement> arrayElements, int low, int high)
+    //{
+    //    ArrayElement pivot = arrayElements[high];
+    //    _arrayAccessCount++;
+    //    int i = low - 1;
 
-    private async Task QuickSort(List<ArrayElement> arrayElements, int low, int high)
-    {
-        if (low < high)
-        {
-            int pi = await Partition(arrayElements, low, high);
+    //    for (int j = low; j < high; j++)
+    //    {
+    //        arrayElements[j].Color = "red";
+    //        OnStyleChanged();
+    //        await Task.Delay(_delay);
 
-            await QuickSort(arrayElements, low, pi - 1);
-            await QuickSort(arrayElements, pi + 1, high);
-        }
-    }
+    //        _compareCount++;
+    //        if (arrayElements[j].Value < pivot.Value)
+    //        {
+    //            i++;
+    //            Swap(i, j, arrayElements);
 
-    private async Task<int> Partition(List<ArrayElement> arrayElements, int low, int high)
-    {
-        ArrayElement pivot = arrayElements[high];
-        _arrayAccessCount++;
-        int i = low - 1;
+    //            arrayElements[i].Color = "blue";
+    //        }
+    //        else
+    //        {
+    //            arrayElements[j].Color = "blue";
+    //        }
+    //    }
 
-        for (int j = low; j < high; j++)
-        {
-            arrayElements[j].Color = "red";
-            OnStyleChanged();
-            await Task.Delay(_delay);
+    //    Swap(i + 1, high, arrayElements);
 
-            _compareCount++;
-            if (arrayElements[j].Value < pivot.Value)
-            {
-                i++;
-                Swap(i, j, arrayElements);
+    //    return i + 1;
+    //}
 
-                arrayElements[i].Color = "blue";
-            }
-            else
-            {
-                arrayElements[j].Color = "blue";
-            }
-        }
-
-        Swap(i + 1, high, arrayElements);
-
-        return i + 1;
-    }
-
-    private async Task ArrayCheck(List<ArrayElement> arrayElements)
+    public async Task ArrayCheck(List<ArrayElement> arrayElements, SortAlgorithm algorithm)
     {
         arrayElements[0].Color = "green";
 
@@ -217,25 +200,9 @@
                 arrayElements[i + 1].Color = "green";
             }
 
-            await Task.Delay(_delay);
+            await Task.Delay(algorithm.Delay);
             OnStyleChanged();
         }
-    }
-
-    private void Swap(int index1, int index2, List<ArrayElement> arrayElements)
-    {
-        _swapCount++;
-
-        var temp = arrayElements[index1];
-        _arrayAccessCount++;
-
-        arrayElements[index1] = arrayElements[index2];
-        _arrayAccessCount += 2;
-
-        arrayElements[index2] = temp;
-        _arrayAccessCount++;
-
-        OnStyleChanged();
     }
 
     public void OnStyleChanged()

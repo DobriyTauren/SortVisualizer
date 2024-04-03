@@ -1,0 +1,13 @@
+﻿@page "/shaker"
+
+@rendermode InteractiveWebAssembly
+
+<PageTitle>Сортировка перемешиванием</PageTitle>
+
+<InfoComponent />
+<VisualizatorComponent Algorithm="_shaker" />
+
+@code 
+{
+    Shaker _shaker = new Shaker();
+}

@@ -1,19 +1,19 @@
 ﻿@rendermode InteractiveWebAssembly
 
-<link href="/css/style.css" rel="stylesheet" />
+<link href="/css/beda.css" rel="stylesheet" />
 
 <div class="main-container">
     <div class="sort-block-container">
         <div class="container">
             <div class="row">
                 <div class="col-sm mb-2 mx-2 bg-primary bg-gradient rounded border border-info">
-                    <p class="text-light text-center my-auto">Обращений к массиву: @SortServiceObject.ArrayAccessCount</p>
+                    <p class="text-light text-center my-auto">Обращений к массиву: @Algorithm.ArrayAccessCount</p>
                 </div>
                 <div class="col mb-2 mx-2 bg-primary bg-gradient rounded border border-info">
-                    <p class="text-light text-center my-auto">Перестановок: @SortServiceObject.SwapCount</p>
+                    <p class="text-light text-center my-auto">Перестановок: @Algorithm.SwapCount</p>
                 </div>
                 <div class="col mb-2 mx-2 bg-primary bg-gradient rounded border border-info">
-                    <p class="text-light text-center my-auto">Сравнений: @SortServiceObject.CompareCount </p>
+                    <p class="text-light text-center my-auto">Сравнений: @Algorithm.CompareCount </p>
                 </div>
             </div>
         </div>
@@ -24,8 +24,9 @@
                 <div class="sort-item" style="--sort-item-color: @element.Color;
                                               --sort-item-height: @element.Height;
                                               --sort-item-width: @element.Width; 
+                                              --sort-item-font-size: @element.FontSize;
                                               --sort-item-margin: @($"{Generator.MARGIN_WIDTH}%");
-                                              --sort-item-delay: @($"{SortServiceObject.Delay * 0.5}ms")">
+                                              --sort-item-delay: @($"{Algorithm.Delay * 0.6}ms")">
                     @element.Value
                 </div>
             }
@@ -43,7 +44,7 @@
                 <p class="text-light text-center">Задержка (мс)</p>>
             </div>
             <div class="col-3 mb-2 w-7">
-                <input @bind="SortServiceObject.Delay" disabled="@_isSorting" type="text" class="form-control" id="inlineFormInputGroup" placeholder="Задержка">
+                <input @bind="Algorithm.Delay" disabled="@_isSorting" type="text" class="form-control" id="inlineFormInputGroup" placeholder="Задержка">
             </div>
             
             <div class="col-auto pt-2">
@@ -61,10 +62,6 @@
 {
     [Parameter]
     public SortAlgorithm Algorithm { get; set; }
-    public delegate Task SortAlgorithm(List<ArrayElement> arrayElements);
-
-    [Parameter]
-    public SortService SortServiceObject { get; set; }
     
     private Generator _generator = new Generator();
 
@@ -75,7 +72,7 @@
 
     protected override void OnInitialized()
     {
-        SortServiceObject.StyleChanged += HandleStateChanged;
+        Algorithm.SortService.StyleChanged += HandleStateChanged;
     }
 
     private void GenerateArray()
@@ -89,7 +86,7 @@
     private async Task SortArray()
     {
         _isSorting = true;
-        await Algorithm(_arrayElements);
+        await Algorithm.Sort(_arrayElements);
 
         _isSorting = false;
         StateHasChanged();
