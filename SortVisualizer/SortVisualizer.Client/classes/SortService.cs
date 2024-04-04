@@ -200,7 +200,7 @@
                 arrayElements[i + 1].Color = "green";
             }
 
-            await Task.Delay(algorithm.Delay);
+            await Task.Delay(algorithm.Delay / 2);
             OnStyleChanged();
         }
     }

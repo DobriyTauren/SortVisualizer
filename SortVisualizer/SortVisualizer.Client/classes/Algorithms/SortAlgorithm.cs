@@ -1,6 +1,6 @@
 ﻿public abstract class SortAlgorithm
 {
-    public virtual int Delay { get; set; }
+    public int Delay { get; set; }
     public int SwapCount { get; protected set; }
     public int CompareCount { get; protected set; }
     public int ArrayAccessCount { get; protected set; }

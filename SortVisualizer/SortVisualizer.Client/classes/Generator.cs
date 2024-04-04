@@ -1,6 +1,6 @@
 ﻿public class Generator
 {
-    public const double MARGIN_WIDTH = 0.2;
+    public const double MARGIN_WIDTH = 0.15;
     private const double SORT_PANEL_WIDTH = 100;
     private const int HEIGHT_MODIFICATOR = 3;
 
