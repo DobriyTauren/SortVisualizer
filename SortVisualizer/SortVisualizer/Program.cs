@@ -11,7 +11,14 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddDbContext<AlgorithmsContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddLogging(builder =>
+{
+    builder.AddConsole(); 
+});
+
+builder.Services.AddMvc(setupAction: options => options.EnableEndpointRouting = false);
 
 var app = builder.Build();
 
@@ -30,6 +37,7 @@ else
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
+app.UseMvcWithDefaultRoute();
 app.UseAntiforgery();
 
 app.MapRazorComponents<App>()

@@ -1,4 +1,4 @@
-﻿public class SortAlgorithmModel
+﻿public class AlgorithmModel
 {
     public int Id { get; set; }
     public required string Name { get; set; }

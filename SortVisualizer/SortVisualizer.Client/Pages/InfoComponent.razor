@@ -9,7 +9,6 @@
         </span>
     </div>
 
-
     <p hidden="@isHidden">
         По сравнению с другими алгоритмами считается простейшим для понимания и реализации. Эффективен для массивов небольшого размера.
 
@@ -25,4 +24,12 @@
 @code 
 {
     private bool isHidden = true;
+
+    HttpClient httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:7248/") };
+    List<AlgorithmModel> algorithms = new List<AlgorithmModel>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        algorithms = await httpClient.GetFromJsonAsync<List<AlgorithmModel>>("api/algorithms");
+    }
 }
