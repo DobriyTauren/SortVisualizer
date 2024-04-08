@@ -23,7 +23,7 @@ public class AlgorithmsContext : DbContext
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .Build();
 
-            optionsBuilder.UseSqlServer(config.GetConnectionString("DefaultConnection"));
+            optionsBuilder.UseSqlite(config.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("SortVisualizer"));
         }
     }
 }

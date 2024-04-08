@@ -4,7 +4,7 @@
     private const double SORT_PANEL_WIDTH = 100;
     private const int HEIGHT_MODIFICATOR = 3;
 
-    private int _itemsCount = 70;
+    private int _itemsCount = 13;
 
     public int ItemsCount { get => _itemsCount; set => _itemsCount = value; }
 

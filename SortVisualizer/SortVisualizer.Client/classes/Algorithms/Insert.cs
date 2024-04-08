@@ -3,8 +3,6 @@
     public Insert()
     {
         SortService = new SortService();
-
-        Delay = 30;
     }
 
     public override async Task Sort(List<ArrayElement> arrayElements)

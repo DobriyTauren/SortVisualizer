@@ -1,35 +1,51 @@
 ﻿@rendermode InteractiveWebAssembly
+@inject GlobalData globalData
+@inject NavigationManager navigationManager
 
 <div class="component-container text-light">
-    <div role="button" class="row user-select-none" @onclick="@(() => {isHidden = !isHidden;})">
-        <h3 class="col">Пузырьковая сортировка</h3>
+    <div role="button" class="row user-select-none" @onclick="@(() => {_isHidden = !_isHidden;})">
+        <h3 class="col">@_selectedAlgorithm.Name</h3>
 
         <span style="color:lightgray;" class="col-6 align-self-center text-end">
-            @(isHidden ? "(Нажмите, чтобы развернуть)" : "(Нажмите, чтобы свернуть)")
+            @(_isHidden ? "(Нажмите, чтобы развернуть)" : "(Нажмите, чтобы свернуть)")
         </span>
     </div>
 
-    <p hidden="@isHidden">
-        По сравнению с другими алгоритмами считается простейшим для понимания и реализации. Эффективен для массивов небольшого размера.
-
-        Выполняется некоторое количество проходов по массиву — начиная от начала массива, перебираются пары соседних элементов массива. Если 1-й элемент пары больше 2-го, элементы переставляются.
-        Пары элементов массива перебираются либо n − 1 раз, либо до тех пор, пока на очередном проходе не обнаружится, что более не требуется выполнять перестановки (массив отсортирован).
-        При каждом проходе алгоритма по внутреннему циклу очередной наибольший элемент массива ставится на своё место в конце массива рядом с предыдущим «наибольшим элементом», а наименьший элемент перемещается на одну позицию к началу массива (как бы «всплывает» до нужной позиции, как пузырёк в воде — откуда и название алгоритма).
-
-        n — размер массива, количество элементов массива.
-        Сложность алгоритма: O (n^2).
+    <p hidden="@_isHidden">
+        @_selectedAlgorithm.Description
     </p>
 </div>
 
-@code 
+@code
 {
-    private bool isHidden = true;
+    [Parameter]
+    public SortAlgorithm Algorithm { get; set; } = null!;
 
-    HttpClient httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:7248/") };
-    List<AlgorithmModel> algorithms = new List<AlgorithmModel>();
+    private AlgorithmModel? _selectedAlgorithm = new AlgorithmModel() { Name = "", Description = "", CodeName = "" };
+
+    private HttpClient _httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:7248/") };
+
+    private bool _isHidden = true;
 
     protected override async Task OnInitializedAsync()
     {
-        algorithms = await httpClient.GetFromJsonAsync<List<AlgorithmModel>>("api/algorithms");
+        if (globalData.Algorithms == null)
+        {
+            globalData.Algorithms = await _httpClient.GetFromJsonAsync<List<AlgorithmModel>>("api/algorithms");
+        }
+
+        string relativePath = navigationManager.ToBaseRelativePath(navigationManager.Uri);
+
+        _selectedAlgorithm = globalData.Algorithms.FirstOrDefault(a => a.CodeName == relativePath);
+
+        if (_selectedAlgorithm == null) // if alg not exists in db
+        {
+            _selectedAlgorithm = new AlgorithmModel()
+            {
+                Name = "Не найдено...",
+                Description = "Не найдено...",
+                CodeName = "Не найдено...",           
+            };
+        }
     }
 }

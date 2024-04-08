@@ -3,8 +3,6 @@
     public Bubble()
     {
         SortService = new SortService();
-
-        Delay = 20;
     }
 
     public override async Task Sort(List<ArrayElement> arrayElements)

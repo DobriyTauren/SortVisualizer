@@ -3,8 +3,6 @@
     public Quick()
     {
         SortService = new SortService();
-
-        Delay = 25;
     }
 
     public override async Task Sort(List<ArrayElement> arrayElements)

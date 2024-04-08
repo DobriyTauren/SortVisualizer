@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using SortVisualizer.Client.classes;
 using SortVisualizer.Client.Pages;
 using SortVisualizer.Components;
 using System;
@@ -11,7 +12,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddDbContext<AlgorithmsContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("SortVisualizer")));
 
 builder.Services.AddLogging(builder =>
 {
@@ -19,6 +20,8 @@ builder.Services.AddLogging(builder =>
 });
 
 builder.Services.AddMvc(setupAction: options => options.EnableEndpointRouting = false);
+
+builder.Services.AddScoped<GlobalData>();
 
 var app = builder.Build();
 

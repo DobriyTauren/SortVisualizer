@@ -4,8 +4,6 @@ public class Shaker : SortAlgorithm
     public Shaker()
     {
         SortService = new SortService();
-
-        Delay = 15;
     }
 
     public override async Task Sort(List<ArrayElement> arrayElements)

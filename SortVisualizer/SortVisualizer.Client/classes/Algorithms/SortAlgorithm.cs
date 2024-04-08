@@ -1,6 +1,6 @@
 ﻿public abstract class SortAlgorithm
 {
-    public int Delay { get; set; }
+    public int Delay { get; set; } = 333;
     public int SwapCount { get; protected set; }
     public int CompareCount { get; protected set; }
     public int ArrayAccessCount { get; protected set; }
