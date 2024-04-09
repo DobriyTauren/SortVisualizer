@@ -205,6 +205,22 @@
         }
     }
 
+    public async Task WaitColor(int delay, ArrayElement elem)
+    {
+        elem.Color = "red";
+
+        OnStyleChanged();
+        await Task.Delay(delay);
+
+        elem.Color = "blue";
+    }
+
+    public async Task Wait(int delay)
+    {
+        OnStyleChanged();
+        await Task.Delay(delay);
+    }
+
     public void OnStyleChanged()
     {
         StyleChanged?.Invoke(null, EventArgs.Empty);

@@ -10,8 +10,6 @@
         ClearValues();
 
         await QuickSort(arrayElements, 0, arrayElements.Count - 1);
-
-        SortService.ArrayCheck(arrayElements, this);
     }
 
     private async Task QuickSort(List<ArrayElement> arrayElements, int low, int high)
@@ -33,25 +31,18 @@
 
         for (int j = low; j < high; j++)
         {
-            arrayElements[j].Color = "red";
-            SortService.OnStyleChanged();
-            await Task.Delay(Delay);
-
+            await SortService.WaitColor(Delay, arrayElements[j]);
+           
             CompareCount++;
+
             if (arrayElements[j].Value < pivot.Value)
             {
                 i++;
-                Swap(i, j, arrayElements);
-
-                arrayElements[i].Color = "blue";
-            }
-            else
-            {
-                arrayElements[j].Color = "blue";
+                await Swap(i, j, arrayElements);
             }
         }
 
-        Swap(i + 1, high, arrayElements);
+        await Swap(i + 1, high, arrayElements);
 
         return i + 1;
     }

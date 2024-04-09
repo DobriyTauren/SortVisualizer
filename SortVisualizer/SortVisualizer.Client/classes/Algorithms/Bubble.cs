@@ -13,29 +13,16 @@
         {
             for (int j = 0; j < arrayElements.Count - i - 1; j++)
             {
-                #region color red
-
-                arrayElements[j].Color = "red";
-                SortService.OnStyleChanged();
-                await Task.Delay(Delay);
-                arrayElements[j].Color = "blue";
-
-                #endregion
-
-                var value1 = arrayElements[j].Value;
-                var value2 = arrayElements[j + 1].Value;
+                await SortService.WaitColor(Delay, arrayElements[j]);
 
                 ArrayAccessCount += 2;
                 CompareCount++;
 
-
-                if (value1 > value2)
+                if (arrayElements[j].Value > arrayElements[j + 1].Value)
                 {
-                    Swap(j, j + 1, arrayElements);
+                    await Swap(j, j + 1, arrayElements);
                 }
             }
         }
-
-        SortService.ArrayCheck(arrayElements, this);
     }
 }

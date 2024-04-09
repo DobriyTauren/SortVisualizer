@@ -1,0 +1,13 @@
+﻿@page "/shell"
+
+@rendermode InteractiveWebAssembly
+
+<PageTitle>Сортировка Шелла</PageTitle>
+
+<InfoComponent Algorithm="_shell" />
+<VisualizatorComponent Algorithm="_shell" />
+
+@code
+{
+    private Shell _shell = new Shell();
+}

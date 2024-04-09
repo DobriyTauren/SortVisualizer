@@ -1,0 +1,13 @@
+﻿@page "/merge"
+
+@rendermode InteractiveWebAssembly
+
+<PageTitle>Сортировка слиянием</PageTitle>
+
+<InfoComponent Algorithm="_merge" />
+<VisualizatorComponent Algorithm="_merge" />
+
+@code
+{
+    private Merge _merge = new Merge();
+}

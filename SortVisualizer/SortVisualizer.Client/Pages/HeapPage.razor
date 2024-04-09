@@ -1,0 +1,13 @@
+﻿@page "/heap"
+
+@rendermode InteractiveWebAssembly
+
+<PageTitle>Сортировка кучей</PageTitle>
+
+<InfoComponent Algorithm="_heap" />
+<VisualizatorComponent Algorithm="_heap" />
+
+@code
+{
+    private Heap _heap = new Heap();
+}

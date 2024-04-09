@@ -22,21 +22,15 @@
             {
                 CompareCount++;
 
+                await SortService.WaitColor(Delay, arrayElements[j + 1]);
+
                 await Swap(j + 1, j, arrayElements);
-
-                arrayElements[j].Color = "red";
-                SortService.OnStyleChanged();
-                await Task.Delay(Delay);
-
-                arrayElements[j].Color = "blue";
 
                 j--;
             }
 
             arrayElements[j + 1] = key;
         }
-
-        SortService.ArrayCheck(arrayElements, this);
     }
 
 }

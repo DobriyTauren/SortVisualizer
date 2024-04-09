@@ -20,10 +20,7 @@ public class Shaker : SortAlgorithm
 
             for (int i = start; i < end; i++)
             {
-                arrayElements[i].Color = "red";
-                SortService.OnStyleChanged();
-                await Task.Delay(Delay);
-                arrayElements[i].Color = "blue";
+                await SortService.WaitColor(Delay, arrayElements[i]);
 
                 CompareCount++;
                 if (arrayElements[i].Value > arrayElements[i + 1].Value)
@@ -48,16 +45,11 @@ public class Shaker : SortAlgorithm
                     swapped = true;
                 }
 
-                arrayElements[i].Color = "red";
-                SortService.OnStyleChanged();
-                await Task.Delay(Delay);
-                arrayElements[i].Color = "blue";
+                await SortService.WaitColor(Delay, arrayElements[i]);
             }
 
             start++;
         }
         while (swapped);
-
-        SortService.ArrayCheck(arrayElements, this);
     }
 }
