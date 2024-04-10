@@ -1,0 +1,87 @@
+﻿@rendermode InteractiveWebAssembly
+
+<link rel="stylesheet" type="text/css" href="css/beda.css?version=0.1">
+
+<div class="main-container">
+    <div class="sort-block-container">
+        <svg width="600" height="400">
+            @foreach (var point in _points)
+            {
+                <circle class="circle" id="movingCircle" cx="@point.X" cy="@point.Y" r="3" fill="@point.Color">
+
+                </circle>
+            }
+        </svg>
+
+        <div class="row btn-container">
+            <div class="col-auto">
+                <button class="btn btn-primary" @onclick="GenerateArray" disabled="@_isSorting">Сгенерировать</button>
+            </div>
+            <div class="col-auto mb-2">
+                <button class="btn btn-primary" @onclick="SortArray" disabled="@(_isEmpty || _isSorting)">Сортировать</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .circle {
+        transition: cx 2s ease, cy 2s ease;
+    }
+</style>
+
+@code
+{
+    [Parameter]
+    public SortAlgorithm Algorithm { get; set; }
+
+    private Generator _generator = new Generator();
+
+    private List<Point> _points = new List<Point>();
+
+    private bool _isSorting = false;
+    private bool _isEmpty = true;
+
+    protected override void OnInitialized()
+    {
+        Algorithm.SortService.StyleChanged += HandleStateChanged;
+    }
+
+    private void GenerateArray()
+    {
+        _points.Clear();
+        _points = _generator.GeneratePoints();
+
+        _isEmpty = false;
+    }
+
+    private async Task SortArray()
+    {
+        _isSorting = true;
+
+        var radius = 150; // Радиус окружности
+
+        for (int i = 0; i < _points.Count; i++)
+        {
+            var angle = 2 * Math.PI * i / _points.Count;
+            var x = 300 + radius * Math.Cos(angle); // Рассчитываем координату x
+            var y = 200 + radius * Math.Sin(angle); // Рассчитываем координату y
+
+            _points[i].X = x;
+            _points[i].Y = y;
+
+            StateHasChanged();
+        }
+
+        await Task.Delay(100);
+
+        await Algorithm.Sort(_points);
+
+        _isSorting = false;
+    }
+
+    private void HandleStateChanged(object sender, EventArgs e)
+    {
+        StateHasChanged(); // обновление состояния компонента
+    }
+}

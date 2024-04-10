@@ -65,7 +65,7 @@
     
     private Generator _generator = new Generator();
 
-    private List<ArrayElement> _arrayElements = new List<ArrayElement>();
+    private List<Bar> _arrayElements = new List<Bar>();
 
     private bool _isSorting = false;
     private bool _isEmpty = true;
@@ -78,7 +78,7 @@
     private void GenerateArray()
     {
         _arrayElements.Clear();
-        _arrayElements = _generator.GenerateRandomArray();
+        _arrayElements = _generator.GenerateBars();
 
         _isEmpty = false;
     }
@@ -86,6 +86,7 @@
     private async Task SortArray()
     {
         _isSorting = true;
+
         await Algorithm.Sort(_arrayElements);
 
         _isSorting = false;

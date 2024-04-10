@@ -5,7 +5,7 @@
         SortService = new SortService();
     }
 
-    public override async Task Sort(List<ArrayElement> arrayElements)
+    public override async Task Sort(List<Bar> arrayElements)
     {
         int n = arrayElements.Count;
 
@@ -23,7 +23,7 @@
         }
     }
 
-    async Task Heapify(List<ArrayElement> arrayElements, int n, int i)
+    async Task Heapify(List<Bar> arrayElements, int n, int i)
     {
         int largest = i; 
         int l = 2 * i + 1;  

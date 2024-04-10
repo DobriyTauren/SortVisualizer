@@ -1,4 +1,6 @@
-﻿public class SortService
+﻿using System.Drawing;
+
+public class SortService
 {
     public event EventHandler StyleChanged;
 
@@ -189,7 +191,7 @@
     //    return i + 1;
     //}
 
-    public async Task ArrayCheck(List<ArrayElement> arrayElements, SortAlgorithm algorithm)
+    public async Task ArrayCheck(List<Bar> arrayElements, SortAlgorithm algorithm)
     {
         arrayElements[0].Color = "green";
 
@@ -205,7 +207,7 @@
         }
     }
 
-    public async Task WaitColor(int delay, ArrayElement elem)
+    public async Task WaitColor(int delay, SortElement elem)
     {
         elem.Color = "red";
 

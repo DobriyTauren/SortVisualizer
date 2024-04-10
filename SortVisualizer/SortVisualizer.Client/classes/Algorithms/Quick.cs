@@ -5,14 +5,14 @@
         SortService = new SortService();
     }
 
-    public override async Task Sort(List<ArrayElement> arrayElements)
+    public override async Task Sort(List<Bar> arrayElements)
     {
         ClearValues();
 
         await QuickSort(arrayElements, 0, arrayElements.Count - 1);
     }
 
-    private async Task QuickSort(List<ArrayElement> arrayElements, int low, int high)
+    private async Task QuickSort(List<Bar> arrayElements, int low, int high)
     {
         if (low < high)
         {
@@ -23,9 +23,9 @@
         }
     }
 
-    private async Task<int> Partition(List<ArrayElement> arrayElements, int low, int high)
+    private async Task<int> Partition(List<Bar> arrayElements, int low, int high)
     {
-        ArrayElement pivot = arrayElements[high];
+        var pivot = arrayElements[high];
         ArrayAccessCount++;
         int i = low - 1;
 

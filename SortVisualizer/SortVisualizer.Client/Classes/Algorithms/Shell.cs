@@ -6,7 +6,7 @@ public class Shell : SortAlgorithm
         SortService = new SortService();
     }
 
-    public override async Task Sort(List<ArrayElement> arrayElements)
+    public override async Task Sort(List<Bar> arrayElements)
     {
         int n = arrayElements.Count;
 

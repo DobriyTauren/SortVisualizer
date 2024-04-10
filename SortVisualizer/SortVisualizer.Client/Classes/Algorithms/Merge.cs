@@ -5,14 +5,14 @@
         SortService = new SortService();
     }
 
-    public override async Task Sort(List<ArrayElement> arrayElements)
+    public override async Task Sort(List<Bar> arrayElements)
     {
         ClearValues();
 
         await MergeSort(arrayElements, 0, arrayElements.Count - 1);
     }
 
-    private async Task MergeSort(List<ArrayElement> arrayElements, int left, int right)
+    private async Task MergeSort(List<Bar> arrayElements, int left, int right)
     {
         if (left < right)
         {
@@ -25,13 +25,13 @@
         }
     }
 
-    private async Task MergeElements(List<ArrayElement> arrayElements, int left, int middle, int right)
+    private async Task MergeElements(List<Bar> arrayElements, int left, int middle, int right)
     {
         int n1 = middle - left + 1;
         int n2 = right - middle;
 
-        var leftArray = new List<ArrayElement>();
-        var rightArray = new List<ArrayElement>();
+        List<Bar> leftArray = new();
+        List<Bar> rightArray = new();
 
         for (int i = 0; i < n1; i++)
         {

@@ -1,4 +1,9 @@
-﻿.btn-container {
+﻿#movingCircle {
+    animation: moveRight 2s forwards;
+}
+
+
+.btn-container {
     padding: 12px 0 0 10px;
 }
 
@@ -11,7 +16,6 @@
     width: 7%;
     min-width: 78px;
 }
-
 
 .w-15 {
     width: 15%;

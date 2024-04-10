@@ -5,7 +5,7 @@
         SortService = new SortService();
     }
 
-    public override async Task Sort(List<ArrayElement> arrayElements)
+    public override async Task Sort(List<Bar> arrayElements)
     {
         ClearValues();
 
@@ -13,7 +13,7 @@
         for (int i = 1; i < n; ++i)
         {
             ArrayAccessCount++;
-            ArrayElement key = arrayElements[i];
+            Bar key = arrayElements[i];
             int j = i - 1;
 
             CompareCount++;
