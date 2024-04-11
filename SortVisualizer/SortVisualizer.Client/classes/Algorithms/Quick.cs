@@ -5,14 +5,14 @@
         SortService = new SortService();
     }
 
-    public override async Task Sort(List<Bar> arrayElements)
+    public override async Task Sort<T>(List<T> arrayElements)
     {
         ClearValues();
 
         await QuickSort(arrayElements, 0, arrayElements.Count - 1);
     }
 
-    private async Task QuickSort(List<Bar> arrayElements, int low, int high)
+    private async Task QuickSort<T>(List<T> arrayElements, int low, int high) where T : SortElement
     {
         if (low < high)
         {
@@ -23,7 +23,7 @@
         }
     }
 
-    private async Task<int> Partition(List<Bar> arrayElements, int low, int high)
+    private async Task<int> Partition<T>(List<T> arrayElements, int low, int high) where T : SortElement
     {
         var pivot = arrayElements[high];
         ArrayAccessCount++;
@@ -32,17 +32,32 @@
         for (int j = low; j < high; j++)
         {
             await SortService.WaitColor(Delay, arrayElements[j]);
-           
+
             CompareCount++;
 
             if (arrayElements[j].Value < pivot.Value)
             {
                 i++;
-                await Swap(i, j, arrayElements);
+
+                if (arrayElements is List<Bar>) // peredelat'?
+                {
+                    await Swap(i, j, arrayElements as List<Bar>);
+                }
+                else
+                {
+                    await Swap(i, j, arrayElements as List<Point>);
+                }
             }
         }
 
-        await Swap(i + 1, high, arrayElements);
+        if (arrayElements is List<Bar>) // peredelat'?
+        {
+            await Swap(i + 1, high, arrayElements as List<Bar>);
+        }
+        else
+        {
+            await Swap(i + 1, high, arrayElements as List<Point>);
+        }
 
         return i + 1;
     }

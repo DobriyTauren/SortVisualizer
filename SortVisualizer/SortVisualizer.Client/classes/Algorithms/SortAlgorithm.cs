@@ -7,11 +7,7 @@
     public SortService SortService { get; protected set; }
 
 
-    public abstract Task Sort (List<Bar> arrayElements);
-    public virtual Task Sort (List<Point> arrayElements)
-    {
-        return null;
-    }
+    public abstract Task Sort<T> (List<T> arrayElements) where T : SortElement;
 
     protected virtual async Task Swap (int index1, int index2, List<Bar> arrayElements)
     {

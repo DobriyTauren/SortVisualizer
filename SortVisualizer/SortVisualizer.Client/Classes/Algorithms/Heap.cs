@@ -5,7 +5,7 @@
         SortService = new SortService();
     }
 
-    public override async Task Sort(List<Bar> arrayElements)
+    public override async Task Sort<T>(List<T> arrayElements)
     {
         int n = arrayElements.Count;
 
@@ -17,13 +17,21 @@
         for (int i = n - 1; i > 0; i--)
         {
             await SortService.WaitColor(Delay, arrayElements[i]);
-            await Swap(0, i, arrayElements);
+            
+            if (arrayElements is List<Bar>) // peredelat'?
+            {
+                await Swap(0, i, arrayElements as List<Bar>);
+            }
+            else
+            {
+                await Swap(0, i, arrayElements as List<Point>);
+            }
 
             await Heapify(arrayElements, i, 0);
         }
     }
 
-    async Task Heapify(List<Bar> arrayElements, int n, int i)
+    async Task Heapify<T>(List<T> arrayElements, int n, int i) where T : SortElement
     {
         int largest = i; 
         int l = 2 * i + 1;  
@@ -38,8 +46,15 @@
         if (largest != i)
         {
             await SortService.WaitColor(Delay, arrayElements[i]);
-
-            await Swap(i, largest, arrayElements);
+            
+            if (arrayElements is List<Bar>) // peredelat'?
+            {
+                await Swap(i, largest, arrayElements as List<Bar>);
+            }
+            else
+            {
+                await Swap(i, largest, arrayElements as List<Point>);
+            }
 
             await Heapify(arrayElements, n, largest);
         }

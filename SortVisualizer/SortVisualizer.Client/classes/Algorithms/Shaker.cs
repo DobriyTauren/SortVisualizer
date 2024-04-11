@@ -6,7 +6,7 @@ public class Shaker : SortAlgorithm
         SortService = new SortService();
     }
 
-    public override async Task Sort(List<Bar> arrayElements)
+    public override async Task Sort<T>(List<T> arrayElements)
     {
         ClearValues();
 
@@ -25,7 +25,14 @@ public class Shaker : SortAlgorithm
                 CompareCount++;
                 if (arrayElements[i].Value > arrayElements[i + 1].Value)
                 {
-                    await Swap(i, i + 1, arrayElements);
+                    if (arrayElements is List<Bar>) // peredelat'?
+                    {
+                        await Swap(i, i + 1, arrayElements as List<Bar>);
+                    }
+                    else
+                    {
+                        await Swap(i, i + 1, arrayElements as List<Point>);
+                    }
                     swapped = true;
                 }
             }
@@ -41,7 +48,14 @@ public class Shaker : SortAlgorithm
                 CompareCount++;
                 if (arrayElements[i].Value > arrayElements[i + 1].Value)
                 {
-                    await Swap(i, i + 1, arrayElements);
+                    if (arrayElements is List<Bar>) // peredelat'?
+                    {
+                        await Swap(i, i + 1, arrayElements as List<Bar>);
+                    }
+                    else
+                    {
+                        await Swap(i, i + 1, arrayElements as List<Point>);
+                    }
                     swapped = true;
                 }
 

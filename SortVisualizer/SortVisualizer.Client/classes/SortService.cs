@@ -209,12 +209,19 @@ public class SortService
 
     public async Task WaitColor(int delay, SortElement elem)
     {
-        elem.Color = "red";
+        if (elem is Bar)
+        {
+            elem.Color = "red";
 
-        OnStyleChanged();
-        await Task.Delay(delay);
+            OnStyleChanged();
+            await Task.Delay(delay);
 
-        elem.Color = "blue";
+            elem.Color = "blue";
+        }
+        else
+        {
+            await Wait(delay);
+        }
     }
 
     public async Task Wait(int delay)

@@ -5,7 +5,7 @@
         SortService = new SortService();
     }
 
-    public override async Task Sort(List<Bar> arrayElements)
+    public override async Task Sort<T>(List<T> arrayElements)
     {
         ClearValues();
 
@@ -13,7 +13,7 @@
         for (int i = 1; i < n; ++i)
         {
             ArrayAccessCount++;
-            Bar key = arrayElements[i];
+            T key = arrayElements[i];
             int j = i - 1;
 
             CompareCount++;
@@ -24,7 +24,14 @@
 
                 await SortService.WaitColor(Delay, arrayElements[j + 1]);
 
-                await Swap(j + 1, j, arrayElements);
+                if (arrayElements is List<Bar>) // peredelat'?
+                {
+                    await Swap(j + 1, j, arrayElements as List<Bar>);
+                }
+                else
+                {
+                    await Swap(j + 1, j, arrayElements as List<Point>);
+                }
 
                 j--;
             }

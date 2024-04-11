@@ -5,7 +5,7 @@
         SortService = new SortService();
     }
 
-    public override async Task Sort(List<Bar> arrayElements)
+    public override async Task Sort<T>(List<T> arrayElements)
     {
         ClearValues();
 
@@ -20,26 +20,14 @@
 
                 if (arrayElements[j].Value > arrayElements[j + 1].Value)
                 {
-                    await Swap(j, j + 1, arrayElements);
-                }
-            }
-        }
-    }
-
-    public override async Task Sort(List<Point> arrayElements)
-    {
-        for (int i = 0; i < arrayElements.Count; i++)
-        {
-            for (int j = 0; j < arrayElements.Count - i - 1; j++)
-            {
-                await SortService.Wait(Delay);
-
-                ArrayAccessCount += 2;
-                CompareCount++;
-
-                if (arrayElements[j].Value > arrayElements[j + 1].Value)
-                {
-                    await Swap(j, j + 1, arrayElements);
+                    if (arrayElements is List<Bar>) // peredelat'?
+                    {
+                        await Swap(j, j + 1, arrayElements as List<Bar>);
+                    }
+                    else
+                    {
+                        await Swap(j, j + 1, arrayElements as List<Point>);
+                    }
                 }
             }
         }

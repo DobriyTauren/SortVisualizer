@@ -5,9 +5,45 @@
 <PageTitle>Сортировка перемешиванием</PageTitle>
 
 <InfoComponent Algorithm="_shaker" />
-<BarVisualization Algorithm="_shaker" />
+<div class="row mb-3 mx-1 border border-primary rounded py-1 px-1">
+    <button @onclick="ShowBars" class="btn btn-primary col-auto">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" class="bi bi-file-bar-graph" viewBox="0 0 16 16">
+            <path d="M4.5 12a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5zm3 0a.5.5 0 0 1-.5-.5v-4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5zm3 0a.5.5 0 0 1-.5-.5v-6a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-.5.5z" />
+            <path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1" />
+        </svg>
+    </button>
+    <button @onclick="ShowPoints" class="btn btn-primary col-auto mx-3">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-circle" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+        </svg>
+    </button>
+</div>
 
-@code 
+<div hidden="@_isBarHidden">
+    <BarVisualization Algorithm="_shaker" />
+</div>
+
+<div hidden="@_isPointHidden">
+    <PointVisualization Algorithm="_shaker" />
+</div>
+
+
+@code
 {
-    Shaker _shaker = new Shaker();
+    private bool _isPointHidden = true;
+    private bool _isBarHidden = false;
+
+    private Shaker _shaker = new();
+
+    private void ShowBars()
+    {
+        _isBarHidden = false;
+        _isPointHidden = true;
+    }
+
+    private void ShowPoints()
+    {
+        _isBarHidden = true;
+        _isPointHidden = false;
+    }
 }

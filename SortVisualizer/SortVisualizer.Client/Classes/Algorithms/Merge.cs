@@ -5,14 +5,14 @@
         SortService = new SortService();
     }
 
-    public override async Task Sort(List<Bar> arrayElements)
+    public override async Task Sort<T>(List<T> arrayElements)
     {
         ClearValues();
 
         await MergeSort(arrayElements, 0, arrayElements.Count - 1);
     }
 
-    private async Task MergeSort(List<Bar> arrayElements, int left, int right)
+    private async Task MergeSort<T>(List<T> arrayElements, int left, int right) where T : SortElement
     {
         if (left < right)
         {
@@ -25,23 +25,14 @@
         }
     }
 
-    private async Task MergeElements(List<Bar> arrayElements, int left, int middle, int right)
+    private async Task MergeElements<T>(List<T> arrayElements, int left, int middle, int right) where T : SortElement
     {
         int n1 = middle - left + 1;
         int n2 = right - middle;
 
-        List<Bar> leftArray = new();
-        List<Bar> rightArray = new();
+        List<T> leftArray = new List<T>(arrayElements.GetRange(left, n1));
+        List<T> rightArray = new List<T>(arrayElements.GetRange(middle + 1, n2));
 
-        for (int i = 0; i < n1; i++)
-        {
-            leftArray.Add(new());
-        }
-
-        for (int i = 0; i < n2; i++)
-        {
-            rightArray.Add(new());
-        }
 
         for (int i = 0; i < n1; ++i)
             leftArray[i] = arrayElements[left + i];
@@ -78,9 +69,9 @@
         }
 
         while (y < n2)
-        {            
+        {
             await SortService.WaitColor(Delay, arrayElements[k]);
-         
+
             arrayElements[k] = rightArray[y];
             y++;
             k++;
