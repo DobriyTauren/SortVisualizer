@@ -56,15 +56,11 @@
             var point = new Point
             {
                 Value = random.Next(0, 361),
-                X = random.Next(10, 590),
+                X = random.Next(10, 390),
                 Y = random.Next(10, 390),
             };
 
-
-
-            // Сопоставляем значение с цветом в палитре
-            // Например, можно использовать градиент цветов от одного к другому
-            point.Color =  $"hsl({point.Value}, 100%, 50%)"; // Используем HSL для представления цвета
+            point.Color =  $"hsl({point.Value}, 100%, 50%)";
 
             points.Add(point);
         }

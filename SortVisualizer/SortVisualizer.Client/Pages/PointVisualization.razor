@@ -4,7 +4,7 @@
 
 <div class="main-container">
     <div class="sort-block-container">
-        <svg width="600" height="400">
+        <svg width="400" height="400">
             @foreach (var point in _points)
             {
                 <circle class="circle" id="movingCircle" cx="@point.X" cy="@point.Y" r="3" fill="@point.Color">
@@ -20,6 +20,22 @@
             <div class="col-auto mb-2">
                 <button class="btn btn-primary" @onclick="SortArray" disabled="@(_isEmpty || _isSorting)">Сортировать</button>
             </div>
+
+
+            <div class="col-auto pt-2">
+                <p class="text-light text-center">Задержка (мс)</p>>
+            </div>
+            <div class="col-3 mb-2 w-7">
+                <input @bind="Algorithm.Delay" disabled="@_isSorting" type="text" class="form-control" id="inlineFormInputGroup" placeholder="Задержка">
+            </div>
+
+            <div class="col-auto pt-2">
+                <p class="text-light text-center">Элементов</p>>
+            </div>
+            <div class="col-3 mb-2 w-7">
+                <input @bind="@_generator.ItemsCount" disabled="@_isSorting" type="text" class="form-control" id="inlineFormInputGroup" placeholder="Элементов">
+            </div>
+
         </div>
     </div>
 </div>
@@ -64,7 +80,7 @@
         for (int i = 0; i < _points.Count; i++)
         {
             var angle = 2 * Math.PI * i / _points.Count;
-            var x = 300 + radius * Math.Cos(angle); // Рассчитываем координату x
+            var x = 200 + radius* Math.Cos(angle); // Рассчитываем координату x
             var y = 200 + radius * Math.Sin(angle); // Рассчитываем координату y
 
             _points[i].X = x;
