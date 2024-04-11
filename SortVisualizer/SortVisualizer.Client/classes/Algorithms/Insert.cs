@@ -18,24 +18,18 @@
 
             CompareCount++;
 
-            while (j >= 0 && arrayElements[j].Value > key.Value)
+            while (j >= 0 && arrayElements[j].GetValue() > key.GetValue())
             {
                 CompareCount++;
 
                 await SortService.WaitColor(Delay, arrayElements[j + 1]);
 
-                if (arrayElements is List<Bar>) // peredelat'?
-                {
-                    await Swap(j + 1, j, arrayElements as List<Bar>);
-                }
-                else
-                {
-                    await Swap(j + 1, j, arrayElements as List<Point>);
-                }
+                await SwapSWAG(j + 1, j, arrayElements);
 
                 j--;
             }
 
+            SwapCount++;
             arrayElements[j + 1] = key;
         }
     }

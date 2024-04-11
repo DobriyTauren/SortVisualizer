@@ -1,4 +1,6 @@
-﻿public class Merge : SortAlgorithm
+﻿using SortVisualizer.Client.Classes.SortElements;
+
+public class Merge : SortAlgorithm
 {
     public Merge()
     {
@@ -12,7 +14,7 @@
         await MergeSort(arrayElements, 0, arrayElements.Count - 1);
     }
 
-    private async Task MergeSort<T>(List<T> arrayElements, int left, int right) where T : SortElement
+    private async Task MergeSort<T>(List<T> arrayElements, int left, int right) where T : ISvgElement
     {
         if (left < right)
         {
@@ -25,7 +27,7 @@
         }
     }
 
-    private async Task MergeElements<T>(List<T> arrayElements, int left, int middle, int right) where T : SortElement
+    private async Task MergeElements<T>(List<T> arrayElements, int left, int middle, int right) where T : ISvgElement
     {
         int n1 = middle - left + 1;
         int n2 = right - middle;
@@ -46,7 +48,7 @@
         {
             await SortService.WaitColor(Delay, arrayElements[k]);
 
-            if (leftArray[x].Value <= rightArray[y].Value)
+            if (leftArray[x].GetValue() <= rightArray[y].GetValue())
             {
                 arrayElements[k] = leftArray[x];
                 x++;

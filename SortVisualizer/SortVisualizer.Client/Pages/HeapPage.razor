@@ -1,4 +1,5 @@
 ﻿@page "/heap"
+@using SortVisualizer.Client.Pages.Components
 
 @rendermode InteractiveWebAssembly
 
@@ -19,31 +20,31 @@
     </button>
 </div>
 
-<div hidden="@_isBarHidden">
-    <BarVisualization Algorithm="_heap" />
-</div>
-
 <div hidden="@_isPointHidden">
-    <PointVisualization Algorithm="_heap" />
+    <LineVisualization Algorithm="_heap" />
+</div>
+
+<div hidden="@_isCircleHidden">
+    <CircleVisualization Algorithm="_heap" />
 </div>
 
 
-@code
+@code 
 {
-    private bool _isPointHidden = true;
-    private bool _isBarHidden = false;
+    private bool _isCircleHidden = true;
+    private bool _isPointHidden = false;
 
-    private Heap _heap = new Heap();
+    private Heap _heap = new();
 
     private void ShowBars()
     {
-        _isBarHidden = false;
-        _isPointHidden = true;
+        _isPointHidden = false;
+        _isCircleHidden = true;
     }
-
+    
     private void ShowPoints()
     {
-        _isBarHidden = true;
-        _isPointHidden = false;
+        _isPointHidden = true;
+        _isCircleHidden = false;
     }
 }

@@ -18,16 +18,9 @@
                 ArrayAccessCount += 2;
                 CompareCount++;
 
-                if (arrayElements[j].Value > arrayElements[j + 1].Value)
+                if (arrayElements[j].GetValue() > arrayElements[j + 1].GetValue())
                 {
-                    if (arrayElements is List<Bar>) // peredelat'?
-                    {
-                        await Swap(j, j + 1, arrayElements as List<Bar>);
-                    }
-                    else
-                    {
-                        await Swap(j, j + 1, arrayElements as List<Point>);
-                    }
+                    SwapSWAG(j, j + 1, arrayElements);
                 }
             }
         }

@@ -1,4 +1,5 @@
 ﻿@page "/merge"
+@using SortVisualizer.Client.Pages.Components
 
 @rendermode InteractiveWebAssembly
 
@@ -19,31 +20,31 @@
     </button>
 </div>
 
-<div hidden="@_isBarHidden">
-    <BarVisualization Algorithm="_merge" />
-</div>
-
 <div hidden="@_isPointHidden">
-    <PointVisualization Algorithm="_merge" />
+    <LineVisualization Algorithm="_merge" />
+</div>
+
+<div hidden="@_isCircleHidden">
+    <CircleVisualization Algorithm="_merge" />
 </div>
 
 
-@code
+@code 
 {
-    private bool _isPointHidden = true;
-    private bool _isBarHidden = false;
+    private bool _isCircleHidden = true;
+    private bool _isPointHidden = false;
 
     private Merge _merge = new();
 
     private void ShowBars()
     {
-        _isBarHidden = false;
-        _isPointHidden = true;
+        _isPointHidden = false;
+        _isCircleHidden = true;
     }
-
+    
     private void ShowPoints()
     {
-        _isBarHidden = true;
-        _isPointHidden = false;
+        _isPointHidden = true;
+        _isCircleHidden = false;
     }
 }

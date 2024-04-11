@@ -1,4 +1,6 @@
-﻿public class Heap : SortAlgorithm
+﻿using SortVisualizer.Client.Classes.SortElements;
+
+public class Heap : SortAlgorithm
 {
     public Heap()
     {
@@ -11,53 +13,45 @@
 
         for (int i = n / 2 - 1; i >= 0; i--)
         {
+            ArrayAccessCount++;
             await Heapify(arrayElements, n, i);
         }
 
+        // Один за другим извлекаем элементы из кучи
         for (int i = n - 1; i > 0; i--)
         {
-            await SortService.WaitColor(Delay, arrayElements[i]);
-            
-            if (arrayElements is List<Bar>) // peredelat'?
-            {
-                await Swap(0, i, arrayElements as List<Bar>);
-            }
-            else
-            {
-                await Swap(0, i, arrayElements as List<Point>);
-            }
+            ArrayAccessCount++;
+            await SortService.WaitColor(Delay, arrayElements[i]); 
 
-            await Heapify(arrayElements, i, 0);
+            await SwapSWAG(0, i, arrayElements);
+
+            ArrayAccessCount++;
+            await Heapify(arrayElements, i, 0); // Обращение к массиву
         }
     }
 
-    async Task Heapify<T>(List<T> arrayElements, int n, int i) where T : SortElement
+    async Task Heapify<T>(List<T> arrayElements, int n, int i) where T : ISvgElement
     {
-        int largest = i; 
-        int l = 2 * i + 1;  
-        int r = 2 * i + 2;  
+        int largest = i;
+        int l = 2 * i + 1;
+        int r = 2 * i + 2;
 
-        if (l < n && arrayElements[l].Value > arrayElements[largest].Value)
-            largest = l;
+        CompareCount++;
+        if (l < n && arrayElements[l].GetValue() > arrayElements[largest].GetValue())
+            largest = l; 
 
-        if (r < n && arrayElements[r].Value > arrayElements[largest].Value)
-            largest = r;
+        CompareCount++;
+        if (r < n && arrayElements[r].GetValue() > arrayElements[largest].GetValue())
+            largest = r; 
 
         if (largest != i)
         {
-            await SortService.WaitColor(Delay, arrayElements[i]);
-            
-            if (arrayElements is List<Bar>) // peredelat'?
-            {
-                await Swap(i, largest, arrayElements as List<Bar>);
-            }
-            else
-            {
-                await Swap(i, largest, arrayElements as List<Point>);
-            }
+            ArrayAccessCount++;
+            await SortService.WaitColor(Delay, arrayElements[i]); 
 
-            await Heapify(arrayElements, n, largest);
+            await SwapSWAG(i, largest, arrayElements); 
+
+            await Heapify(arrayElements, n, largest); 
         }
     }
-
 }

@@ -23,16 +23,10 @@ public class Shaker : SortAlgorithm
                 await SortService.WaitColor(Delay, arrayElements[i]);
 
                 CompareCount++;
-                if (arrayElements[i].Value > arrayElements[i + 1].Value)
+                if (arrayElements[i].GetValue() > arrayElements[i + 1].GetValue())
                 {
-                    if (arrayElements is List<Bar>) // peredelat'?
-                    {
-                        await Swap(i, i + 1, arrayElements as List<Bar>);
-                    }
-                    else
-                    {
-                        await Swap(i, i + 1, arrayElements as List<Point>);
-                    }
+                    await SwapSWAG(i, i + 1, arrayElements);
+
                     swapped = true;
                 }
             }
@@ -46,16 +40,10 @@ public class Shaker : SortAlgorithm
             for (int i = end - 1; i >= start; i--)
             {
                 CompareCount++;
-                if (arrayElements[i].Value > arrayElements[i + 1].Value)
+                if (arrayElements[i].GetValue() > arrayElements[i + 1].GetValue())
                 {
-                    if (arrayElements is List<Bar>) // peredelat'?
-                    {
-                        await Swap(i, i + 1, arrayElements as List<Bar>);
-                    }
-                    else
-                    {
-                        await Swap(i, i + 1, arrayElements as List<Point>);
-                    }
+                    await SwapSWAG(i, i + 1, arrayElements);
+
                     swapped = true;
                 }
 

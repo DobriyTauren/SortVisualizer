@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using SortVisualizer.Client.Classes.SortElements;
+using System.Drawing;
 
 public class SortService
 {
@@ -191,7 +192,7 @@ public class SortService
     //    return i + 1;
     //}
 
-    public async Task ArrayCheck(List<Bar> arrayElements, SortAlgorithm algorithm)
+    public async Task ArrayCheck(List<SvgLine> arrayElements, SortAlgorithm algorithm)
     {
         arrayElements[0].Color = "green";
 
@@ -207,16 +208,16 @@ public class SortService
         }
     }
 
-    public async Task WaitColor(int delay, SortElement elem)
+    public async Task WaitColor<T>(int delay, T elem) where T : ISvgElement
     {
-        if (elem is Bar)
+        if (elem is SvgLine)
         {
-            elem.Color = "red";
+            (elem as SvgLine).Color = "red";
 
             OnStyleChanged();
             await Task.Delay(delay);
 
-            elem.Color = "blue";
+            (elem as SvgLine).Color = "blue";
         }
         else
         {

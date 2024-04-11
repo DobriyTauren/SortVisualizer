@@ -1,6 +1,6 @@
 ﻿@rendermode InteractiveWebAssembly
 
-<link rel="stylesheet" type="text/css" href="css/beda.css?version=0.1">
+<link rel="stylesheet" type="text/css" href="css/beda.css?version=0.2">
 
 <div class="main-container">
     <div class="sort-block-container">
@@ -19,6 +19,15 @@
         </div>
 
 
+        <svg width="@_generator.ContainerWidth" height="310" class="mx-2">
+            @foreach (var line in _arrayElements)
+            {
+                <line class="line" x1="@line.StartPoint.X" y1="@line.StartPoint.Y" x2="@line.EndPoint.X" y2="@line.EndPoint.Y" stroke-width="@Generator.LINE_WIDTH" stroke="@line.Color">
+                </line>
+            }
+        </svg>
+
+@*  
         <div class="sort-item-container">
             @foreach (var element in _arrayElements)
             {
@@ -31,7 +40,7 @@
                     @element.Value
                 </div>
             }
-        </div>
+        </div> *@
 
         <div class="row btn-container">
             <div class="col-auto">
@@ -66,7 +75,7 @@
     
     private Generator _generator = new Generator();
 
-    private List<Bar> _arrayElements = new List<Bar>();
+    private List<SvgLine> _arrayElements = new List<SvgLine>();
 
     private bool _isSorting = false;
     private bool _isEmpty = true;
@@ -79,7 +88,7 @@
     private void GenerateArray()
     {
         _arrayElements.Clear();
-        _arrayElements = _generator.GenerateBars();
+        _arrayElements = _generator.GenerateLines();
 
         _isEmpty = false;
     }

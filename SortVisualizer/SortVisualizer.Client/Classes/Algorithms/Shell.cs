@@ -19,7 +19,7 @@ public class Shell : SortAlgorithm
 
                 await SortService.WaitColor(Delay, arrayElements[i]);
                 
-                for (j = i; j >= gap && arrayElements[j - gap].Value > temp.Value; j -= gap)
+                for (j = i; j >= gap && arrayElements[j - gap].GetValue() > temp.GetValue(); j -= gap)
                 {
                     arrayElements[j] = arrayElements[j - gap];
                 }

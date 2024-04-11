@@ -1,4 +1,6 @@
-﻿public class Quick : SortAlgorithm
+﻿using SortVisualizer.Client.Classes.SortElements;
+
+public class Quick : SortAlgorithm
 {
     public Quick()
     {
@@ -12,21 +14,23 @@
         await QuickSort(arrayElements, 0, arrayElements.Count - 1);
     }
 
-    private async Task QuickSort<T>(List<T> arrayElements, int low, int high) where T : SortElement
+    private async Task QuickSort<T>(List<T> arrayElements, int low, int high) where T : ISvgElement
     {
         if (low < high)
         {
-            int pi = await Partition(arrayElements, low, high);
+            ArrayAccessCount++;
+            int pi = await Partition(arrayElements, low, high); 
 
-            await QuickSort(arrayElements, low, pi - 1);
+            await QuickSort(arrayElements, low, pi - 1); 
             await QuickSort(arrayElements, pi + 1, high);
         }
     }
 
-    private async Task<int> Partition<T>(List<T> arrayElements, int low, int high) where T : SortElement
+    private async Task<int> Partition<T>(List<T> arrayElements, int low, int high) where T : ISvgElement
     {
-        var pivot = arrayElements[high];
+        var pivot = arrayElements[high]; 
         ArrayAccessCount++;
+
         int i = low - 1;
 
         for (int j = low; j < high; j++)
@@ -35,31 +39,16 @@
 
             CompareCount++;
 
-            if (arrayElements[j].Value < pivot.Value)
+            if (arrayElements[j].GetValue() < pivot.GetValue()) 
             {
                 i++;
 
-                if (arrayElements is List<Bar>) // peredelat'?
-                {
-                    await Swap(i, j, arrayElements as List<Bar>);
-                }
-                else
-                {
-                    await Swap(i, j, arrayElements as List<Point>);
-                }
+                await SwapSWAG(i, j, arrayElements); 
             }
         }
 
-        if (arrayElements is List<Bar>) // peredelat'?
-        {
-            await Swap(i + 1, high, arrayElements as List<Bar>);
-        }
-        else
-        {
-            await Swap(i + 1, high, arrayElements as List<Point>);
-        }
+        await SwapSWAG(i + 1, high, arrayElements);
 
         return i + 1;
     }
-
 }

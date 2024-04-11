@@ -1,13 +1,30 @@
 ﻿@rendermode InteractiveWebAssembly
 
-<link rel="stylesheet" type="text/css" href="css/beda.css?version=0.1">
+<link rel="stylesheet" type="text/css" href="css/beda.css?version=0.2">
 
 <div class="main-container">
     <div class="sort-block-container">
+
+        <div class="container">
+            <div class="row">
+                <div class="col-sm mb-2 mx-2 bg-primary bg-gradient rounded border border-info">
+                    <p class="text-light text-center my-auto">Обращений к массиву: @Algorithm.ArrayAccessCount</p>
+                </div>
+                <div class="col mb-2 mx-2 bg-primary bg-gradient rounded border border-info">
+                    <p class="text-light text-center my-auto">Перестановок: @Algorithm.SwapCount</p>
+                </div>
+                <div class="col mb-2 mx-2 bg-primary bg-gradient rounded border border-info">
+                    <p class="text-light text-center my-auto">Сравнений: @Algorithm.CompareCount </p>
+                </div>
+            </div>
+        </div>
+
+
+
         <svg width="400" height="400">
             @foreach (var point in _points)
             {
-                <circle class="circle" id="movingCircle" cx="@point.X" cy="@point.Y" r="3" fill="@point.Color">
+                <circle class="circle" id="movingCircle" cx="@point.Center.X" cy="@point.Center.Y" r="3" fill="@point.Color">
 
                 </circle>
             }
@@ -53,7 +70,7 @@
 
     private Generator _generator = new Generator();
 
-    private List<Point> _points = new List<Point>();
+    private List<SvgCircle> _points = new List<SvgCircle>();
 
     private bool _isSorting = false;
     private bool _isEmpty = true;
@@ -66,7 +83,7 @@
     private void GenerateArray()
     {
         _points.Clear();
-        _points = _generator.GeneratePoints();
+        _points = _generator.GenerateCircles();
 
         _isEmpty = false;
     }
@@ -80,11 +97,11 @@
         for (int i = 0; i < _points.Count; i++)
         {
             var angle = 2 * Math.PI * i / _points.Count;
-            var x = 200 + radius* Math.Cos(angle); // Рассчитываем координату x
-            var y = 200 + radius * Math.Sin(angle); // Рассчитываем координату y
+            int x = (int)(200 + radius* Math.Cos(angle)); // Рассчитываем координату x
+            int y = (int)(200 + radius * Math.Sin(angle)); // Рассчитываем координату y
 
-            _points[i].X = x;
-            _points[i].Y = y;
+            _points[i].Center.X = x;
+            _points[i].Center.Y = y;
 
             StateHasChanged();
         }
