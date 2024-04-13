@@ -28,7 +28,6 @@ public abstract class SortAlgorithm
         arrayElements[index2].Move(startPosIndex2);
     }
 
-
     protected virtual void ClearValues() 
     {
         ArrayAccessCount = 0;

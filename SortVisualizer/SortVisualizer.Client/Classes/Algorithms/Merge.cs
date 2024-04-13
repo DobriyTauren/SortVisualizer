@@ -54,7 +54,7 @@ public class Merge : SortAlgorithm
                 x++;
             }
             else
-            {              
+            {
                 arrayElements[k] = rightArray[y];
                 y++;
             }
