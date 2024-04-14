@@ -5,6 +5,8 @@ public class SvgLine : SvgShape, ISvgElement
     public Point StartPoint { get; set; }
     public Point EndPoint { get; set; }
 
+    public Point FixedStartPoint { get; set; }
+    
     public Point GetStartPosition()
     {
         return StartPoint;
@@ -29,5 +31,10 @@ public class SvgLine : SvgShape, ISvgElement
     public int GetValue() // kek yyyyyyyy
     {
         return Value;
+    }
+
+    public Point GetFixedPosition()
+    {
+        return FixedStartPoint;
     }
 }

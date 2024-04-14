@@ -4,6 +4,7 @@
     {
         Point GetStartPosition();
         Point GetEndPosition();
+        Point GetFixedPosition();
         int GetValue();
         void Move(Point newPosition);
     }

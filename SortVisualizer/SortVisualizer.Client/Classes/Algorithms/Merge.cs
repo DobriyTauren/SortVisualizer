@@ -7,9 +7,13 @@ public class Merge : SortAlgorithm
         SortService = new SortService();
     }
 
+    private List<ISvgElement> _savedElements;    
+
     public override async Task Sort<T>(List<T> arrayElements)
     {
         ClearValues();
+
+        _savedElements = arrayElements.Cast<ISvgElement>().ToList();
 
         await MergeSort(arrayElements, 0, arrayElements.Count - 1);
     }
@@ -50,14 +54,20 @@ public class Merge : SortAlgorithm
 
             if (leftArray[x].GetValue() <= rightArray[y].GetValue())
             {
+                
+                leftArray[x].Move(_savedElements[k].GetFixedPosition());
                 arrayElements[k] = leftArray[x];
                 x++;
             }
             else
             {
+                rightArray[y].Move(_savedElements[k].GetFixedPosition());
                 arrayElements[k] = rightArray[y];
                 y++;
             }
+
+            Console.WriteLine($"{k} : {_savedElements[k].GetFixedPosition().X}");
+
             k++;
         }
 
@@ -65,6 +75,7 @@ public class Merge : SortAlgorithm
         {
             await SortService.WaitColor(Delay, arrayElements[k]);
 
+            leftArray[x].Move(_savedElements[k].GetFixedPosition());
             arrayElements[k] = leftArray[x];
             x++;
             k++;
@@ -74,6 +85,7 @@ public class Merge : SortAlgorithm
         {
             await SortService.WaitColor(Delay, arrayElements[k]);
 
+            rightArray[y].Move(_savedElements[k].GetFixedPosition());
             arrayElements[k] = rightArray[y];
             y++;
             k++;

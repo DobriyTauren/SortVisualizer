@@ -32,9 +32,12 @@ public class Generator
                 value = MAX_HEIGHT - height;
             } while (!generatedValues.Add(value)); // Генерируем значение, пока оно не станет уникальным
 
+            Point startPoint = new Point(i * LINE_WIDTH + 3, MAX_HEIGHT);
+
             var line = new SvgLine
             {
-                StartPoint = new Point(i * LINE_WIDTH + 3, MAX_HEIGHT),
+                StartPoint = startPoint,
+                FixedStartPoint = startPoint,
                 EndPoint = new Point(i * LINE_WIDTH + 3, MAX_HEIGHT - value),
                 Value = value,
                 Color = "blue",
@@ -62,10 +65,13 @@ public class Generator
                 value = random.Next(0, 361);
             } while (!generatedValues.Add(value)); // Генерируем значение, пока оно не станет уникальным
 
+            Point center = new Point(random.Next(10, 360), random.Next(10, 390));
+
             var point = new SvgCircle
             {
                 Value = value,
-                Center = new Point(random.Next(10, 360), random.Next(10, 390)),
+                Center = center,
+                FixedCenter = center,
             };
 
             point.Color = $"hsl({point.Value}, 100%, 50%)";
