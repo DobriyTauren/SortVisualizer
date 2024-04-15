@@ -19,10 +19,11 @@
         </div>
 
 
-        <svg width="@_generator.ContainerWidth" height="310" class="mx-2">
+        <svg width="100%" height="310" class="mx-2">
             @foreach (var line in _arrayElements)
             {
-                <line class="line" x1="@line.StartPoint.X" y1="@line.StartPoint.Y" x2="@line.EndPoint.X" y2="@line.EndPoint.Y" stroke-width="@Generator.LINE_WIDTH" stroke="@line.Color">
+                var containerWidth = (float)_generator.ContainerWidth;
+                <line class="line" x1="@($"{(line.StartPoint.X / containerWidth) * 100}%")" y1="@line.StartPoint.Y" x2="@($"{(line.EndPoint.X / containerWidth) * 100}%")" y2="@line.EndPoint.Y" stroke-width="@_generator.LINE_WIDTH" stroke="@line.Color">
                 </line>
             }
         </svg>

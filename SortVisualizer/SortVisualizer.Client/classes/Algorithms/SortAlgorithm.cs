@@ -2,7 +2,28 @@
 
 public abstract class SortAlgorithm
 {
-    public int Delay { get; set; } = 1;
+    private int _delay = 1;
+
+    public int Delay
+    {
+        get => _delay;
+        set
+        {
+            switch (value)
+            {
+                case < 0:
+                    _delay = 0;
+                    break;
+                case > 9999:
+                    _delay = 9999;
+                    break;
+                default:
+                    _delay = value;
+                    break;
+            }
+        }
+    }
+
     public int SwapCount { get; protected set; }
     public int CompareCount { get; protected set; }
     public int ArrayAccessCount { get; protected set; }

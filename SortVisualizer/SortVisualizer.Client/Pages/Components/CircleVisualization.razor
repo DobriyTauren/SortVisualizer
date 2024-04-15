@@ -44,14 +44,14 @@
                 <p class="text-light text-center">Задержка (мс)</p>>
             </div>
             <div class="col-3 mb-2 w-7">
-                <input @bind="Algorithm.Delay" disabled="@_isSorting" type="text" class="form-control" id="inlineFormInputGroup" placeholder="Задержка">
+                <input @bind="Algorithm.Delay" disabled="@_isSorting" type="text" class="form-control" id="inlineFormInputGroup" placeholder="Кол-во">
             </div>
 
             <div class="col-auto pt-2">
                 <p class="text-light text-center">Элементов</p>>
             </div>
             <div class="col-3 mb-2 w-7">
-                <input @bind="@_generator.ItemsCount" disabled="@_isSorting" type="text" class="form-control" id="inlineFormInputGroup" placeholder="Элементов">
+                <input @bind="@_generator.ItemsCount" disabled="@_isSorting" type="text" class="form-control" id="inlineFormInputGroup" placeholder="Кол-во">
             </div>
 
         </div>
@@ -92,7 +92,7 @@
     }
 
     private async Task SortArray()
-    {
+    {        
         _isSorting = true;
 
         var radius = 150; 
