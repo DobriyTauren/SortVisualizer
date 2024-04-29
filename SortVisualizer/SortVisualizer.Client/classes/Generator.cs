@@ -15,6 +15,7 @@ public class Generator
     private int _itemsCount = 100;
 
     public double ContainerWidth { get; set; } = 600;
+    public double ContainerHeight { get; set; }
 
     public int ItemsCount 
     { 
@@ -89,6 +90,7 @@ public class Generator
         var random = new Random();
         var generatedValues = new HashSet<int>(); // Для отслеживания уже сгенерированных значений
 
+
         for (int i = 0; i < _itemsCount; i++)
         {
             int value;
@@ -97,7 +99,10 @@ public class Generator
                 value = random.Next(0, 361);
             } while (!generatedValues.Add(value)); // Генерируем значение, пока оно не станет уникальным
 
-            Point center = new Point(random.Next(10, 360), random.Next(10, 390));
+            double centerXPercentage = random.Next(30, (int)ContainerWidth - 30) / ContainerWidth * 100;
+            double centerYPercentage = random.Next(30, (int)ContainerHeight - 30) / ContainerHeight * 100;
+
+            Point center = new Point(centerXPercentage, centerYPercentage);
 
             var point = new SvgCircle
             {
@@ -112,6 +117,20 @@ public class Generator
         }
 
         return points;
+    }
+
+    public static void Shuffle<T>(List<T> list)
+    {
+        Random rng = new Random();
+        int n = list.Count;
+        while (n > 1)
+        {
+            n--;
+            int k = rng.Next(n + 1);
+            T value = list[k];
+            list[k] = list[n];
+            list[n] = value;
+        }
     }
 
 }

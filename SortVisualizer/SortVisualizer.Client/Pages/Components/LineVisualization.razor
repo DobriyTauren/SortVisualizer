@@ -55,15 +55,15 @@
 
 @code
 {
+    [Inject]
+    private IJSRuntime JSRuntime { get; set; }
+    
     [Parameter]
     public SortAlgorithm Algorithm { get; set; }
 
     private Generator _generator = new Generator();
 
     private List<SvgLine> _arrayElements = new List<SvgLine>();
-
-    [Inject]
-    private IJSRuntime JSRuntime { get; set; }
 
     private bool _isSorting = false;
     private bool _isEmpty = true;
@@ -77,7 +77,7 @@
     {
         _arrayElements.Clear();
 
-        _generator.ContainerWidth = await JSRuntime.InvokeAsync<int>("svgInterop.getSvgWidth");
+        _generator.ContainerWidth = await JSRuntime.InvokeAsync<int>("svgInterop.getSvgWidth", 0);
 
         _arrayElements = _generator.GenerateLines();
 

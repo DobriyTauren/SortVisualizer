@@ -20,12 +20,10 @@
             </div>
         </div>
 
-
-
-        <svg width="400" height="400">
+        <svg width="100%" height="400">
             @foreach (var point in _points)
             {
-                <circle class="@_elementClass" id="movingCircle" cx="@point.Center.X" cy="@point.Center.Y" r="3" fill="@point.Color">
+                <circle class="@_elementClass" id="movingCircle" cx="@($"{point.Center.X}%")" cy="@($"{point.Center.Y}%")" r="2%" fill="@point.Color">
 
                 </circle>
             }
@@ -66,6 +64,9 @@
 
 @code
 {
+    [Inject]
+    private IJSRuntime JSRuntime { get; set; }
+
     [Parameter]
     public SortAlgorithm Algorithm { get; set; }
 
@@ -83,33 +84,66 @@
         Algorithm.SortService.StyleChanged += HandleStateChanged;
     }
 
-    private void GenerateArray()
+    private async Task GenerateArray()
     {
         _points.Clear();
-        _points = _generator.GenerateCircles();
+
+        GetContainerSize();
+
+        try // cringe moment
+        {
+            _points = _generator.GenerateCircles();
+        }
+        catch
+        {
+            await Task.Delay(300);
+            GetContainerSize();
+            _points = _generator.GenerateCircles();
+        }
 
         _isEmpty = false;
+    }
+
+    private async Task GetContainerSize() // HITROST
+    {
+        _generator.ContainerWidth = await JSRuntime.InvokeAsync<int>("svgInterop.getSvgWidth", 1);
+        _generator.ContainerHeight = await JSRuntime.InvokeAsync<int>("svgInterop.getSvgHeight", 1);
     }
 
     private async Task SortArray()
     {        
         _isSorting = true;
 
-        var radius = 150; 
-        var xOffset = 200;
-        var yOffset = 200;
+        var radius = 4000;
+
+        var centerXPercentage = 50; // Пример процентного значения центра по X
+        var centerYPercentage = 50; // Пример процентного значения центра по Y
+
+        // Преобразование процентных значений в абсолютные координаты контейнера
+        var xOffset = _generator.ContainerWidth * centerXPercentage / 100;
+        var yOffset = _generator.ContainerHeight * centerYPercentage / 100;
+
+        var relation = _generator.ContainerWidth / _generator.ContainerHeight;
+
+        Console.WriteLine($"offset: {xOffset} {yOffset}");
+        Console.WriteLine($"WH: {_generator.ContainerWidth} {_generator.ContainerHeight}");
 
         for (int i = 0; i < _points.Count; i++)
         {
             var angle = 2 * Math.PI * i / _points.Count;
 
-            Point center = new Point((xOffset + radius * Math.Cos(angle)), (yOffset + radius * Math.Sin(angle)));
+            // Выразим координаты центра круга в процентах относительно ширины и высоты контейнера
+            double centerX = ((xOffset / _generator.ContainerWidth * 100) + radius * Math.Cos(angle) / 100);
+            double centerY = ((yOffset / _generator.ContainerHeight * 100) + radius * Math.Sin(angle) / 100);
+
+            Point center = new Point(centerX, centerY);
 
             _points[i].Center = center;
             _points[i].FixedCenter = center;
 
             StateHasChanged();
         }
+
 
         await Task.Delay(1900);
 
