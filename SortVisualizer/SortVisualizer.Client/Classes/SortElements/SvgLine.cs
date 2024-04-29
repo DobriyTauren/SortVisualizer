@@ -20,8 +20,8 @@ public class SvgLine : SvgShape, ISvgElement
     public void Move(Point newPosition)
     {
         // Вычисление разности между старой и новой позициями
-        int deltaX = newPosition.X - StartPoint.X;
-        int deltaY = newPosition.Y - StartPoint.Y;
+        var deltaX = newPosition.X - StartPoint.X;
+        var deltaY = newPosition.Y - StartPoint.Y;
 
         // Перемещение начальной и конечной точек линии на ту же разницу
         StartPoint = new Point(StartPoint.X + deltaX, StartPoint.Y + deltaY);

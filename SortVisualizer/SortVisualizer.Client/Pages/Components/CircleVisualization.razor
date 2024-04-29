@@ -103,7 +103,7 @@
         {
             var angle = 2 * Math.PI * i / _points.Count;
 
-            Point center = new Point((int)(xOffset + radius * Math.Cos(angle)), (int)(yOffset + radius * Math.Sin(angle)));
+            Point center = new Point((xOffset + radius * Math.Cos(angle)), (yOffset + radius * Math.Sin(angle)));
 
             _points[i].Center = center;
             _points[i].FixedCenter = center;

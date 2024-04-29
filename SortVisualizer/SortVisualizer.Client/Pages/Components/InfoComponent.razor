@@ -29,23 +29,40 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (globalData.Algorithms == null)
+        try // PEREDELAT
         {
-            globalData.Algorithms = await _httpClient.GetFromJsonAsync<List<AlgorithmModel>>("api/algorithms");
+            if (globalData.Algorithms == null)
+            {
+                globalData.Algorithms = await _httpClient.GetFromJsonAsync<List<AlgorithmModel>>("api/algorithms");
+            }
+
+            string relativePath = navigationManager.ToBaseRelativePath(navigationManager.Uri);
+
+            _selectedAlgorithm = globalData.Algorithms.FirstOrDefault(a => a.CodeName == relativePath);
         }
+        catch
+        {
+            _httpClient = new HttpClient();
+            _httpClient.BaseAddress = new Uri("http://localhost:7248/");
 
-        string relativePath = navigationManager.ToBaseRelativePath(navigationManager.Uri);
+            if (globalData.Algorithms == null)
+            {
+                globalData.Algorithms = await _httpClient.GetFromJsonAsync<List<AlgorithmModel>>("api/algorithms");
+            }
 
-        _selectedAlgorithm = globalData.Algorithms.FirstOrDefault(a => a.CodeName == relativePath);
+            string relativePath = navigationManager.ToBaseRelativePath(navigationManager.Uri);
+
+            _selectedAlgorithm = globalData.Algorithms.FirstOrDefault(a => a.CodeName == relativePath);  
+        }
 
         if (_selectedAlgorithm == null) // if alg not exists in db
         {
             _selectedAlgorithm = new AlgorithmModel()
-            {
-                Name = "Не найдено...",
-                Description = "Не найдено...",
-                CodeName = "Не найдено...",           
-            };
+                {
+                    Name = "Не найдено...",
+                    Description = "Не найдено...",
+                    CodeName = "Не найдено...",
+                };
         }
     }
 }

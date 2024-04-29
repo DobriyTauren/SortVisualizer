@@ -66,7 +66,7 @@ public class Merge : SortAlgorithm
                 y++;
             }
 
-            Console.WriteLine($"{k} : {_savedElements[k].GetFixedPosition().X}");
+            //Console.WriteLine($"{k} : {_savedElements[k].GetFixedPosition().X}");
 
             k++;
         }

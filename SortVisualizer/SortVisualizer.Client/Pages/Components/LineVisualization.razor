@@ -22,26 +22,10 @@
         <svg width="100%" height="310" class="mx-2">
             @foreach (var line in _arrayElements)
             {
-                var containerWidth = (float)_generator.ContainerWidth;
-                <line class="line" x1="@($"{(line.StartPoint.X / containerWidth) * 100}%")" y1="@line.StartPoint.Y" x2="@($"{(line.EndPoint.X / containerWidth) * 100}%")" y2="@line.EndPoint.Y" stroke-width="@_generator.LINE_WIDTH" stroke="@line.Color">
+                <line class="line" x1="@_generator.CalculatePercentage(line.StartPoint.X)" y1="@line.StartPoint.Y" x2="@_generator.CalculatePercentage(line.EndPoint.X)" y2="@line.EndPoint.Y" stroke-width="@($"{_generator.LineWidthPercentage}%")" stroke="@line.Color">
                 </line>
             }
         </svg>
-
-@*  
-        <div class="sort-item-container">
-            @foreach (var element in _arrayElements)
-            {
-                <div class="sort-item" style="--sort-item-color: @element.Color;
-                                              --sort-item-height: @element.Height;
-                                              --sort-item-width: @element.Width; 
-                                              --sort-item-font-size: @element.FontSize;
-                                              --sort-item-margin: @($"{Generator.MARGIN_WIDTH}%");
-                                              --sort-item-delay: @($"{Algorithm.Delay * 0.6}ms")">
-                    @element.Value
-                </div>
-            }
-        </div> *@
 
         <div class="row btn-container">
             <div class="col-auto">
@@ -73,10 +57,13 @@
 {
     [Parameter]
     public SortAlgorithm Algorithm { get; set; }
-    
+
     private Generator _generator = new Generator();
 
     private List<SvgLine> _arrayElements = new List<SvgLine>();
+
+    [Inject]
+    private IJSRuntime JSRuntime { get; set; }
 
     private bool _isSorting = false;
     private bool _isEmpty = true;
@@ -86,9 +73,12 @@
         Algorithm.SortService.StyleChanged += HandleStateChanged;
     }
 
-    private void GenerateArray()
+    private async Task GenerateArray()
     {
         _arrayElements.Clear();
+
+        _generator.ContainerWidth = await JSRuntime.InvokeAsync<int>("svgInterop.getSvgWidth");
+
         _arrayElements = _generator.GenerateLines();
 
         _isEmpty = false;

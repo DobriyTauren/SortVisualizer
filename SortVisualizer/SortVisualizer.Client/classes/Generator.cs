@@ -10,10 +10,11 @@ public class Generator
     private const int MAX_VALUE = 100;
     private const int MAX_HEIGHT = 310;
 
-    private int _lineWidth = 4;
-    private int _itemsCount = 200;
+    private double _lineWidth = 4;
+    private double _lineWidthPercentage = 4;
+    private int _itemsCount = 100;
 
-    public int ContainerWidth { get; private set; } = 600;
+    public double ContainerWidth { get; set; } = 600;
 
     public int ItemsCount 
     { 
@@ -35,33 +36,18 @@ public class Generator
         }
     }
 
-    public int LINE_WIDTH { get => _lineWidth; set => _lineWidth = value; }
+    public double LineWidthPercentage { get => _lineWidthPercentage; set => _lineWidthPercentage = value; }
 
     public List<SvgLine> GenerateLines()
     {
         var lines = new List<SvgLine>();
         var random = new Random();
         var generatedValues = new HashSet<int>(); // Для отслеживания уже сгенерированных значений
-        var offset = 3;
 
-        switch (_itemsCount)
-        {
-            case <= 10:
-                _lineWidth = 30;
-                break;
-            case <= 24:
-                _lineWidth = 15;
-                break;
-            case <= 35:
-                _lineWidth = 10;
-                break;
-            case <= 100:
-                _lineWidth = 5;
-                break;
-            default:
-                _lineWidth = 4;
-                break;
-        }
+        _lineWidth = (ContainerWidth - 8) / ItemsCount;
+        _lineWidthPercentage = (_lineWidth / ContainerWidth) * 100;
+
+        double offset = _lineWidth / 2;
 
         for (int i = 0; i < _itemsCount; i++)
         {
@@ -72,13 +58,13 @@ public class Generator
                 value = MAX_HEIGHT - height;
             } while (!generatedValues.Add(value)); // Генерируем значение, пока оно не станет уникальным
 
-            Point startPoint = new Point(i * LINE_WIDTH + offset, MAX_HEIGHT);
+            Point startPoint = new Point(i * _lineWidth + offset, MAX_HEIGHT);
 
             var line = new SvgLine
             {
                 StartPoint = startPoint,
                 FixedStartPoint = startPoint,
-                EndPoint = new Point(i * LINE_WIDTH + offset, MAX_HEIGHT - value),
+                EndPoint = new Point(i * _lineWidth + offset, MAX_HEIGHT - value),
                 Value = value,
                 Color = "blue",
             };
@@ -86,9 +72,15 @@ public class Generator
             lines.Add(line);
         }
 
-        ContainerWidth = LINE_WIDTH * lines.Count + offset;
-
         return lines;
+    }
+
+    public string CalculatePercentage(double x) // PEREDELATT
+    {
+        var response = $"{x / ContainerWidth * 100}%";
+        response = response.Replace(",", ".");
+
+        return response;
     }
 
     public List<SvgCircle> GenerateCircles()

@@ -42,6 +42,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseMvcWithDefaultRoute();
 app.UseAntiforgery();
+app.UseDeveloperExceptionPage();
 
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
