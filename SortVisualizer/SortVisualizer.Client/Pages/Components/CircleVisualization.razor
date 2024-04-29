@@ -23,7 +23,7 @@
         <svg width="100%" height="400">
             @foreach (var point in _points)
             {
-                <circle class="@_elementClass" id="movingCircle" cx="@($"{point.Center.X}%")" cy="@($"{point.Center.Y}%")" r="2%" fill="@point.Color">
+                <circle class="@_elementClass" id="movingCircle" cx="@($"{point.Center.X}%".Replace(",", "."))" cy="@($"{point.Center.Y}%".Replace(",", "."))" r="2%" fill="@point.Color">
 
                 </circle>
             }
