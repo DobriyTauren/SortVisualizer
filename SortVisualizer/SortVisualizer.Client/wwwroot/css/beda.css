@@ -28,41 +28,29 @@
 .sort-block-container {
     min-width: 90%;
     max-width: 83vw;
-}
 
-.sort-item-container {
-    padding-left: 10px;
-    margin-top: 10px;
-    min-height: 310px;
-    display: flex;
-}
-
-.sort-item {
-    width: var(--sort-item-width);
-    height: var(--sort-item-height);
-    margin-right: var(--sort-item-margin);
-    background-color: var(--sort-item-color);
-    transition: height var(--sort-item-delay) ease-in-out;
-    font-size: var(--sort-item-font-size);
-
-    display: inline-block;
-    align-self: flex-end;
-    color: whitesmoke;
-    text-align: center;
-    /*         min-width: 7.1px; */
+    padding-top: 20px;
+    height: 100%;
 }
 
 .main-container {
     background: linear-gradient(180deg, rgba(0,120,255,1) 0%, rgba(0,0,50,1) 100%);
-    height: 55vh;
+    height: auto;
+    min-height: 450px;
+
     width: 100%;
-    min-height: 710px;
+    
+    
     min-width: 330px;
     border-radius: 20px 20px 20px 20px;
     padding-right: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.svg-container {
+
 }
 
 .component-container {

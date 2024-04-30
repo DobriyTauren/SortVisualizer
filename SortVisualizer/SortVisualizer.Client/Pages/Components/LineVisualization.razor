@@ -19,10 +19,10 @@
         </div>
 
 
-        <svg width="100%" height="310" class="mx-2">
+        <svg width="100%" height="60vh" class="mx-2 svg-container">
             @foreach (var line in _arrayElements)
             {
-                <line class="line" x1="@_generator.CalculatePercentage(line.StartPoint.X)" y1="@line.StartPoint.Y" x2="@_generator.CalculatePercentage(line.EndPoint.X)" y2="@line.EndPoint.Y" stroke-width="@($"{_generator.LineWidthPercentage}%".Replace(",","."))" stroke="@line.Color">
+                <line class="line" x1="@($"{line.StartPoint.X}%".Replace(",", "."))" y1="@($"{line.StartPoint.Y}%".Replace(",", "."))" x2="@($"{line.EndPoint.X}%".Replace(",", "."))" y2="@($"{line.EndPoint.Y}%".Replace(",", "."))" stroke-width="@($"{_generator.LineWidthPercentage}%".Replace(",","."))" stroke="@line.Color">
                 </line>
             }
         </svg>
@@ -78,6 +78,7 @@
         _arrayElements.Clear();
 
         _generator.ContainerWidth = await JSRuntime.InvokeAsync<int>("svgInterop.getSvgWidth", 0);
+        _generator.ContainerHeight = await JSRuntime.InvokeAsync<int>("svgInterop.getSvgHeight", 0);
 
         _arrayElements = _generator.GenerateLines();
 
