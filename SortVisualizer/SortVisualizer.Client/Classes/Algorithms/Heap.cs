@@ -9,6 +9,8 @@ public class Heap : SortAlgorithm
 
     public override async Task Sort<T>(List<T> arrayElements)
     {
+        ClearValues();
+
         int n = arrayElements.Count;
 
         for (int i = n / 2 - 1; i >= 0; i--)

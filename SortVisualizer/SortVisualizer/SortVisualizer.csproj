@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\SortVisualizer.Client\Pages\ChooseTypeVisualization.razor" Link="ChooseTypeVisualization.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\SortVisualizer.Client\SortVisualizer.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.3" />

@@ -24,7 +24,7 @@ public abstract class SortAlgorithm
         }
     }
 
-    public int SwapCount { get; protected set; }
+    public int MoveCount { get; protected set; }
     public int CompareCount { get; protected set; }
     public int ArrayAccessCount { get; protected set; }
     public SortService SortService { get; protected set; }
@@ -37,7 +37,7 @@ public abstract class SortAlgorithm
         var startPosIndex1 = arrayElements[index1].GetStartPosition();
         var startPosIndex2 = arrayElements[index2].GetStartPosition();
 
-        SwapCount++;
+        MoveCount++;
 
         var temp = arrayElements[index1];
         arrayElements[index1] = arrayElements[index2];
@@ -52,7 +52,7 @@ public abstract class SortAlgorithm
     protected virtual void ClearValues() 
     {
         ArrayAccessCount = 0;
-        SwapCount = 0;
+        MoveCount = 0;
         CompareCount = 0;
     }  
 }

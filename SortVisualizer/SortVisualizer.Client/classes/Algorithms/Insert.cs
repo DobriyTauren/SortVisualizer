@@ -29,7 +29,7 @@
                 j--;
             }
 
-            SwapCount++;
+            MoveCount++;
             arrayElements[j + 1] = key;
         }
     }

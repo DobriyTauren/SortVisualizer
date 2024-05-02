@@ -8,6 +8,9 @@ public class Shell : SortAlgorithm
 
     public override async Task Sort<T>(List<T> arrayElements)
     {
+        ClearValues();
+
+        ArrayAccessCount++;
         int n = arrayElements.Count;
 
         for (int gap = n / 2; gap > 0; gap /= 2)
@@ -17,7 +20,7 @@ public class Shell : SortAlgorithm
                 var temp = arrayElements[i];
                 int j;
 
-                ArrayAccessCount++;
+                ArrayAccessCount += 2;
 
                 await SortService.WaitColor(Delay, arrayElements[i]);
 
