@@ -20,13 +20,11 @@ public class Shell : SortAlgorithm
                 var temp = arrayElements[i];
                 int j;
 
-                ArrayAccessCount += 2;
-
                 await SortService.WaitColor(Delay, arrayElements[i]);
 
+                ArrayAccessCount += 3;
                 for (j = i; j >= gap && arrayElements[j - gap].GetValue() > temp.GetValue(); j -= gap)
                 {
-                    CompareCount++;
                     await SwapSWAG(j, j - gap, arrayElements);
                 }
 

@@ -25,7 +25,6 @@ public abstract class SortAlgorithm
     }
 
     public int MoveCount { get; protected set; }
-    public int CompareCount { get; protected set; }
     public int ArrayAccessCount { get; protected set; }
     public SortService SortService { get; protected set; }
 
@@ -53,6 +52,5 @@ public abstract class SortAlgorithm
     {
         ArrayAccessCount = 0;
         MoveCount = 0;
-        CompareCount = 0;
     }  
 }

@@ -14,6 +14,8 @@ public class Shaker : SortAlgorithm
         int start = 0;
         int end = arrayElements.Count - 1;
 
+        ArrayAccessCount++;
+
         do
         {
             swapped = false;
@@ -22,7 +24,7 @@ public class Shaker : SortAlgorithm
             {
                 await SortService.WaitColor(Delay, arrayElements[i]);
 
-                CompareCount++;
+                ArrayAccessCount += 2;
                 if (arrayElements[i].GetValue() > arrayElements[i + 1].GetValue())
                 {
                     await SwapSWAG(i, i + 1, arrayElements);
@@ -39,7 +41,7 @@ public class Shaker : SortAlgorithm
 
             for (int i = end - 1; i >= start; i--)
             {
-                CompareCount++;
+                ArrayAccessCount += 2;
                 if (arrayElements[i].GetValue() > arrayElements[i + 1].GetValue())
                 {
                     await SwapSWAG(i, i + 1, arrayElements);

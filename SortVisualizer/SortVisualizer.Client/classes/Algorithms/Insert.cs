@@ -9,21 +9,19 @@
     {
         ClearValues();
 
+        ArrayAccessCount++;
         int n = arrayElements.Count;
         for (int i = 1; i < n; ++i)
         {
-            ArrayAccessCount++;
+            ArrayAccessCount += 2;
             T key = arrayElements[i];
             int j = i - 1;
 
-            CompareCount++;
-
             while (j >= 0 && arrayElements[j].GetValue() > key.GetValue())
             {
-                CompareCount++;
+                ArrayAccessCount++;
 
                 await SortService.WaitColor(Delay, arrayElements[j + 1]);
-
                 await SwapSWAG(j + 1, j, arrayElements);
 
                 j--;

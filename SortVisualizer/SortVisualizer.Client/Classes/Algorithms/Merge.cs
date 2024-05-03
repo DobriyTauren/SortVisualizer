@@ -15,6 +15,7 @@ public class Merge : SortAlgorithm
 
         _savedElements = arrayElements.Cast<ISvgElement>().ToList();
 
+        ArrayAccessCount += 2;
         await MergeSort(arrayElements, 0, arrayElements.Count - 1);
     }
 
@@ -24,6 +25,7 @@ public class Merge : SortAlgorithm
         {
             int middle = (left + right) / 2;
 
+            ArrayAccessCount += 3;
             await MergeSort(arrayElements, left, middle);
             await MergeSort(arrayElements, middle + 1, right);
 
@@ -60,7 +62,6 @@ public class Merge : SortAlgorithm
         {
             await SortService.WaitColor(Delay, arrayElements[k]);
 
-            CompareCount++;
             ArrayAccessCount++;
             MoveCount++;
 

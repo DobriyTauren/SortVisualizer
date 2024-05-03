@@ -11,6 +11,7 @@ public class Heap : SortAlgorithm
     {
         ClearValues();
 
+        ArrayAccessCount++;
         int n = arrayElements.Count;
 
         for (int i = n / 2 - 1; i >= 0; i--)
@@ -22,7 +23,6 @@ public class Heap : SortAlgorithm
         // Один за другим извлекаем элементы из кучи
         for (int i = n - 1; i > 0; i--)
         {
-            ArrayAccessCount++;
             await SortService.WaitColor(Delay, arrayElements[i]); 
 
             await SwapSWAG(0, i, arrayElements);
@@ -38,21 +38,19 @@ public class Heap : SortAlgorithm
         int l = 2 * i + 1;
         int r = 2 * i + 2;
 
-        CompareCount++;
         if (l < n && arrayElements[l].GetValue() > arrayElements[largest].GetValue())
             largest = l; 
 
-        CompareCount++;
         if (r < n && arrayElements[r].GetValue() > arrayElements[largest].GetValue())
             largest = r; 
 
         if (largest != i)
         {
-            ArrayAccessCount++;
             await SortService.WaitColor(Delay, arrayElements[i]); 
 
             await SwapSWAG(i, largest, arrayElements); 
 
+            ArrayAccessCount++;
             await Heapify(arrayElements, n, largest); 
         }
     }

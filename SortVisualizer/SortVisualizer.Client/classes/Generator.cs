@@ -7,6 +7,8 @@ public class Generator
     private const int MIN_VALUE = 1;
     private const int MAX_VALUE = 100;
 
+    private SortService _sortService = new SortService();
+
     private double _lineWidth = 4;
     private double _lineWidthPercentage = 4;
     private int _itemsCount = 75;
@@ -67,7 +69,7 @@ public class Generator
                 FixedStartPoint = startPoint,
                 EndPoint = new Point(x, (double)(ContainerHeight - value) / ContainerHeight * 100),
                 Value = value,
-                Color = "blue",
+                Color = _sortService.BaseColor,
             };
 
             lines.Add(line);

@@ -16,11 +16,10 @@
                 await SortService.WaitColor(Delay, arrayElements[j]);
 
                 ArrayAccessCount += 2;
-                CompareCount++;
 
                 if (arrayElements[j].GetValue() > arrayElements[j + 1].GetValue())
                 {
-                    SwapSWAG(j, j + 1, arrayElements);
+                    await SwapSWAG(j, j + 1, arrayElements);
                 }
             }
         }

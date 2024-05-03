@@ -11,6 +11,7 @@ public class Quick : SortAlgorithm
     {
         ClearValues();
 
+        ArrayAccessCount += 2;
         await QuickSort(arrayElements, 0, arrayElements.Count - 1);
     }
 
@@ -19,8 +20,9 @@ public class Quick : SortAlgorithm
         if (low < high)
         {
             ArrayAccessCount++;
-            int pi = await Partition(arrayElements, low, high); 
+            int pi = await Partition(arrayElements, low, high);
 
+            ArrayAccessCount += 2;
             await QuickSort(arrayElements, low, pi - 1); 
             await QuickSort(arrayElements, pi + 1, high);
         }
@@ -28,8 +30,8 @@ public class Quick : SortAlgorithm
 
     private async Task<int> Partition<T>(List<T> arrayElements, int low, int high) where T : ISvgElement
     {
-        var pivot = arrayElements[high]; 
         ArrayAccessCount++;
+        var pivot = arrayElements[high]; 
 
         int i = low - 1;
 
@@ -37,8 +39,7 @@ public class Quick : SortAlgorithm
         {
             await SortService.WaitColor(Delay, arrayElements[j]);
 
-            CompareCount++;
-
+            ArrayAccessCount++;
             if (arrayElements[j].GetValue() < pivot.GetValue()) 
             {
                 i++;
