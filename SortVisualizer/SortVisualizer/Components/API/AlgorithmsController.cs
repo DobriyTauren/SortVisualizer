@@ -21,6 +21,7 @@ public class AlgorithmsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<AlgorithmModel>>> GetAlgorithms()
     {
+
         return await _context.Algorithms.ToListAsync();
     }
 }
