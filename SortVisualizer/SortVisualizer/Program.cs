@@ -21,7 +21,7 @@ builder.Services.AddLogging(builder =>
 
 builder.Services.AddMvc(setupAction: options => options.EnableEndpointRouting = false);
 
-builder.Services.AddScoped<GlobalData>();
+builder.Services.AddScoped<UserDataStorage>();
 
 var app = builder.Build();
 

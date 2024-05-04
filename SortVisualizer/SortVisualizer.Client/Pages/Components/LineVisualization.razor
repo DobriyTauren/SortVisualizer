@@ -1,4 +1,4 @@
-﻿
+﻿@inject UserDataStorage userData
 @rendermode InteractiveWebAssembly
 
 <div class="main-container bdr block-bg-color">
@@ -6,10 +6,10 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm mb-2 mx-2 info-control-color rounded">
-                    <p class="text-center my-auto">Обращений к массиву: @Algorithm.ArrayAccessCount</p>
+                    <p class="text-center my-auto">Обращений к массиву: @SortAlgorithm.ArrayAccessCount</p>
                 </div>
                 <div class="col mb-2 mx-2 info-control-color rounded">
-                    <p class="text-center my-auto">Перестановок: @Algorithm.MoveCount</p>
+                    <p class="text-center my-auto">Перестановок: @SortAlgorithm.MoveCount</p>
                 </div>
                 <div class="col mb-2 mx-2 info-control-color rounded">
                     <p class="text-center my-auto">Время: @($"{_sortTimer.ElapsedTime:mm\\:ss}")</p>
@@ -38,7 +38,7 @@
                 <p class="text-center">Задержка (мс)</p>
             </div>
             <div class="col-auto mb-2 w-7">
-                <input @bind="Algorithm.Delay" disabled="@_isSorting" type="text" class="form-control" id="inlineFormInputGroup" placeholder="Задержка">
+                <input @bind="SortAlgorithm.Delay" disabled="@_isSorting" type="text" class="form-control" id="inlineFormInputGroup" placeholder="Задержка">
             </div>
             
             <div class="col-auto pt-2">
@@ -57,7 +57,7 @@
     private IJSRuntime JSRuntime { get; set; }
 
     [Parameter]
-    public SortAlgorithm Algorithm { get; set; }
+    public SortAlgorithm SortAlgorithm { get; set; }
 
     private Generator _generator = new Generator();
     private SortTimer _sortTimer = new SortTimer();
@@ -69,7 +69,7 @@
 
     protected override void OnInitialized()
     {
-        Algorithm.SortService.StyleChanged += HandleStateChanged;
+        SortAlgorithm.SortService.StyleChanged += HandleStateChanged;
     }
 
     private async Task GenerateArray()
@@ -89,9 +89,25 @@
         _isSorting = true;
 
         _sortTimer.Start();
-        await Algorithm.Sort(_arrayElements);
+        await SortAlgorithm.Sort(_arrayElements);
 
         _sortTimer.Stop();
+
+        Console.WriteLine(userData.CurrentAlgorithm.Name);
+
+        HistoryModel historyModel = new HistoryModel()
+        {
+            AlgorithmId = userData.CurrentAlgorithm.Id,
+            ArrayAccessCount = SortAlgorithm.ArrayAccessCount,
+            Delay = SortAlgorithm.Delay,
+            MoveCount = SortAlgorithm.MoveCount,
+            ElementsCount = _generator.ItemsCount,
+            TimeWasted = _sortTimer.ElapsedTime.ToString(),
+            UserId = await userData.GetUserId(JSRuntime),
+        };
+
+        userData.AddHistory(historyModel);
+
         _isSorting = false;
         StateHasChanged();
     }

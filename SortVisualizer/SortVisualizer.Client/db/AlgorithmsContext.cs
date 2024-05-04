@@ -3,6 +3,7 @@
 public class AlgorithmsContext : DbContext
 {
     public DbSet<AlgorithmModel> Algorithms { get; set; }
+    public DbSet<HistoryModel> Histories { get; set; }
 
     public AlgorithmsContext()
     {

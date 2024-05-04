@@ -1,37 +1,54 @@
 ﻿@rendermode InteractiveWebAssembly
+@inject IJSRuntime JSRuntime
+@inject UserDataStorage globalData
 
-<link rel="stylesheet" type="text/css" href="css/beda.css?version=0.3">
+<div class="block-bg-color mt-3 p-3 bdr">
+    <table class="table table-hover table-dark">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Алгоритм</th>
+                <th scope="col">Обращений</th>
+                <th scope="col">Перемещений</th>
+                <th scope="col">Время</th>
+                <th scope="col">Задержка</th>
+                <th scope="col">Элементов</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < globalData.UserHistories.Count; i++)
+            {
+                <tr>
+                    <th scope="row">@(i + 1)</th>
+                    <td>@(globalData.Algorithms.FirstOrDefault(a => a.Id == globalData.UserHistories[i].AlgorithmId).Name)</td>
+                    <td>@globalData.UserHistories[i].ArrayAccessCount</td>
+                    <td>@globalData.UserHistories[i].MoveCount</td>
+                    <td>@globalData.UserHistories[i].TimeWasted</td>
+                    <td>@globalData.UserHistories[i].Delay</td>
+                    <td>@globalData.UserHistories[i].ElementsCount</td>                    
+                </tr>
+            }
+            
+        </tbody>
+    </table>
+</div>
 
-<table class="table table-hover table-dark mt-3 bdr block-bg-color">
-    <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">First</th>
-            <th scope="col">Last</th>
-            <th scope="col">Handle</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>mdo</td>
-        </tr>
-        <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>fat</td>
-        </tr>
-        <tr>
-            <th scope="row">3</th>
-            <td colspan="2">Larry the Bird</td>
-            <td>twitter</td>
-        </tr>
-    </tbody>
-</table>
+@code 
+{
+    private SaveAPI _saveAPI;
+    private string _userId;
 
-@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            StateHasChanged();
 
+            _userId = await globalData.GetUserId(JSRuntime);
+            _saveAPI = new SaveAPI(globalData);
+            await _saveAPI.GetHistory(_userId);
+
+            StateHasChanged();
+        }
+    }
 }

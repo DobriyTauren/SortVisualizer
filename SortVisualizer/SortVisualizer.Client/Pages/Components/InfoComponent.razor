@@ -1,5 +1,5 @@
 ﻿@rendermode InteractiveWebAssembly
-@inject GlobalData globalData
+@inject UserDataStorage globalData
 @inject NavigationManager navigationManager
 
 <div class="component-container bdr block-bg-color pt-4 px-3 pb-3">
@@ -21,48 +21,28 @@
     [Parameter]
     public SortAlgorithm Algorithm { get; set; } = null!;
 
+    private SaveAPI _saveAPI;
     private AlgorithmModel? _selectedAlgorithm = new AlgorithmModel() { Name = "", Description = "", CodeName = "" };
-
-    private HttpClient _httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:7248/") };
 
     private bool _isHidden = true;
 
     protected override async Task OnInitializedAsync()
     {
-        try // PEREDELAT
-        {
-            if (globalData.Algorithms == null)
-            {
-                globalData.Algorithms = await _httpClient.GetFromJsonAsync<List<AlgorithmModel>>("api/algorithms");
-            }
+        _saveAPI = new SaveAPI(globalData, navigationManager);
 
-            string relativePath = navigationManager.ToBaseRelativePath(navigationManager.Uri);
+        _selectedAlgorithm = await _saveAPI.GetSelectedAlgorithm();
+        globalData.CurrentAlgorithm = _selectedAlgorithm;
 
-            _selectedAlgorithm = globalData.Algorithms.FirstOrDefault(a => a.CodeName == relativePath);
-        }
-        catch
-        {
-            _httpClient = new HttpClient();
-            _httpClient.BaseAddress = new Uri("http://localhost:7248/");
-
-            if (globalData.Algorithms == null)
-            {
-                globalData.Algorithms = await _httpClient.GetFromJsonAsync<List<AlgorithmModel>>("api/algorithms");
-            }
-
-            string relativePath = navigationManager.ToBaseRelativePath(navigationManager.Uri);
-
-            _selectedAlgorithm = globalData.Algorithms.FirstOrDefault(a => a.CodeName == relativePath);  
-        }
+        Console.WriteLine(_selectedAlgorithm.Id);
 
         if (_selectedAlgorithm == null) // if alg not exists in db
         {
             _selectedAlgorithm = new AlgorithmModel()
-                {
-                    Name = "Не найдено...",
-                    Description = "Не найдено...",
-                    CodeName = "Не найдено...",
-                };
+            {
+                Name = "Не найдено...",
+                Description = "Не найдено...",
+                CodeName = "Не найдено...",
+            };
         }
     }
 }
