@@ -1,6 +1,6 @@
 ﻿@rendermode InteractiveWebAssembly
 @inject IJSRuntime JSRuntime
-@inject UserDataStorage globalData
+@inject UserDataStorage userData
 
 <div class="block-bg-color mt-3 p-3 bdr">
     <table class="table table-hover table-dark">
@@ -16,16 +16,16 @@
             </tr>
         </thead>
         <tbody>
-            @for (int i = 0; i < globalData.UserHistories.Count; i++)
+            @for (int i = 0; i < userData.UserHistories.Count; i++)
             {
                 <tr>
                     <th scope="row">@(i + 1)</th>
-                    <td>@(globalData.Algorithms.FirstOrDefault(a => a.Id == globalData.UserHistories[i].AlgorithmId).Name)</td>
-                    <td>@globalData.UserHistories[i].ArrayAccessCount</td>
-                    <td>@globalData.UserHistories[i].MoveCount</td>
-                    <td>@globalData.UserHistories[i].TimeWasted</td>
-                    <td>@globalData.UserHistories[i].Delay</td>
-                    <td>@globalData.UserHistories[i].ElementsCount</td>                    
+                    <td>@(userData.Algorithms.FirstOrDefault(a => a.Id == userData.UserHistories[i].AlgorithmId).Name)</td>
+                    <td>@userData.UserHistories[i].ArrayAccessCount</td>
+                    <td>@userData.UserHistories[i].MoveCount</td>
+                    <td>@userData.UserHistories[i].TimeWasted</td>
+                    <td>@userData.UserHistories[i].Delay</td>
+                    <td>@userData.UserHistories[i].ElementsCount</td>
                 </tr>
             }
             
@@ -42,13 +42,18 @@
     {
         if (firstRender)
         {
-            StateHasChanged();
-
-            _userId = await globalData.GetUserId(JSRuntime);
-            _saveAPI = new SaveAPI(globalData);
+            _userId = await userData.GetUserId(JSRuntime);
+            _saveAPI = new SaveAPI(userData);
             await _saveAPI.GetHistory(_userId);
+
+            userData.DataChanged += HandleStateChanged;
 
             StateHasChanged();
         }
+    }
+
+    private void HandleStateChanged(object sender, EventArgs e)
+    {
+        StateHasChanged();
     }
 }

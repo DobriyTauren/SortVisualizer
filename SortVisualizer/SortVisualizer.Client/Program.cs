@@ -8,4 +8,5 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 builder.Services.AddScoped<UserDataStorage>();
 
+
 await builder.Build().RunAsync();

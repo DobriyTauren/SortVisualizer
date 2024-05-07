@@ -73,10 +73,10 @@ public class SaveAPI
     private async Task GetHistoryByUserId(HttpClient httpClient, string userId)
     {
         if (_globalData.UserHistories.Count == 0)
-        {
-            Console.WriteLine(userId);
-
+        {            
             var history = await httpClient.GetFromJsonAsync<List<HistoryModel>>($"api/histories/{userId}");
+
+            _globalData.SetHistory(history);
         }
     }
 
