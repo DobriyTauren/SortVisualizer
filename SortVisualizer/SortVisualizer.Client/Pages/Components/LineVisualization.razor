@@ -20,7 +20,7 @@
         <svg width="100%" height="60vh" class="mx-2 svg-container">
             @foreach (var line in _arrayElements)
             {
-                <line class="line" x1="@($"{line.StartPoint.X}%".Replace(",", "."))" y1="@($"{line.StartPoint.Y}%".Replace(",", "."))" x2="@($"{line.EndPoint.X}%".Replace(",", "."))" y2="@($"{line.EndPoint.Y}%".Replace(",", "."))" stroke-width="@($"{_generator.LineWidthPercentage}%".Replace(",","."))" stroke="@line.Color">
+                <line x1="@($"{line.StartPoint.X}%".Replace(",", "."))" y1="@($"{line.StartPoint.Y}%".Replace(",", "."))" x2="@($"{line.EndPoint.X}%".Replace(",", "."))" y2="@($"{line.EndPoint.Y}%".Replace(",", "."))" stroke-width="@($"{_generator.LineWidthPercentage}%".Replace(",","."))" stroke="@line.Color">
                 
                 </line>
             }

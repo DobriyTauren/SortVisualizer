@@ -25,7 +25,16 @@ namespace SortVisualizer.Client.classes
 
         public async Task AddHistory (HistoryModel history)
         {
-            UserHistories.Add(history);
+            if (UserHistories.Count == 10)
+            {
+                UserHistories.Insert(0, history);
+
+                UserHistories.Remove(UserHistories.Last());
+            }
+            else
+            {
+                UserHistories.Insert(0, history);
+            }
 
             _saveAPI = new SaveAPI(this);
             _saveAPI.AddHistory(history);

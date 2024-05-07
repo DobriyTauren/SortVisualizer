@@ -51,8 +51,6 @@ public class SaveAPI
             HttpResponseMessage response = await _httpClient.PostAsJsonAsync("/api/histories/add", new { Token, historyModel });
             response.EnsureSuccessStatusCode();
         }
-
-       
     }
 
     public async Task GetHistory (string userId)
@@ -74,7 +72,7 @@ public class SaveAPI
     {
         if (_globalData.UserHistories.Count == 0)
         {            
-            var history = await httpClient.GetFromJsonAsync<List<HistoryModel>>($"api/histories/{userId}");
+            var history = await httpClient.GetFromJsonAsync<List<HistoryModel>>($"api/histories/{userId}&10"); // get 10 last records
 
             _globalData.SetHistory(history);
         }

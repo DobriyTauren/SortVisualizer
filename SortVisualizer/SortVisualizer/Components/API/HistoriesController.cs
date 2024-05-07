@@ -32,6 +32,17 @@ public class HistoriesController : ControllerBase
         return histories;
     }
 
+    [HttpGet]
+    [Route("api/histories/{userId}&{itemsCount}")]
+    public async Task<ActionResult<IEnumerable<HistoryModel>>> GetHistoriesByUserId(string userId, int itemsCount)
+    {
+        var histories = await _context.Histories.Where(h => h.UserId == userId).ToListAsync();
+
+        histories = histories.TakeLast(itemsCount).Reverse().ToList();
+
+        return histories;
+    }
+
     [HttpPost]
     [Route("api/histories/add")]
     public IActionResult AddRecordToDatabase([FromBody] JsonElement requestData)

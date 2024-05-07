@@ -2,8 +2,6 @@
 
 public class Generator
 {
-    public const double MARGIN_WIDTH = 0.15;
-
     private const int MIN_VALUE = 1;
     private const int MAX_VALUE = 100;
 
@@ -45,7 +43,13 @@ public class Generator
         var generatedValues = new HashSet<int>(); // Для отслеживания уже сгенерированных значений
 
         _lineWidth = (ContainerWidth - 8) / ItemsCount;
+
         _lineWidthPercentage = (_lineWidth / ContainerWidth) * 100;
+
+        if (ContainerWidth < 400) // mobile scalse cringe
+        {
+            _lineWidthPercentage *= 0.8;
+        }
 
         double offset = _lineWidth / 2;
 
@@ -56,7 +60,7 @@ public class Generator
             {
                 var height = random.Next(MIN_VALUE, (int)ContainerHeight);
                 value = (int)(ContainerHeight - height);
-            } while (!generatedValues.Add(value)); // Генерируем значение, пока оно не станет уникальным
+            } while (!generatedValues.Add(value)); // Генер значение, пока оно не станет уникальным
 
             double x = i * _lineWidth + offset;
             x = x / ContainerWidth * 100;
@@ -91,7 +95,7 @@ public class Generator
             do
             {
                 value = random.Next(0, 361);
-            } while (!generatedValues.Add(value)); // Генерируем значение, пока оно не станет уникальным
+            } while (!generatedValues.Add(value)); // Генер значение, пока оно не станет уникальным
 
             double centerXPercentage = random.Next(30, (int)ContainerWidth - 30) / ContainerWidth * 100;
             double centerYPercentage = random.Next(30, (int)ContainerHeight - 30) / ContainerHeight * 100;
@@ -112,19 +116,4 @@ public class Generator
 
         return points;
     }
-
-    public static void Shuffle<T>(List<T> list)
-    {
-        Random rng = new Random();
-        int n = list.Count;
-        while (n > 1)
-        {
-            n--;
-            int k = rng.Next(n + 1);
-            T value = list[k];
-            list[k] = list[n];
-            list[n] = value;
-        }
-    }
-
 }
