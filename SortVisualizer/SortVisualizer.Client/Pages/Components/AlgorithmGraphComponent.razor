@@ -1,0 +1,34 @@
+﻿@rendermode InteractiveWebAssembly
+@inject IJSRuntime JSRuntime
+@inject UserDataStorage userData
+
+<div class="secondary-block-bg-color statistics-block mb-3 bdr" id="chart-container">
+    
+</div>
+
+<style>
+    .statistics-block {
+        max-height: 70% !important;
+        aspect-ratio: 1/1;
+
+        width: 100%;
+    }
+</style>
+
+@code 
+{
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            string userId = await userData.GetUserId(JSRuntime);
+            var saveAPI = new SaveAPI(userData);
+
+            var history = await saveAPI.TryGetAllHistory(userId);
+
+            Console.WriteLine(history.Count);
+
+            await JSRuntime.InvokeVoidAsync("renderChart", history);
+        }
+    }
+}

@@ -63,6 +63,10 @@ input[type="text"] {
     background: #030b12 !important;
 }
 
+.secondary-block-bg-color {
+    background: #1d242a !important;
+}
+
 #movingCircle {
     animation: moveRight 2s forwards;
 }
@@ -96,6 +100,10 @@ input[type="text"] {
 
 .w-30 {
     width: 30%;
+}
+
+.h-90 {
+    height: 90%;
 }
 
 .bg-blue-grad {

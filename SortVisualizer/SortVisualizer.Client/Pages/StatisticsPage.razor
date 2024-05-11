@@ -1,0 +1,48 @@
+﻿@page "/statistics"
+@using SortVisualizer.Client.Pages.Components
+
+@rendermode InteractiveWebAssembly
+@inject UserDataStorage userData
+
+<PageTitle>Статистика</PageTitle>
+
+<div class="block-bg-color bdr main-statistics-block">
+    <div class="row h-100">
+        <div class="col pt-3 text-center h-100 px-4 py-4">
+
+            <AlgorithmGraphComponent />
+
+            <div class="row mx-0">
+                <div class="col-auto px-1 py-1">
+                    <DropdownComponent UserData="userData" />
+                </div> 
+                
+                <div class="col-auto px-1 py-1">
+                    <DropdownComponent UserData="userData" />
+                </div> 
+
+            </div>
+
+
+
+
+        </div>
+    </div>
+</div>
+<style>
+    .main-statistics-block 
+    {
+        width: 100%;
+        height: 94vh;
+    }
+</style>
+
+@code 
+{
+    protected override async Task OnInitializedAsync()
+    {
+        var saveAPI = new SaveAPI(userData);
+
+        await saveAPI.TryGetAlgorithms();
+    }
+}

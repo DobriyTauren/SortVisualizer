@@ -1,0 +1,48 @@
+﻿@rendermode InteractiveWebAssembly
+
+<div class="dropdown d-inline-block">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" @onclick="ToggleDropdown">
+        @(SelectedAlgorithm == null ? "Алгоритм" : @SelectedAlgorithm.Name)
+    </button>
+    <div class="dropdown-menu @_dropdownCssClass block-bg-color border" aria-labelledby="dropdownMenuButton">
+        @foreach (var algorithm in UserData.Algorithms)
+        {
+            if (algorithm != SelectedAlgorithm)
+            {
+                <a class="dropdown-item" @onclick="() => ToggleDropdown(algorithm)">@algorithm.Name</a>
+            }
+        }
+    </div>
+</div>
+
+<style>
+    .dropdown-menu a.dropdown-item:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        user-select: none;
+        cursor: pointer;
+    }
+</style>
+
+@code 
+{
+    [Parameter]
+    public UserDataStorage UserData { get; set; } = null!;
+
+    public AlgorithmModel? SelectedAlgorithm { get; private set; }
+
+    private bool _isDropdownOpen = false;
+
+    private string _dropdownCssClass => _isDropdownOpen ? "dropdown-menu show" : "dropdown-menu"; // KPACUBO
+
+    private void ToggleDropdown()
+    {
+        _isDropdownOpen = !_isDropdownOpen;
+    }
+
+    private void ToggleDropdown(AlgorithmModel algorithm)
+    {
+        _isDropdownOpen = !_isDropdownOpen;
+
+        SelectedAlgorithm = algorithm;
+    }
+}

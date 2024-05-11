@@ -27,7 +27,7 @@ public class SaveAPI
         _globalData = globalData;
     }
 
-    public async Task AddHistory(HistoryModel historyModel)
+    public async Task TryAddHistory(HistoryModel historyModel)
     {
         if (Token == null || _tokenService.IsTokenExpired(Token))
         {
@@ -53,7 +53,7 @@ public class SaveAPI
         }
     }
 
-    public async Task GetHistory (string userId)
+    public async Task TryGetHistory (string userId)
     {
         try // PEREDELAT
         {
@@ -78,28 +78,54 @@ public class SaveAPI
         }
     }
 
-    public async Task<AlgorithmModel> GetSelectedAlgorithm ()
+    public async Task<List<HistoryModel>> TryGetAllHistory(string userId)
     {
-        AlgorithmModel? selectedAlgorithm = new AlgorithmModel() { Name = "", Description = "", CodeName = "" };
+        var history = new List<HistoryModel>();
 
         try // PEREDELAT
         {
-            selectedAlgorithm = await GetAlgorithms(_httpClient);
+            history = await GetAllHistoryByUserId(_httpClient, userId);
         }
         catch
         {
             _httpClient = new HttpClient();
             _httpClient.BaseAddress = new Uri(HTTP_PATH);
 
-            selectedAlgorithm = await GetAlgorithms(_httpClient);
+            history = await GetAllHistoryByUserId(_httpClient, userId);
+        }
+
+        return history;
+    }
+
+    private async Task<List<HistoryModel>?> GetAllHistoryByUserId(HttpClient httpClient, string userId)
+    {
+        var history = await httpClient.GetFromJsonAsync<List<HistoryModel>>($"api/histories/{userId}"); // get all records
+
+        return history;
+    }
+    
+    public async Task<AlgorithmModel> TryGetAlgorithmsWithSelected ()
+    {
+        AlgorithmModel? selectedAlgorithm = new AlgorithmModel() { Name = "", Description = "", CodeName = "" };
+
+        try // PEREDELAT
+        {
+            selectedAlgorithm = await GetAlgorithmsWithSelected(_httpClient);
+        }
+        catch
+        {
+            _httpClient = new HttpClient();
+            _httpClient.BaseAddress = new Uri(HTTP_PATH);
+
+            selectedAlgorithm = await GetAlgorithmsWithSelected(_httpClient);
         }
 
         return selectedAlgorithm;
     }
 
-    private async Task<AlgorithmModel> GetAlgorithms (HttpClient httpClient)
+    private async Task<AlgorithmModel> GetAlgorithmsWithSelected(HttpClient httpClient)
     {
-        if (_globalData.Algorithms == null)
+        if (_globalData.Algorithms.Count == 0)
         {
             _globalData.SetAlgorithms(await httpClient.GetFromJsonAsync<List<AlgorithmModel>>("api/algorithms"));
         }
@@ -108,5 +134,28 @@ public class SaveAPI
         var selectedAlgorithm = _globalData.Algorithms.FirstOrDefault(a => a.CodeName == relativePath);
 
         return selectedAlgorithm;
+    }
+
+    public async Task TryGetAlgorithms()
+    {
+        try // PEREDELAT
+        {
+            await GetAlgorithms(_httpClient);
+        }
+        catch
+        {
+            _httpClient = new HttpClient();
+            _httpClient.BaseAddress = new Uri(HTTP_PATH);
+
+            await GetAlgorithms(_httpClient);
+        }
+    }
+
+    private async Task GetAlgorithms(HttpClient httpClient)
+    {
+        if (_globalData.Algorithms.Count == 0)
+        {
+            _globalData.SetAlgorithms(await httpClient.GetFromJsonAsync<List<AlgorithmModel>>("api/algorithms"));
+        }
     }
 }

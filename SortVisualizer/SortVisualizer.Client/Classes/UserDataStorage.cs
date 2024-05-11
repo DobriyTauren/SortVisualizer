@@ -6,7 +6,7 @@ namespace SortVisualizer.Client.classes
     {
         private SaveAPI _saveAPI;
         public AlgorithmModel CurrentAlgorithm { get; set; }
-        public List<AlgorithmModel>? Algorithms { get; private set; }
+        public List<AlgorithmModel> Algorithms { get; private set; } = new List<AlgorithmModel>();
         public List<HistoryModel>? UserHistories { get; private set; } = new List<HistoryModel>();
 
         public event EventHandler DataChanged;
@@ -37,7 +37,7 @@ namespace SortVisualizer.Client.classes
             }
 
             _saveAPI = new SaveAPI(this);
-            _saveAPI.AddHistory(history);
+            _saveAPI.TryAddHistory(history);
 
             OnDataChanged();
         }

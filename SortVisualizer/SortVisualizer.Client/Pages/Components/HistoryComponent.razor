@@ -44,7 +44,7 @@
         {
             _userId = await userData.GetUserId(JSRuntime);
             _saveAPI = new SaveAPI(userData);
-            await _saveAPI.GetHistory(_userId);
+            await _saveAPI.TryGetHistory(_userId);
 
             userData.DataChanged += HandleStateChanged;
 

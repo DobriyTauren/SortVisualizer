@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <None Include="..\SortVisualizer.Client\Pages\ChooseTypeVisualization.razor" Link="ChooseTypeVisualization.razor" />
+    <None Include="..\SortVisualizer.Client\Pages\Components\AreaSeriesData.razor" Link="AreaSeriesData.razor" />
   </ItemGroup>
 
   <ItemGroup>
