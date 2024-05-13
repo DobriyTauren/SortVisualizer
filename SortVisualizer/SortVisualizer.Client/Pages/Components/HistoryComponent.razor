@@ -16,24 +16,29 @@
             </tr>
         </thead>
         <tbody>
-            @for (int i = 0; i < userData.UserHistories.Count; i++)
+            @if (userData.Algorithms.Count != 0)
             {
-                <tr>
-                    <th scope="row">@(i + 1)</th>
-                    <td>@(userData.Algorithms.FirstOrDefault(a => a.Id == userData.UserHistories[i].AlgorithmId).Name)</td>
-                    <td>@userData.UserHistories[i].ArrayAccessCount</td>
-                    <td>@userData.UserHistories[i].MoveCount</td>
-                    <td>@userData.UserHistories[i].TimeWasted</td>
-                    <td>@userData.UserHistories[i].Delay</td>
-                    <td>@userData.UserHistories[i].ElementsCount</td>
-                </tr>
+                for (int i = 0; i < userData.UserHistories.Count; i++)
+                {
+                    var algorithm = userData.Algorithms.FirstOrDefault(a => a.Id == userData.UserHistories[i].AlgorithmId);
+                    var history = userData.UserHistories[i];
+
+                    <tr>
+                        <th scope="row">@(i + 1)</th>
+                        <td>@(algorithm != null ? algorithm.Name : "Неизвестный")</td>
+                        <td>@history.ArrayAccessCount</td>
+                        <td>@history.MoveCount</td>
+                        <td>@history.TimeWasted</td>
+                        <td>@history.Delay</td>
+                        <td>@history.ElementsCount</td>
+                    </tr>
+                }
             }
-            
         </tbody>
     </table>
 </div>
 
-@code 
+@code
 {
     private SaveAPI _saveAPI;
     private string _userId;
@@ -46,7 +51,8 @@
             _saveAPI = new SaveAPI(userData);
             await _saveAPI.TryGetHistory(_userId);
 
-            userData.DataChanged += HandleStateChanged;
+            userData.HistoryChanged += HandleStateChanged;
+            userData.AlgorithmsChanged += HandleStateChanged;
 
             StateHasChanged();
         }

@@ -52,18 +52,22 @@ namespace SortVisualizer.Client.classes
         public List<AlgorithmModel> Algorithms { get; private set; } = new List<AlgorithmModel>();
         public List<HistoryModel>? UserHistories { get; private set; } = new List<HistoryModel>();
 
-        public event EventHandler DataChanged;
+        public event EventHandler AlgorithmsChanged;
+
+        public event EventHandler HistoryChanged;
 
         public void SetAlgorithms (List<AlgorithmModel> algorithms)
         {
             Algorithms = algorithms;
+
+            OnAlgorithmsChanged();
         }
 
         public void SetHistory (List<HistoryModel> history)
         {
             UserHistories = history;
 
-            OnDataChanged();
+            OnHistoryChanged();
         }
 
         public async Task AddHistory (HistoryModel history)
@@ -82,7 +86,7 @@ namespace SortVisualizer.Client.classes
             _saveAPI = new SaveAPI(this);
             _saveAPI.TryAddHistory(history);
 
-            OnDataChanged();
+            OnHistoryChanged();
         }
 
         public async Task<string> GetUserId (IJSRuntime jSRuntime)
@@ -98,9 +102,14 @@ namespace SortVisualizer.Client.classes
             return userId;
         }
 
-        private void OnDataChanged () 
+        private void OnAlgorithmsChanged () 
         {
-            DataChanged?.Invoke(null, EventArgs.Empty);
+            AlgorithmsChanged?.Invoke(null, EventArgs.Empty);
+        }
+        
+        private void OnHistoryChanged () 
+        {
+            HistoryChanged?.Invoke(null, EventArgs.Empty);
         }
     }
 }

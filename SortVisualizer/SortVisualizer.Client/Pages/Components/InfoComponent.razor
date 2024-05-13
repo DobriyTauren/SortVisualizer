@@ -1,5 +1,5 @@
 ﻿@rendermode InteractiveWebAssembly
-@inject UserDataStorage globalData
+@inject UserDataStorage userData
 @inject NavigationManager navigationManager
 
 <div class="component-container bdr block-bg-color pt-4 px-3 pb-3 top-block">
@@ -28,10 +28,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _saveAPI = new SaveAPI(globalData, navigationManager);
+        _saveAPI = new SaveAPI(userData, navigationManager);
 
         _selectedAlgorithm = await _saveAPI.TryGetAlgorithmsWithSelected();
-        globalData.CurrentAlgorithm = _selectedAlgorithm;
+        userData.CurrentAlgorithm = _selectedAlgorithm;
 
         if (_selectedAlgorithm == null) // if alg not exists in db
         {

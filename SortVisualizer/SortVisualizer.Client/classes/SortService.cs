@@ -26,14 +26,14 @@ public class SortService
 
     public async Task WaitColor<T>(int delay, T elem) where T : ISvgElement
     {
-        if (elem is SvgLine)
+        if (elem is SvgLine svgLine)
         {
-            (elem as SvgLine).Color = ActionColor;
+            svgLine.Color = ActionColor;
 
             OnStyleChanged();
             await Task.Delay(delay);
 
-            (elem as SvgLine).Color = BaseColor;
+            svgLine.Color = BaseColor;
         }
         else
         {
