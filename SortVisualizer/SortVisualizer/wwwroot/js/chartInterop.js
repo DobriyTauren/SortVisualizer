@@ -5,9 +5,10 @@ window.renderCharts = (dataArrays, algorithmNames) => {
             const hours = parseInt(timeParts[0]);
             const minutes = parseInt(timeParts[1]);
             const seconds = parseInt(timeParts[2]);
+            const totalSeconds = hours * 3600 + minutes * 60 + seconds; // переводим время в секунды
             return {
-                x: Date.UTC(1970, 0, 1, hours, minutes, seconds),
-                y: item.arrayAccessCount,
+                x: item.elementsCount,
+                y: totalSeconds, // используем время в качестве значения оси y
                 algorithmName: algorithmNames[index] // Добавляем имя алгоритма к данным точек
             };
         });
@@ -23,22 +24,27 @@ window.renderCharts = (dataArrays, algorithmNames) => {
     Highcharts.chart('chart-container', {
         chart: {
             type: 'spline',
-            backgroundColor: 'rgba(0, 0, 0, 0.1)',
+            backgroundColor: '#030b12',
             style: {
                 fontFamily: '"Arial", sans-serif',
                 color: '#e0e0e0'
             }
         },
         title: {
-            text: 'Операции во времени',
+            text: 'Время затраченное на сортировку по количеству элементов',
             style: {
                 color: '#ffffff'
             }
         },
         xAxis: {
-            type: 'datetime',
+            type: 'linear', // изменяем тип оси на 'linear'
+            title: {
+                text: 'Количество элементов', // изменяем заголовок оси y
+                style: {
+                    color: '#ffffff'
+                }
+            },
             labels: {
-                format: '{value:%H:%M:%S}',
                 style: {
                     color: '#e0e0e0'
                 }
@@ -48,12 +54,13 @@ window.renderCharts = (dataArrays, algorithmNames) => {
         },
         yAxis: {
             title: {
-                text: 'Количество операций',
+                text: 'Время затраченное на сорт. (в сек.)', // изменяем заголовок оси y
                 style: {
                     color: '#ffffff'
                 }
             },
             labels: {
+                format: '{value}', // формат меток оси y
                 style: {
                     color: '#ffffff'
                 }
@@ -62,7 +69,7 @@ window.renderCharts = (dataArrays, algorithmNames) => {
         },
         tooltip: {
             formatter: function () {
-                return '<span style="color:' + this.point.color + '">\u25CF</span>' + ' <b>' + this.point.algorithmName + '</b><br />' + ' Время: <b>' + Highcharts.dateFormat('%H:%M:%S', this.x) + '</b><br/>Количество операций: <b>' + this.y + '</b>';
+                return '<span style="color:' + this.point.color + '">\u25CF</span>' + ' <b>' + this.point.algorithmName + '</b><br />' + ' Время: <b>' + Highcharts.dateFormat('%H:%M:%S', this.y * 1000) + '</b><br/>Количество элементов: <b>' + this.x + '</b>';
             },
             backgroundColor: 'rgba(0, 0, 0, 0.8)',
             borderColor: '#707070',
