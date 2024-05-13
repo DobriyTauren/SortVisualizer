@@ -26,9 +26,14 @@
 
             var history = await saveAPI.TryGetAllHistory(userId);
 
-            Console.WriteLine(history.Count);
+            var groupedHistories = history
+                      .GroupBy(h => h.AlgorithmId)
+                      .Select(group => group.ToList())
+                      .ToList();
 
-            await JSRuntime.InvokeVoidAsync("renderChart", history);
+            var algNames = userData.Algorithms.Select(a => a.Name).ToList();
+
+            await JSRuntime.InvokeVoidAsync("renderCharts", groupedHistories, algNames);
         }
     }
 }

@@ -9,40 +9,19 @@ public class Generator
 
     private double _lineWidth = 4;
     private double _lineWidthPercentage = 4;
-    private int _itemsCount = 75;
 
     public double ContainerWidth { get; set; } = 600;
     public double ContainerHeight { get; set; }
 
-    public int ItemsCount 
-    { 
-        get => _itemsCount; 
-        set
-        {
-            switch (value)
-            {
-                case < 1:
-                    _itemsCount = 1;
-                    break;
-                case > 355:
-                    _itemsCount = 355;
-                    break;
-                default:
-                    _itemsCount = value;
-                    break;
-            }
-        }
-    }
-
     public double LineWidthPercentage { get => _lineWidthPercentage; set => _lineWidthPercentage = value; }
 
-    public List<SvgLine> GenerateLines()
+    public List<SvgLine> GenerateLines(int elementsCount)
     {
         var lines = new List<SvgLine>();
         var random = new Random();
         var generatedValues = new HashSet<int>(); // Для отслеживания уже сгенерированных значений
 
-        _lineWidth = (ContainerWidth - 8) / ItemsCount;
+        _lineWidth = (ContainerWidth - 8) / elementsCount;
 
         _lineWidthPercentage = (_lineWidth / ContainerWidth) * 100;
 
@@ -53,7 +32,7 @@ public class Generator
 
         double offset = _lineWidth / 2;
 
-        for (int i = 0; i < _itemsCount; i++)
+        for (int i = 0; i < elementsCount; i++)
         {
             int value;
             do
@@ -82,14 +61,14 @@ public class Generator
         return lines;
     }
 
-    public List<SvgCircle> GenerateCircles()
+    public List<SvgCircle> GenerateCircles(int elementsCount)
     {
         var points = new List<SvgCircle>();
         var random = new Random();
         var generatedValues = new HashSet<int>(); // Для отслеживания уже сгенерированных значений
 
 
-        for (int i = 0; i < _itemsCount; i++)
+        for (int i = 0; i < elementsCount; i++)
         {
             int value;
             do

@@ -45,7 +45,7 @@
                 <p class="text-center">Элементов</p>
             </div>
             <div class="col-auto mb-4 w-7">
-                <input @bind="@_generator.ItemsCount" disabled="@_isSorting" type="text" class="form-control" id="inlineFormInputGroup" placeholder="Элементов">
+                <input @bind="@userData.ItemsCount" disabled="@_isSorting" type="text" class="form-control" id="inlineFormInputGroup" placeholder="Элементов">
             </div>
         </div>
     </div>
@@ -79,7 +79,7 @@
         _generator.ContainerWidth = await JSRuntime.InvokeAsync<int>("svgInterop.getSvgWidth", 0);
         _generator.ContainerHeight = await JSRuntime.InvokeAsync<int>("svgInterop.getSvgHeight", 0);
 
-        _arrayElements = _generator.GenerateLines();
+        _arrayElements = _generator.GenerateLines(userData.ItemsCount);
 
         _isEmpty = false;
     }
@@ -99,7 +99,7 @@
             ArrayAccessCount = SortAlgorithm.ArrayAccessCount,
             Delay = SortAlgorithm.Delay,
             MoveCount = SortAlgorithm.MoveCount,
-            ElementsCount = _generator.ItemsCount,
+            ElementsCount = userData.ItemsCount,
             TimeWasted = _sortTimer.ElapsedTime.ToString(),
             UserId = await userData.GetUserId(JSRuntime),
         };

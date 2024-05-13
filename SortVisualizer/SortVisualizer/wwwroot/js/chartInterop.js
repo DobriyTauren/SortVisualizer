@@ -1,30 +1,38 @@
-window.renderChart = (dataItems) => {
-    const datetimeData = dataItems.map(item => {
-        const timeParts = item.timeWasted.split(':');
-        const hours = parseInt(timeParts[0]);
-        const minutes = parseInt(timeParts[1]);
-        const seconds = parseInt(timeParts[2]);
+window.renderCharts = (dataArrays, algorithmNames) => {
+    const seriesData = dataArrays.map((dataItems, index) => {
+        const datetimeData = dataItems.map(item => {
+            const timeParts = item.timeWasted.split(':');
+            const hours = parseInt(timeParts[0]);
+            const minutes = parseInt(timeParts[1]);
+            const seconds = parseInt(timeParts[2]);
+            return {
+                x: Date.UTC(1970, 0, 1, hours, minutes, seconds),
+                y: item.arrayAccessCount,
+                algorithmName: algorithmNames[index] // Добавляем имя алгоритма к данным точек
+            };
+        });
+
+        datetimeData.sort((a, b) => a.x - b.x);
+
         return {
-            x: Date.UTC(1970, 0, 1, hours, minutes, seconds),
-            y: item.arrayAccessCount
+            name: algorithmNames[index],
+            data: datetimeData
         };
     });
 
-    datetimeData.sort((a, b) => a.x - b.x);
-
     Highcharts.chart('chart-container', {
         chart: {
-            type: 'area',
-            backgroundColor: 'rgba(0, 0, 0, 0.1)', // Прозрачный черный фон (примерно прозрачность 90%)
+            type: 'spline',
+            backgroundColor: 'rgba(0, 0, 0, 0.1)',
             style: {
                 fontFamily: '"Arial", sans-serif',
-                color: '#e0e0e0' // Цвет текста
+                color: '#e0e0e0'
             }
         },
         title: {
             text: 'Операции во времени',
             style: {
-                color: '#ffffff' // Цвет заголовка
+                color: '#ffffff'
             }
         },
         xAxis: {
@@ -32,40 +40,37 @@ window.renderChart = (dataItems) => {
             labels: {
                 format: '{value:%H:%M:%S}',
                 style: {
-                    color: '#e0e0e0' // Цвет меток оси X
+                    color: '#e0e0e0'
                 }
             },
-            lineColor: '#707070', // Цвет линии оси X
-            tickColor: '#707070' // Цвет меток на оси X
+            lineColor: '#707070',
+            tickColor: '#707070'
         },
         yAxis: {
             title: {
                 text: 'Количество операций',
                 style: {
-                    color: '#ffffff' // Цвет заголовка оси Y
+                    color: '#ffffff'
                 }
             },
             labels: {
                 style: {
-                    color: '#ffffff' // Цвет меток оси Y
+                    color: '#ffffff'
                 }
             },
-            gridLineColor: '#707070' // Цвет линий сетки
+            gridLineColor: '#707070'
         },
         tooltip: {
             formatter: function () {
-                return '<span style="color:' + this.point.color + '">\u25CF</span> Время: <b>' + Highcharts.dateFormat('%H:%M:%S', this.x) + '</b><br/>Количество операций: <b>' + this.y + '</b>';
+                return '<span style="color:' + this.point.color + '">\u25CF</span>' + ' <b>' + this.point.algorithmName + '</b><br />' + ' Время: <b>' + Highcharts.dateFormat('%H:%M:%S', this.x) + '</b><br/>Количество операций: <b>' + this.y + '</b>';
             },
-            backgroundColor: 'rgba(0, 0, 0, 0.8)', // Прозрачный черный фон для тултипа
-            borderColor: '#707070', // Цвет рамки тултипа
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            borderColor: '#707070',
             style: {
-                color: '#e0e0e0' // Цвет текста в тултипе
+                color: '#e0e0e0'
             }
         },
-        series: [{
-            name: 'Операции во времени',
-            data: datetimeData
-        }],
+        series: seriesData,
         credits: {
             enabled: false
         },
@@ -73,7 +78,10 @@ window.renderChart = (dataItems) => {
             enabled: false
         },
         legend: {
-            enabled: false,
+            enabled: true,
+            itemStyle: {
+                color: '#ffffff' // Изменяем цвет текста в легенде
+            }
         },
         navigation: {
             buttonOptions: {

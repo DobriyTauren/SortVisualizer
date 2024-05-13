@@ -46,7 +46,7 @@
                 <p class="text-center">Элементов</p>
             </div>
             <div class="col-auto mb-4 w-7">
-                <input @bind="@_generator.ItemsCount" disabled="@_isSorting" type="text" class="form-control" id="inlineFormInputGroup" placeholder="Кол-во">
+                <input @bind="userData.ItemsCount" disabled="@_isSorting" type="text" class="form-control" id="inlineFormInputGroup" placeholder="Кол-во">
             </div>
         </div>
     </div>
@@ -83,13 +83,13 @@
 
         try // cringe moment
         {
-            _points = _generator.GenerateCircles();
+            _points = _generator.GenerateCircles(userData.ItemsCount);
         }
         catch
         {
             await Task.Delay(300);
             GetContainerSize();
-            _points = _generator.GenerateCircles();
+            _points = _generator.GenerateCircles(userData.ItemsCount);
         }
 
         _isEmpty = false;
@@ -148,7 +148,7 @@
                 ArrayAccessCount = SortAlgorithm.ArrayAccessCount,
                 Delay = SortAlgorithm.Delay,
                 MoveCount = SortAlgorithm.MoveCount,
-                ElementsCount = _generator.ItemsCount,
+                ElementsCount = userData.ItemsCount,
                 TimeWasted = _sortTimer.ElapsedTime.ToString(),
                 UserId = await userData.GetUserId(JSRuntime),
             };

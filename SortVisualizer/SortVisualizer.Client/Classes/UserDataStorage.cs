@@ -5,6 +5,49 @@ namespace SortVisualizer.Client.classes
     public class UserDataStorage
     {
         private SaveAPI _saveAPI;
+        private int _itemsCount = 75;
+        private int _delay = 1;
+
+        public int Delay
+        {
+            get => _delay;
+            set
+            {
+                switch (value)
+                {
+                    case < 0:
+                        _delay = 0;
+                        break;
+                    case > 9999:
+                        _delay = 9999;
+                        break;
+                    default:
+                        _delay = value;
+                        break;
+                }
+            }
+        }
+
+        public int ItemsCount
+        {
+            get => _itemsCount;
+            set
+            {
+                switch (value)
+                {
+                    case < 1:
+                        _itemsCount = 1;
+                        break;
+                    case > 355:
+                        _itemsCount = 355;
+                        break;
+                    default:
+                        _itemsCount = value;
+                        break;
+                }
+            }
+        }
+
         public AlgorithmModel CurrentAlgorithm { get; set; }
         public List<AlgorithmModel> Algorithms { get; private set; } = new List<AlgorithmModel>();
         public List<HistoryModel>? UserHistories { get; private set; } = new List<HistoryModel>();
