@@ -2,10 +2,9 @@
 {
     public interface ISvgElement
     {
-        Point GetStartPosition();
-        Point GetEndPosition();
+        Point GetPosition();
         Point GetFixedPosition();
-        int GetValue();
+        float GetValue();
         void Move(Point newPosition);
     }
 

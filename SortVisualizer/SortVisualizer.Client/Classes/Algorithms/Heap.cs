@@ -25,7 +25,7 @@ public class Heap : SortAlgorithm
         {
             await SortService.WaitColor(Delay, arrayElements[i]); 
 
-            await SwapSWAG(0, i, arrayElements);
+            Swap(0, i, arrayElements);
 
             ArrayAccessCount++;
             await Heapify(arrayElements, i, 0); // Обращение к массиву
@@ -48,7 +48,7 @@ public class Heap : SortAlgorithm
         {
             await SortService.WaitColor(Delay, arrayElements[i]); 
 
-            await SwapSWAG(i, largest, arrayElements); 
+            Swap(i, largest, arrayElements); 
 
             ArrayAccessCount++;
             await Heapify(arrayElements, n, largest); 

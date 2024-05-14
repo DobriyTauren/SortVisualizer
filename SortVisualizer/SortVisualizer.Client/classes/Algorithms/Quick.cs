@@ -44,11 +44,11 @@ public class Quick : SortAlgorithm
             {
                 i++;
 
-                await SwapSWAG(i, j, arrayElements); 
+                Swap(i, j, arrayElements); 
             }
         }
 
-        await SwapSWAG(i + 1, high, arrayElements);
+        Swap(i + 1, high, arrayElements);
 
         return i + 1;
     }

@@ -2,37 +2,27 @@
 
 public class SvgLine : SvgShape, ISvgElement
 {
-    public Point StartPoint { get; set; }
-    public Point EndPoint { get; set; }
+    public Point Position { get; set; }
 
-    public Point FixedStartPoint { get; set; }
+    public Point FixedPosition { get; set; }
     
-    public Point GetStartPosition()
+    public Point GetPosition()
     {
-        return StartPoint;
-    }
-
-    public Point GetEndPosition()
-    {
-        return EndPoint;
+        return Position;
     }
 
     public void Move(Point newPosition)
     {
-        var deltaX = newPosition.X - StartPoint.X;
-        var deltaY = newPosition.Y - StartPoint.Y;
-
-        StartPoint = newPosition;
-        EndPoint = new Point(EndPoint.X + deltaX, EndPoint.Y + deltaY);
+        Position = new Point(newPosition.X, Position.Y);
     }
 
-    public int GetValue() // kek yyyyyyyy
+    public float GetValue() // kek yyyyyyyy
     {
         return Value;
     }
 
     public Point GetFixedPosition()
     {
-        return FixedStartPoint;
+        return FixedPosition;
     }
 }

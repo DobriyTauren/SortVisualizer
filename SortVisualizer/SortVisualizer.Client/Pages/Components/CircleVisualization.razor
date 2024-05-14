@@ -110,8 +110,8 @@
         var centerXPercentage = 50; // Пример процентного значения центра по X
         var centerYPercentage = 50; // Пример процентного значения центра по Y
 
-        var xOffset = _generator.ContainerWidth * centerXPercentage / 100;
-        var yOffset = _generator.ContainerHeight * centerYPercentage / 100;
+        float xOffset = _generator.ContainerWidth * centerXPercentage / 100;
+        float yOffset = _generator.ContainerHeight * centerYPercentage / 100;
 
         var relation = _generator.ContainerWidth / _generator.ContainerHeight;
 
@@ -120,8 +120,8 @@
             var angle = 2 * Math.PI * i / _points.Count;
 
             // координаты центра круга в процентах относительно ширины и высоты контейнера
-            double centerX = ((xOffset / _generator.ContainerWidth * 100) + radius * Math.Cos(angle) / 100);
-            double centerY = ((yOffset / _generator.ContainerHeight * 100) + radius * Math.Sin(angle) / 100);
+            var centerX = ((xOffset / _generator.ContainerWidth * 100) + radius * Math.Cos(angle) / 100);
+            var centerY = ((yOffset / _generator.ContainerHeight * 100) + radius * Math.Sin(angle) / 100);
 
             Point center = new Point(centerX, centerY);
 

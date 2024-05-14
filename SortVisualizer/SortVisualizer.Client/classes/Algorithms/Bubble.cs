@@ -19,7 +19,7 @@
 
                 if (arrayElements[j].GetValue() > arrayElements[j + 1].GetValue())
                 {
-                    await SwapSWAG(j, j + 1, arrayElements);
+                    Swap(j, j + 1, arrayElements);
                 }
             }
         }

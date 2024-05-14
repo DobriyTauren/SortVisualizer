@@ -27,7 +27,7 @@ public class Shaker : SortAlgorithm
                 ArrayAccessCount += 2;
                 if (arrayElements[i].GetValue() > arrayElements[i + 1].GetValue())
                 {
-                    await SwapSWAG(i, i + 1, arrayElements);
+                    Swap(i, i + 1, arrayElements);
 
                     swapped = true;
                 }
@@ -44,7 +44,7 @@ public class Shaker : SortAlgorithm
                 ArrayAccessCount += 2;
                 if (arrayElements[i].GetValue() > arrayElements[i + 1].GetValue())
                 {
-                    await SwapSWAG(i, i + 1, arrayElements);
+                    Swap(i, i + 1, arrayElements);
 
                     swapped = true;
                 }

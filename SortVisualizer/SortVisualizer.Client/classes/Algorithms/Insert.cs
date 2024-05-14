@@ -22,7 +22,7 @@
                 ArrayAccessCount++;
 
                 await SortService.WaitColor(Delay, arrayElements[j + 1]);
-                await SwapSWAG(j + 1, j, arrayElements);
+                Swap(j + 1, j, arrayElements);
 
                 j--;
             }

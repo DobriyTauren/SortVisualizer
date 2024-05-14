@@ -25,7 +25,7 @@ public class Shell : SortAlgorithm
                 ArrayAccessCount += 3;
                 for (j = i; j >= gap && arrayElements[j - gap].GetValue() > temp.GetValue(); j -= gap)
                 {
-                    await SwapSWAG(j, j - gap, arrayElements);
+                    Swap(j, j - gap, arrayElements);
                 }
 
                 await SortService.WaitColor(Delay, arrayElements[j]);

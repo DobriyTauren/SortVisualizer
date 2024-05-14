@@ -20,9 +20,9 @@
         <svg width="100%" height="60vh" class="mx-2 svg-container">
             @foreach (var line in _arrayElements)
             {
-                <line x1="@($"{line.StartPoint.X}%".Replace(",", "."))" y1="@($"{line.StartPoint.Y}%".Replace(",", "."))" x2="@($"{line.EndPoint.X}%".Replace(",", "."))" y2="@($"{line.EndPoint.Y}%".Replace(",", "."))" stroke-width="@($"{_generator.LineWidthPercentage}%".Replace(",","."))" stroke="@line.Color">
+                <rect x="@($"{line.Position.X}%".Replace(",", "."))" y="@($"{line.Position.Y}%".Replace(",", "."))" height="@($"{line.Value}%".Replace(",","."))" width="@($"{_generator.LineWidthPercentage}%".Replace(",","."))" fill="@line.Color">
                 
-                </line>
+                </rect>
             }
         </svg>
 
@@ -79,7 +79,7 @@
         _generator.ContainerWidth = await JSRuntime.InvokeAsync<int>("svgInterop.getSvgWidth", 0);
         _generator.ContainerHeight = await JSRuntime.InvokeAsync<int>("svgInterop.getSvgHeight", 0);
 
-        _arrayElements = _generator.GenerateLines(userData.ItemsCount);
+        _arrayElements = _generator.GenerateRects(userData.ItemsCount);
 
         _isEmpty = false;
     }

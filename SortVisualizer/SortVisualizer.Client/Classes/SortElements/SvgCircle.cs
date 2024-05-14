@@ -7,12 +7,7 @@ public class SvgCircle : SvgShape, ISvgElement
 
     public int Radius { get; set; }
 
-    public Point GetStartPosition()
-    {
-        return Center;
-    }
-
-    public Point GetEndPosition()
+    public Point GetPosition()
     {
         return Center;
     }
@@ -22,7 +17,7 @@ public class SvgCircle : SvgShape, ISvgElement
         Center = newPosition;
     }
 
-    public int GetValue()
+    public float GetValue()
     {
         return Value;
     }
