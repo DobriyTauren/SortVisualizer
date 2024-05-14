@@ -28,13 +28,11 @@ public class Generator
 
         _lineWidthPercentage = (_lineWidth - offset) / ContainerWidth * 100;
 
-
-
         Console.WriteLine($"ContainerWidth: {ContainerWidth}, _lineWidth: {_lineWidth}, _lineWidthPercentage: {_lineWidthPercentage}, elementsCount: {elementsCount}, offset: {offset}");
 
         for (int i = 0; i < elementsCount; i++)
         {
-            float xPercentage = i * (_lineWidth) / ContainerWidth * 100; // Исправлено на (_lineWidth + offset)
+            float xPercentage = i * _lineWidth / ContainerWidth * 100; // Исправлено на (_lineWidth + offset)
 
             Point startPoint = new Point(xPercentage, MAX_VALUE - values[i]);
 
