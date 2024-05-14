@@ -22,28 +22,21 @@ public class Generator
 
         Shuffle(values);
 
-
         _lineWidth = (ContainerWidth - 8) / elementsCount;
 
-        float offset = _lineWidth / 2;
+        float offset = _lineWidth * 0.25f;
 
-        ContainerWidth += offset * elementsCount - 1;
+        _lineWidthPercentage = (_lineWidth - offset) / ContainerWidth * 100;
 
-        _lineWidthPercentage = _lineWidth / (ContainerWidth) * 100;
 
-        Console.WriteLine(ContainerWidth);
 
-        if (ContainerWidth < 500) // mobile scalse cringe
-        {
-            _lineWidthPercentage *= 0.8f;
-        }
+        Console.WriteLine($"ContainerWidth: {ContainerWidth}, _lineWidth: {_lineWidth}, _lineWidthPercentage: {_lineWidthPercentage}, elementsCount: {elementsCount}, offset: {offset}");
 
         for (int i = 0; i < elementsCount; i++)
         {
-            float x = i * (_lineWidth + offset);
-            x = x / ContainerWidth * 100;
+            float xPercentage = i * (_lineWidth) / ContainerWidth * 100; // Исправлено на (_lineWidth + offset)
 
-            Point startPoint = new Point(x, MAX_VALUE - values[i]);
+            Point startPoint = new Point(xPercentage, MAX_VALUE - values[i]);
 
             var line = new SvgLine
             {
@@ -58,6 +51,8 @@ public class Generator
 
         return rects;
     }
+
+
 
     public List<SvgCircle> GenerateCircles(int elementsCount)
     {
