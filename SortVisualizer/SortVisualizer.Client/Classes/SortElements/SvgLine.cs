@@ -26,7 +26,7 @@ public class SvgLine : SvgShape, ISvgElement
         EndPoint = new Point(EndPoint.X + deltaX, EndPoint.Y + deltaY);
     }
 
-    public int GetValue() // kek yyyyyyyy
+    public float GetValue() // kek yyyyyyyy
     {
         return Value;
     }

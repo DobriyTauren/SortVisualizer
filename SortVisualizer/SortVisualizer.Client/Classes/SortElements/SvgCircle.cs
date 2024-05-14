@@ -22,7 +22,7 @@ public class SvgCircle : SvgShape, ISvgElement
         Center = newPosition;
     }
 
-    public int GetValue()
+    public float GetValue()
     {
         return Value;
     }

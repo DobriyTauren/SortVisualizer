@@ -5,7 +5,7 @@
         Point GetStartPosition();
         Point GetEndPosition();
         Point GetFixedPosition();
-        int GetValue();
+        float GetValue();
         void Move(Point newPosition);
     }
 
