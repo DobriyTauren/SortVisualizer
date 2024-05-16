@@ -7,6 +7,11 @@ html, body, p, input, a, button, table {
     color: #d7e9f8 !important;
 }
 
+.table th, .table td {
+    text-align: center;
+    vertical-align: middle;
+}
+
 button {
     background: #27188d !important;
 }

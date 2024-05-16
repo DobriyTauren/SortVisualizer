@@ -102,6 +102,7 @@
             ElementsCount = userData.ItemsCount,
             TimeWasted = _sortTimer.ElapsedTime.ToString(),
             UserId = await userData.GetUserId(JSRuntime),
+            VisualizationType = VisualizationType.Line
         };
 
         userData.AddHistory(historyModel);

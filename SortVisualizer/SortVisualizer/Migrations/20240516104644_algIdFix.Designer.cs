@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace SortVisualizer.Migrations
 {
     [DbContext(typeof(AlgorithmsContext))]
-    partial class AlgorithmsContextModelSnapshot : ModelSnapshot
+    [Migration("20240516104644_algIdFix")]
+    partial class algIdFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.3");
@@ -67,9 +70,6 @@ namespace SortVisualizer.Migrations
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("VisualizationType")
-                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
