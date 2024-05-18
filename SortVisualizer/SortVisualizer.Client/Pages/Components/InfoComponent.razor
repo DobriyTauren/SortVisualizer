@@ -1,6 +1,7 @@
-﻿@rendermode InteractiveWebAssembly
-@inject UserDataStorage userData
+﻿@inject UserDataStorage userData
 @inject NavigationManager navigationManager
+
+@rendermode InteractiveWebAssembly
 
 <div class="component-container bdr block-bg-color pt-4 px-3 pb-3 top-block">
     <div role="button" class="row user-select-none" @onclick="@(() => {_isHidden = !_isHidden;})">

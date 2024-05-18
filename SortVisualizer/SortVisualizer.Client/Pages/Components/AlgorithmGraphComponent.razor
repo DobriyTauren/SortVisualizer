@@ -1,6 +1,11 @@
-﻿@rendermode InteractiveWebAssembly
+﻿@using Blazored.LocalStorage
+
 @inject IJSRuntime JSRuntime
 @inject UserDataStorage userData
+@inject ILocalStorageService localStorage
+@inject IndexedDB indexDB
+
+@rendermode InteractiveWebAssembly
 
 <div class="secondary-block-bg-color statistics-block mb-3 bdr" id="chart-container">
     
@@ -37,15 +42,11 @@
 
 @code 
 {
-    private string _userId = "";
-    private SaveAPI _saveAPI;
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _userId = await userData.GetUserId(JSRuntime);
-            _saveAPI = new SaveAPI(userData);
+            await indexDB.LoadObjects(localStorage);
 
             await RenderAllTypesHistory();
         }
@@ -53,7 +54,7 @@
 
     private async Task RenderAllTypesHistory()
     {
-        var history = await _saveAPI.TryGetAllHistory(_userId);
+        var history = indexDB.ObjectManager.History;
 
         var groupedHistories = history
                   .GroupBy(h => h.AlgorithmId)
@@ -61,14 +62,18 @@
                   .OrderBy(group => group.First().AlgorithmId) // Сортируем по AlgorithmId
                   .ToList();
 
-        var algNames = userData.Algorithms.Select(a => a.Name).ToList();
+        var algorithmIds = groupedHistories.Select(group => group.First().AlgorithmId).ToList();
 
-        await RenderCharts(groupedHistories, algNames);
+        var filteredNames = userData.Algorithms
+                .Where(a => algorithmIds.Contains(a.Id))
+                .Select(a => a.Name).ToList();
+
+        await RenderCharts(groupedHistories, filteredNames);
     }
 
     private async Task RenderHistoryByType(VisualizationType type)
     {
-        var history = await _saveAPI.TryGetAllHistory(_userId);
+        var history = indexDB.ObjectManager.History;
 
         history = history.Where(h => h.VisualizationType == type).ToList();
 

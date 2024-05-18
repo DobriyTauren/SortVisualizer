@@ -1,6 +1,11 @@
 ﻿@using SortVisualizer.Client.Classes.SortElements
-@rendermode InteractiveWebAssembly
+@using Blazored.LocalStorage
+
 @inject UserDataStorage userData
+@inject ILocalStorageService localStorage
+@inject IndexedDB indexDB
+
+@rendermode InteractiveWebAssembly
 
 <div class="main-container bdr block-bg-color">
     <div class="sort-block-container">
@@ -131,7 +136,6 @@
             StateHasChanged();
         }
 
-
         await Task.Delay(1900);
 
         _sortTimer.Start();
@@ -142,20 +146,20 @@
         _elementClass = "circle";
         _sortTimer.Stop();
 
-            HistoryModel historyModel = new HistoryModel()
+        HistoryModel historyModel = new HistoryModel()
             {
+                Id = ++indexDB.ObjectManager.CurrentMaxId,
                 AlgorithmId = userData.CurrentAlgorithm.Id,
                 ArrayAccessCount = SortAlgorithm.ArrayAccessCount,
                 Delay = SortAlgorithm.Delay,
                 MoveCount = SortAlgorithm.MoveCount,
                 ElementsCount = userData.ItemsCount,
                 TimeWasted = _sortTimer.ElapsedTime.ToString(),
-                UserId = await userData.GetUserId(JSRuntime),
                 VisualizationType = VisualizationType.Circle
             };
 
-        userData.AddHistory(historyModel);
-        
+        await userData.AddHistory(historyModel, localStorage, indexDB);
+
         _isSorting = false;
     }
 

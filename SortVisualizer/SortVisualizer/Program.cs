@@ -1,9 +1,7 @@
+using Blazored.LocalStorage;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using SortVisualizer.Client.classes;
-using SortVisualizer.Client.Pages;
 using SortVisualizer.Components;
-using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +11,8 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddDbContext<AlgorithmsContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("SortVisualizer")));
+
+builder.Services.AddBlazoredLocalStorage();
 
 builder.Services.AddLogging(builder =>
 {
@@ -28,6 +28,7 @@ builder.Services.AddLogging(builder =>
 builder.Services.AddMvc(setupAction: options => options.EnableEndpointRouting = false);
 
 builder.Services.AddScoped<UserDataStorage>();
+builder.Services.AddScoped<IndexedDB>();
 
 var app = builder.Build();
 

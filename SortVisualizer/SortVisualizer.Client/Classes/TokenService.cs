@@ -15,7 +15,7 @@ public class TokenService
         var token = new JwtSecurityToken(
             issuer: "ваш_сервер",
             audience: "ваш_клиент",
-            expires: DateTime.UtcNow.AddHours(1),
+            expires: DateTime.UtcNow.AddMinutes(1),
             signingCredentials: credentials
         );
 
@@ -29,7 +29,7 @@ public class TokenService
 
         if (jwtToken == null || !jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
         {
-            throw new SecurityTokenException("Некорректный токен");
+            return true;
         }
 
         var expirationDateUnix = jwtToken.Payload.Exp;

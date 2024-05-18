@@ -1,4 +1,9 @@
-﻿@inject UserDataStorage userData
+﻿@using Blazored.LocalStorage
+
+@inject UserDataStorage userData
+@inject ILocalStorageService localStorage
+@inject IndexedDB indexDB
+
 @rendermode InteractiveWebAssembly
 
 <div class="main-container bdr block-bg-color">
@@ -95,17 +100,17 @@
 
         HistoryModel historyModel = new HistoryModel()
         {
+            Id = ++indexDB.ObjectManager.CurrentMaxId,
             AlgorithmId = userData.CurrentAlgorithm.Id,
             ArrayAccessCount = SortAlgorithm.ArrayAccessCount,
             Delay = SortAlgorithm.Delay,
             MoveCount = SortAlgorithm.MoveCount,
             ElementsCount = userData.ItemsCount,
             TimeWasted = _sortTimer.ElapsedTime.ToString(),
-            UserId = await userData.GetUserId(JSRuntime),
             VisualizationType = VisualizationType.Line
         };
 
-        userData.AddHistory(historyModel);
+        await userData.AddHistory(historyModel, localStorage, indexDB);
 
         _isSorting = false;
         StateHasChanged();

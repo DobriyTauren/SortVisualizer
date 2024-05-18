@@ -22,6 +22,37 @@ window.renderCharts = (dataArrays, algorithmNames) => {
     });
 
     Highcharts.chart('chart-container', {
+        exporting: {
+            enabled: true,
+            buttons: {
+                contextButton: {
+                    symbol: 'menu',
+                    symbolStroke: '#e0e0e0',
+                    theme: {
+                        fill: '#2a2a2b',
+                        stroke: '#2a2a2b',
+                        states: {
+                            hover: {
+                                fill: '#3e3e40',
+                                stroke: '#3e3e40'
+                            },
+                            select: {
+                                fill: '#3e3e40',
+                                stroke: '#3e3e40'
+                            }
+                        }
+                    },
+                    menuItems: [
+                        'printChart',
+                        'downloadPNG',
+                        'downloadJPEG',
+                        'downloadSVG',
+                        'downloadCSV',
+                        'downloadXLS'
+                    ]
+                }
+            }
+        },
         chart: {
             type: 'spline',
             backgroundColor: '#030b12',
@@ -37,9 +68,9 @@ window.renderCharts = (dataArrays, algorithmNames) => {
             }
         },
         xAxis: {
-            type: 'linear', // изменяем тип оси на 'linear'
+            type: 'linear',
             title: {
-                text: 'Количество элементов', // изменяем заголовок оси y
+                text: 'Количество элементов',
                 style: {
                     color: '#ffffff'
                 }
@@ -54,13 +85,13 @@ window.renderCharts = (dataArrays, algorithmNames) => {
         },
         yAxis: {
             title: {
-                text: 'Время затраченное на сорт. (в сек.)', // изменяем заголовок оси y
+                text: 'Время затраченное на сорт. (в сек.)',
                 style: {
                     color: '#ffffff'
                 }
             },
             labels: {
-                format: '{value}', // формат меток оси y
+                format: '{value}',
                 style: {
                     color: '#ffffff'
                 }
@@ -81,18 +112,41 @@ window.renderCharts = (dataArrays, algorithmNames) => {
         credits: {
             enabled: false
         },
-        exporting: {
-            enabled: false
-        },
         legend: {
             enabled: true,
             itemStyle: {
-                color: '#ffffff' // Изменяем цвет текста в легенде
+                color: '#ffffff'
             }
         },
         navigation: {
             buttonOptions: {
-                enabled: false
+                symbolStroke: '#e0e0e0',
+                theme: {
+                    fill: '#2a2a2b',
+                    stroke: '#2a2a2b',
+                    states: {
+                        hover: {
+                            fill: '#3e3e40',
+                            stroke: '#3e3e40'
+                        },
+                        select: {
+                            fill: '#3e3e40',
+                            stroke: '#3e3e40'
+                        }
+                    }
+                }
+            },
+            menuStyle: {
+                background: '#2a2a2b',
+                color: '#e0e0e0',
+                border: '1px solid #3e3e40'
+            },
+            menuItemStyle: {
+                color: '#e0e0e0'
+            },
+            menuItemHoverStyle: {
+                background: '#3e3e40',
+                color: '#ffffff'
             }
         },
         lang: {

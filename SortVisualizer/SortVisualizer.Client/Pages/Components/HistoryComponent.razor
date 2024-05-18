@@ -1,6 +1,11 @@
-﻿@rendermode InteractiveWebAssembly
+﻿@using Blazored.LocalStorage
+
 @inject IJSRuntime JSRuntime
+@inject ILocalStorageService localStorage
+@inject IndexedDB indexDB
 @inject UserDataStorage userData
+
+@rendermode InteractiveWebAssembly
 
 <div class="block-bg-color mt-3 p-3 bdr">
     <div class="table-responsive">
@@ -20,10 +25,10 @@
             <tbody>
                 @if (userData.Algorithms.Count != 0)
                 {
-                    for (int i = 0; i < userData.UserHistories.Count; i++)
+                    for (int i = 0; i < userData.SmallHistory.Count; i++)
                     {
-                        var algorithm = userData.Algorithms.FirstOrDefault(a => a.Id == userData.UserHistories[i].AlgorithmId);
-                        var history = userData.UserHistories[i];
+                        var algorithm = userData.Algorithms.FirstOrDefault(a => a.Id == userData.SmallHistory[i].AlgorithmId);
+                        var history = userData.SmallHistory[i];
 
                         <tr>
                             <th scope="row">@(i + 1)</th>
@@ -57,16 +62,12 @@
 
 @code
 {
-    private SaveAPI _saveAPI;
-    private string _userId;
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _userId = await userData.GetUserId(JSRuntime);
-            _saveAPI = new SaveAPI(userData);
-            await _saveAPI.TryGetHistory(_userId);
+            await indexDB.LoadObjects(localStorage);
+            userData.SetSmallHistory(indexDB.ObjectManager.History);
 
             userData.HistoryChanged += HandleStateChanged;
             userData.AlgorithmsChanged += HandleStateChanged;

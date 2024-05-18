@@ -1,10 +1,10 @@
-﻿using Microsoft.JSInterop;
+﻿using Blazored.LocalStorage;
+using Microsoft.JSInterop;
 
 namespace SortVisualizer.Client.classes
 {
     public class UserDataStorage
     {
-        private SaveAPI _saveAPI;
         private int _itemsCount = 75;
         private int _delay = 1;
 
@@ -50,7 +50,7 @@ namespace SortVisualizer.Client.classes
 
         public AlgorithmModel CurrentAlgorithm { get; set; }
         public List<AlgorithmModel> Algorithms { get; private set; } = new List<AlgorithmModel>();
-        public List<HistoryModel>? UserHistories { get; private set; } = new List<HistoryModel>();
+        public List<HistoryModel>? SmallHistory { get; private set; } = new List<HistoryModel>();
 
         public event EventHandler AlgorithmsChanged;
 
@@ -63,43 +63,36 @@ namespace SortVisualizer.Client.classes
             OnAlgorithmsChanged();
         }
 
-        public void SetHistory (List<HistoryModel> history)
+        public void SetSmallHistory (List<HistoryModel> history)
         {
-            UserHistories = history;
+            SmallHistory = history.TakeLast(10).Reverse().ToList();
 
             OnHistoryChanged();
         }
 
-        public async Task AddHistory (HistoryModel history)
+        public async Task AddHistory (HistoryModel history, ILocalStorageService localStorage, IndexedDB indexedDB)
         {
-            if (UserHistories.Count == 10)
+            try
             {
-                UserHistories.Insert(0, history);
+                await indexedDB.SaveObject(history, localStorage);
 
-                UserHistories.Remove(UserHistories.Last());
+                if (SmallHistory.Count == 10)
+                {
+                    SmallHistory.Insert(0, history);
+
+                    SmallHistory.Remove(SmallHistory.Last());
+                }
+                else
+                {
+                    SmallHistory.Insert(0, history);
+                }
             }
-            else
+            catch
             {
-                UserHistories.Insert(0, history);
+                Console.WriteLine($"[indexedDB] - error when adding record at " + DateTime.Now.ToLongTimeString());
             }
-
-            _saveAPI = new SaveAPI(this);
-            _saveAPI.TryAddHistory(history);
 
             OnHistoryChanged();
-        }
-
-        public async Task<string> GetUserId (IJSRuntime jSRuntime)
-        {
-            var userId = await jSRuntime.InvokeAsync<string>("localStorage.getItem", "UserId");
-
-            if (string.IsNullOrEmpty(userId))
-            {
-                userId = Guid.NewGuid().ToString();
-                await jSRuntime.InvokeVoidAsync("localStorage.setItem", "UserId", userId);
-            }
-
-            return userId;
         }
 
         private void OnAlgorithmsChanged () 
