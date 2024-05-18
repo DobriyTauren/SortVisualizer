@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -21,6 +19,7 @@ public class AlgorithmsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<AlgorithmModel>>> GetAlgorithms()
     {
+        _logger.LogInformation("[api/algorithms] - visited at " + DateTime.Now.ToLongTimeString());
 
         return await _context.Algorithms.ToListAsync();
     }

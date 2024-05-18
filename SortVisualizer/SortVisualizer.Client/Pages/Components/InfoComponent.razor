@@ -26,21 +26,41 @@
 
     private bool _isHidden = true;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        _saveAPI = new SaveAPI(userData, navigationManager);
-
-        _selectedAlgorithm = await _saveAPI.TryGetAlgorithmsWithSelected();
-        userData.CurrentAlgorithm = _selectedAlgorithm;
-
-        if (_selectedAlgorithm == null) // if alg not exists in db
+        if (firstRender)
         {
-            _selectedAlgorithm = new AlgorithmModel()
+            if (userData.Algorithms.Count > 0)
             {
-                Name = "Не найдено...",
-                Description = "Не найдено...",
-                CodeName = "Не найдено...",
-            };
+                string relativePath = navigationManager.ToBaseRelativePath(navigationManager.Uri);
+
+                _selectedAlgorithm = userData.Algorithms.FirstOrDefault(a => a.CodeName == relativePath);
+
+                if (_selectedAlgorithm != null)
+                {
+                    userData.CurrentAlgorithm = _selectedAlgorithm;
+                }
+            }
+            else
+            {
+                _saveAPI = new SaveAPI(userData, navigationManager);
+
+                _selectedAlgorithm = await _saveAPI.TryGetAlgorithmsWithSelected();
+
+                userData.CurrentAlgorithm = _selectedAlgorithm;
+            }
+
+            if (_selectedAlgorithm == null) // if alg not exists in db
+            {
+                _selectedAlgorithm = new AlgorithmModel()
+                    {
+                        Name = "Не найдено...",
+                        Description = "Не найдено...",
+                        CodeName = "Не найдено...",
+                    };
+            }
+
+            StateHasChanged();
         }
     }
 }

@@ -16,7 +16,13 @@ builder.Services.AddDbContext<AlgorithmsContext>(options =>
 
 builder.Services.AddLogging(builder =>
 {
-    builder.AddConsole(); 
+    builder.ClearProviders();
+    builder.AddConsole();
+
+    builder.SetMinimumLevel(LogLevel.Information);
+
+    // Откл логирование команд базы данных
+    builder.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Warning);
 });
 
 builder.Services.AddMvc(setupAction: options => options.EnableEndpointRouting = false);
