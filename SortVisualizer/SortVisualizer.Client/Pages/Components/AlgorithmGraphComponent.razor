@@ -40,15 +40,53 @@
     }
 </style>
 
+@if (isModalVisible)
+{
+    <ModalComponent Title="Невозможно построить графики!" Ok="@null" Cancel="Понятно" OnClose="HandleModalClose">
+        <Body>
+            <p>Ваша история сортировок пока пуста, воспользуйтесь одним из алгоритмов сортировки данных.</p>
+        </Body>
+    </ModalComponent>
+}
+
 @code 
 {
+    #region modal window
+
+    private bool isModalVisible = false;
+
+    private void ShowModal()
+    {
+        isModalVisible = true;
+    }
+
+    private async Task HandleModalClose(bool result)
+    {
+        isModalVisible = false;
+
+        NavigateBack();
+    }
+
+    #endregion
+
+    APIHandler _api = new();
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            await _api.CheckForAlgorithms(userData);
+
             await indexDB.LoadObjects(localStorage);
 
             await RenderAllTypesHistory();
+
+            if (indexDB.ObjectManager.History.Count == 0)
+            {
+                ShowModal();
+
+                StateHasChanged();
+            }
         }
     }
 
@@ -96,5 +134,10 @@
     private async Task RenderCharts(object histories, object algorithmNames)
     {
         await JSRuntime.InvokeVoidAsync("renderCharts", histories, algorithmNames);
+    }
+
+    private async Task NavigateBack()
+    {
+        await JSRuntime.InvokeVoidAsync("history.back");
     }
 }

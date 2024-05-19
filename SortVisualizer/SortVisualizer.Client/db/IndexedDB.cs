@@ -19,4 +19,25 @@ public class IndexedDB
             ObjectManager = new ObjectManager();
         }
     }
+
+    public async Task DeleteObjects(List<HistoryModel> historyModels, ILocalStorageService localStorage)
+    {
+        foreach (var model in historyModels)
+        {
+            var itemToRemove = ObjectManager.History.FirstOrDefault(h => h.Id == model.Id);
+            if (itemToRemove != null)
+            {
+                ObjectManager.History.Remove(itemToRemove);
+            }
+        }
+
+        await localStorage.SetItemAsync("objectManager", ObjectManager); 
+    }
+
+    public async Task DeleteAllObjects(ILocalStorageService localStorage)
+    {
+        ObjectManager.History.Clear(); 
+
+        await localStorage.SetItemAsync("objectManager", ObjectManager); 
+    }
 }

@@ -5,7 +5,12 @@
 
 <div class="component-container bdr block-bg-color pt-4 px-3 pb-3 top-block">
     <div role="button" class="row user-select-none" @onclick="@(() => {_isHidden = !_isHidden;})">
-        <h3 class="col">@_selectedAlgorithm.Name</h3>
+        <h3 class="col">
+            @if (userData.CurrentAlgorithm != null)
+            {
+                @userData.CurrentAlgorithm.Name
+            }
+        </h3>
 
         <span style="color:lightgray;" class="col-6 align-self-center text-end">
             @(_isHidden ? "(Нажмите, чтобы развернуть)" : "(Нажмите, чтобы свернуть)")
@@ -13,17 +18,20 @@
     </div>
 
     <p hidden="@_isHidden">
-        @_selectedAlgorithm.Description
+        @if (userData.CurrentAlgorithm != null)
+        {
+            @userData.CurrentAlgorithm.Description
+        }
     </p>
 </div>
+
 
 @code
 {
     [Parameter]
     public SortAlgorithm Algorithm { get; set; } = null!;
 
-    private SaveAPI _saveAPI;
-    private AlgorithmModel? _selectedAlgorithm = new AlgorithmModel() { Name = "", Description = "", CodeName = "" };
+    private APIHandler _api = new();
 
     private bool _isHidden = true;
 
@@ -31,35 +39,7 @@
     {
         if (firstRender)
         {
-            if (userData.Algorithms.Count > 0)
-            {
-                string relativePath = navigationManager.ToBaseRelativePath(navigationManager.Uri);
-
-                _selectedAlgorithm = userData.Algorithms.FirstOrDefault(a => a.CodeName == relativePath);
-
-                if (_selectedAlgorithm != null)
-                {
-                    userData.CurrentAlgorithm = _selectedAlgorithm;
-                }
-            }
-            else
-            {
-                _saveAPI = new SaveAPI(userData, navigationManager);
-
-                _selectedAlgorithm = await _saveAPI.TryGetAlgorithmsWithSelected();
-
-                userData.CurrentAlgorithm = _selectedAlgorithm;
-            }
-
-            if (_selectedAlgorithm == null) // if alg not exists in db
-            {
-                _selectedAlgorithm = new AlgorithmModel()
-                    {
-                        Name = "Не найдено...",
-                        Description = "Не найдено...",
-                        CodeName = "Не найдено...",
-                    };
-            }
+            await _api.CheckForAlgorithms(userData, navigationManager);
 
             StateHasChanged();
         }

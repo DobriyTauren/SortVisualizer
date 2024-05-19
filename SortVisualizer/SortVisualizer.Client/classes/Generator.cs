@@ -28,7 +28,7 @@ public class Generator
 
         if (ContainerWidth < 400) // mobile scalse cringe
         {
-            _lineWidthPercentage *= 0.8;
+            _lineWidthPercentage *= 0.7;
         }
 
         double offset = _lineWidth / 2;

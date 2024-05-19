@@ -1,13 +1,11 @@
 ﻿@page "/statistics"
 @using SortVisualizer.Client.Pages.Components
 
-@inject UserDataStorage userData
-
 @rendermode InteractiveWebAssembly
 
 <PageTitle>Статистика</PageTitle>
 
-<div class="block-bg-color bdr main-statistics-block top-block">
+<div class="block-bg-color bdr full-page-block top-block">
     <div class="row h-100">
         <div class="col pt-3 text-center h-100 px-4 py-4">
 
@@ -16,13 +14,3 @@
         </div>
     </div>
 </div>
-
-@code 
-{
-    protected override async Task OnInitializedAsync()
-    {
-        var saveAPI = new SaveAPI(userData);
-
-        await saveAPI.TryGetAlgorithms();
-    }
-}

@@ -1,0 +1,75 @@
+﻿@code {
+
+    [Parameter]
+    public string Ok { get; set; }
+
+    [Parameter]
+    public string Cancel { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public RenderFragment Body { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> OnClose { get; set; }
+
+    private async Task CloseModal(bool result)
+    {
+        await OnClose.InvokeAsync(result);
+    }
+}
+
+<div class="modal show d-flex align-items-center justify-content-center" tabindex="-1">
+    <div class="modal-dialog rounded">
+        <div class="modal-content shadow-lg block-bg-color text-white border border-danger">
+            <div class="modal-header" style="border: none;">
+                <h5 class="modal-title">@Title</h5>
+
+            </div>
+            <div class="modal-body">
+                @Body
+            </div>
+            <div class="modal-footer" style="border-top: ridge #dc3545 2px;">
+                
+                @if (Ok != null)
+                {
+                    <button type="button" class="btn red-button w-30-fixed" @onclick="() => CloseModal(true)">@Ok</button>
+                }
+
+                @if (Cancel != null)
+                {
+                    <button type="button" class="btn w-30-fixed" @onclick="() => CloseModal(false)">@Cancel</button>                    
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .modal-body {
+        text-align: left; /* Выравнивание текста по ширине */
+    }
+
+    .modal-content {
+        border-radius: 15px;
+    }
+
+        /* Эффект тени */
+        .modal-content.shadow-lg {
+            box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.3);
+        }
+
+    /* Затемнение фона */
+    .modal.show::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.65);
+        z-index: -1;
+    }
+</style>

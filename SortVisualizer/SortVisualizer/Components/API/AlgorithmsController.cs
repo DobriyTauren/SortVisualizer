@@ -12,7 +12,7 @@ public class AlgorithmsController : ControllerBase
     public AlgorithmsController(IServiceProvider serviceProvider, ILogger<AlgorithmsController> logger)
     {
         _context = serviceProvider.GetRequiredService<AlgorithmsContext>();
-
+        
         _logger = logger;
     }
 
