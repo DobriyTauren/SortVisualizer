@@ -31,7 +31,7 @@
 
 @if (isDeletelVisible)
 {
-    <ModalComponent Title="Полная очистка истории" Ok="Удалить" Cancel="Отмена" OnClose="HandleDeleteModalClose">
+    <ModalComponent Title="Полная очистка истории" Ok="Очистить" Cancel="Отмена" OnClose="HandleDeleteModalClose">
         <Body>
             <p>Вы действительно хотите полностью очистить историю?</p>
         </Body>
@@ -163,7 +163,6 @@
         }
 
         _lastSelectedType = selectedType;
-        Console.WriteLine($"Selected type: {selectedType}");
     }
 
     private void FilterByAlg(string selectedAlgorithm, ref List<HistoryModel> history)
@@ -182,7 +181,6 @@
         history = usingHistory.Where(h => h.AlgorithmId == _algorithmNames.IndexOf(selectedAlgorithm) + 1).ToList();
 
         _lastSelectedAlg = selectedAlgorithm;
-        Console.WriteLine($"Selected alg: {selectedAlgorithm} {_algorithmNames.IndexOf(selectedAlgorithm)}");
     }
 
 }

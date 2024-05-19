@@ -32,7 +32,7 @@
                             var algorithm = userData.Algorithms.FirstOrDefault(a => a.Id == _histories[i].AlgorithmId);
                             var history = _histories[i];
 
-                            <tr @onclick="() => SelectRow(history)" class="@((IsRowSelected(history)) ? "table-active" : "") table-hover">
+                            <tr @onclick="() => SelectRow(history)" class="@((IsRowSelected(history) && !IsHistorySmall) ? "table-active" : "") table-hover">
                                 <th scope="row">@(i + 1)</th>
                                 <td>@(algorithm != null ? algorithm.Name : "Неизвестный")</td>
                                 <td>

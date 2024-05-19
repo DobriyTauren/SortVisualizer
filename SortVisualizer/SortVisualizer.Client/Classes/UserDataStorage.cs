@@ -4,7 +4,7 @@ namespace SortVisualizer.Client.classes
 {
     public class UserDataStorage
     {
-        private int _itemsCount = 75;
+        private int _itemsCount = 50;
         private int _delay = 1;
 
         public int Delay
