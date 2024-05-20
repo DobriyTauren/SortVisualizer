@@ -4,8 +4,8 @@ using System.Net.Http.Json;
 
 public class APIHandler
 {
-    private const string HTTP_PATH = "http://localhost:7248/";
-    private const string HTTPS_PATH = "https://localhost:7248/";
+    private const string HTTP_PATH = "http://localhost:5000/";
+    private const string HTTPS_PATH = "https://localhost:5001";
 
     private HttpClient _httpClient = new HttpClient() { BaseAddress = new Uri(HTTPS_PATH) };
 
