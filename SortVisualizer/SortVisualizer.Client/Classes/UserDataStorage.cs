@@ -5,27 +5,6 @@ namespace SortVisualizer.Client.classes
     public class UserDataStorage
     {
         private int _itemsCount = 50;
-        private int _delay = 1;
-
-        public int Delay
-        {
-            get => _delay;
-            set
-            {
-                switch (value)
-                {
-                    case < 0:
-                        _delay = 0;
-                        break;
-                    case > 9999:
-                        _delay = 9999;
-                        break;
-                    default:
-                        _delay = value;
-                        break;
-                }
-            }
-        }
 
         public int ItemsCount
         {
@@ -139,8 +118,6 @@ namespace SortVisualizer.Client.classes
             {
                 await indexedDB.SaveObject(history, localStorage);
                 
-                FullHistory.Add(history);
-
                 if (SmallHistory.Count == 10)
                 {
                     SmallHistory.Insert(0, history);

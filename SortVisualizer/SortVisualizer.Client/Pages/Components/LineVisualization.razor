@@ -76,6 +76,8 @@
     private bool _isSorted = false;
     private bool _isEmpty = true;
 
+    private int _algorithmId = 0;
+
     protected override void OnInitialized()
     {
         SortAlgorithm.SortService.StyleChanged += HandleStateChanged;
@@ -97,6 +99,7 @@
     private async Task SortArray()
     {
         IsSortingCallback.InvokeAsync();
+        _algorithmId = userData.CurrentAlgorithm.Id;
 
         _isSorting = true;
 
@@ -108,11 +111,11 @@
         HistoryModel historyModel = new HistoryModel()
         {
             Id = ++indexDB.ObjectManager.CurrentMaxId,
-            AlgorithmId = userData.CurrentAlgorithm.Id,
+            AlgorithmId = _algorithmId,
             ArrayAccessCount = SortAlgorithm.ArrayAccessCount,
             Delay = SortAlgorithm.Delay,
             MoveCount = SortAlgorithm.MoveCount,
-            ElementsCount = userData.ItemsCount,
+            ElementsCount = _arrayElements.Count,
             TimeWasted = _sortTimer.ElapsedTime.ToString(),
             VisualizationType = VisualizationType.Line
         };

@@ -11,8 +11,8 @@ public abstract class SortAlgorithm
         {
             switch (value)
             {
-                case < 0:
-                    _delay = 0;
+                case < 1:
+                    _delay = 1;
                     break;
                 case > 9999:
                     _delay = 9999;
