@@ -17,11 +17,11 @@
 </div>
 
 <div hidden="@_isPointHidden">
-    <LineVisualization IsSortingCallback="() => { _isLinesSorting = !_isLinesSorting; Console.WriteLine(_isLinesSorting); }" SortAlgorithm="Algorithm" />
+    <LineVisualization IsSortingCallback="() => { _isLinesSorting = !_isLinesSorting; }" SortAlgorithm="Algorithm" />
 </div>
 
 <div hidden="@_isCircleHidden">
-    <CircleVisualization IsSortingCallback="() => { _isCirclesSorting = !_isCirclesSorting; Console.WriteLine(_isLinesSorting); }" SortAlgorithm="Algorithm" />
+    <CircleVisualization IsSortingCallback="() => { _isCirclesSorting = !_isCirclesSorting; }" SortAlgorithm="Algorithm" />
 </div>
 
 @code {
