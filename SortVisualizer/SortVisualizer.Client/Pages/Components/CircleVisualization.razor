@@ -37,7 +37,7 @@
                 <button class="btn" @onclick="GenerateArray" disabled="@_isSorting">Сгенерировать</button>
             </div>
             <div class="col-auto mb-2">
-                <button class="btn" @onclick="SortArray" disabled="@(_isEmpty || _isSorting)">Сортировать</button>
+                <button class="btn" @onclick="SortArray" disabled="@(_isEmpty || _isSorting || _isSorted)">Сортировать</button>
             </div>
 
             <div class="col-auto pt-2">
@@ -65,6 +65,9 @@
     [Parameter]
     public SortAlgorithm SortAlgorithm { get; set; }
 
+    [Parameter]
+    public EventCallback IsSortingCallback { get; set; }
+
     private Generator _generator = new Generator();
     private SortTimer _sortTimer = new SortTimer();
 
@@ -72,6 +75,7 @@
 
     private bool _isSorting = false;
     private bool _isEmpty = true;
+    private bool _isSorted = false;
 
     private string _elementClass = "circle";
 
@@ -98,6 +102,7 @@
         }
 
         _isEmpty = false;
+        _isSorted = false;
     }
 
     private async Task GetContainerSize() // HITROST
@@ -107,8 +112,12 @@
     }
 
     private async Task SortArray()
-    {        
+    {
+        IsSortingCallback.InvokeAsync();
+
         _isSorting = true;
+
+        #region circles position calculating
 
         var radius = 4000;
 
@@ -137,6 +146,7 @@
         }
 
         await Task.Delay(1900);
+        #endregion
 
         _sortTimer.Start();
         _elementClass = "";
@@ -160,7 +170,10 @@
 
         await userData.AddHistory(historyModel, localStorage, indexDB);
 
+        _isSorted = true;
         _isSorting = false;
+
+        IsSortingCallback.InvokeAsync();
     }
 
     private void HandleStateChanged(object sender, EventArgs e)

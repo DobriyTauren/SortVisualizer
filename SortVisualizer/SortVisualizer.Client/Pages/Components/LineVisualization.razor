@@ -36,7 +36,7 @@
                 <button class="btn" @onclick="GenerateArray" disabled="@_isSorting">Сгенерировать</button>
             </div>
             <div class="col-auto mb-2">
-                <button class="btn" @onclick="SortArray" disabled="@(_isEmpty || _isSorting)">Сортировать</button>
+                <button class="btn" @onclick="SortArray" disabled="@(_isEmpty || _isSorting || _isSorted)">Сортировать</button>
             </div>
             
             <div class="col-auto pt-2">
@@ -64,12 +64,16 @@
     [Parameter]
     public SortAlgorithm SortAlgorithm { get; set; }
 
+    [Parameter]
+    public EventCallback IsSortingCallback { get; set; }
+
     private Generator _generator = new Generator();
     private SortTimer _sortTimer = new SortTimer();
 
     private List<SvgLine> _arrayElements = new List<SvgLine>();
 
     private bool _isSorting = false;
+    private bool _isSorted = false;
     private bool _isEmpty = true;
 
     protected override void OnInitialized()
@@ -87,10 +91,13 @@
         _arrayElements = _generator.GenerateLines(userData.ItemsCount);
 
         _isEmpty = false;
+        _isSorted = false;
     }
 
     private async Task SortArray()
     {
+        IsSortingCallback.InvokeAsync();
+
         _isSorting = true;
 
         _sortTimer.Start();
@@ -113,6 +120,9 @@
         await userData.AddHistory(historyModel, localStorage, indexDB);
 
         _isSorting = false;
+        _isSorted = true;
+
+        IsSortingCallback.InvokeAsync();
         StateHasChanged();
     }
 
