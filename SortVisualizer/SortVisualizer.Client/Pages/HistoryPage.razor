@@ -82,14 +82,10 @@
             await _api.CheckForAlgorithms(userData);
 
             userData.HistoryChanged += HandleStateChanged;
+            userData.FilteredHistoryChanged += HandleStateChanged;
 
             _algorithmNames = userData.Algorithms.Select(a => a.Name).ToList();
 
-            StateHasChanged();
-        }
-
-        if (userData.FilteredHistory.Count > 0)
-        {
             StateHasChanged();
         }
     }
