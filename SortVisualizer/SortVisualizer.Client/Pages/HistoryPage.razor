@@ -82,12 +82,16 @@
             await _api.CheckForAlgorithms(userData);
 
             userData.HistoryChanged += HandleStateChanged;
-            userData.FilteredHistoryChanged += HandleStateChanged;
 
             _algorithmNames = userData.Algorithms.Select(a => a.Name).ToList();
 
             StateHasChanged();
         }
+    }
+
+    protected override void OnInitialized()
+    {
+        userData.ClearSelected();
     }
 
     private void ClearAllFilters()
