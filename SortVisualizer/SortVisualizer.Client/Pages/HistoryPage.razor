@@ -5,6 +5,7 @@
 @inject ILocalStorageService localStorage
 @inject UserDataStorage userData
 @inject IndexedDB indexDB
+@inject IConfiguration config
 
 @rendermode InteractiveWebAssembly
 
@@ -70,8 +71,6 @@
         "Линия", "Круг", "Все типы"
     };
 
-    private APIHandler _api = new();
-
     private string _lastSelectedAlg = null;
     private string _lastSelectedType = null;
 
@@ -79,6 +78,7 @@
     {
         if (firstRender)
         {
+            APIHandler _api = new APIHandler(config);
             await _api.CheckForAlgorithms(userData);
 
             userData.HistoryChanged += HandleStateChanged;

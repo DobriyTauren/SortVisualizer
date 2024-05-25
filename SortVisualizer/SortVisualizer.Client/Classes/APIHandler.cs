@@ -4,9 +4,15 @@ using System.Net.Http.Json;
 
 public class APIHandler
 {
-    private const string HTTP_PATH = "http://46.32.185.2:5000/";
+    private HttpClient _httpClient = new HttpClient();
+    private readonly IConfiguration _configuration;
 
-    private HttpClient _httpClient = new HttpClient() { BaseAddress = new Uri(HTTP_PATH) };
+    public APIHandler(IConfiguration configuration) 
+    { 
+        _configuration = configuration;
+
+        _httpClient.BaseAddress = new Uri(GetApiUrl());
+    }
 
     public async Task CheckForAlgorithms (UserDataStorage userData, NavigationManager navigationManager)
     {
@@ -70,5 +76,10 @@ public class APIHandler
         {
             userData.SetAlgorithms(await httpClient.GetFromJsonAsync<List<AlgorithmModel>>("api/algorithms"));
         }
+    }
+
+    public string GetApiUrl()
+    {
+        return _configuration["ApiUrl"];
     }
 }

@@ -4,6 +4,7 @@
 @inject UserDataStorage userData
 @inject ILocalStorageService localStorage
 @inject IndexedDB indexDB
+@inject IConfiguration config
 
 @rendermode InteractiveWebAssembly
 
@@ -69,12 +70,11 @@
 
     #endregion
 
-    APIHandler _api = new();
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            APIHandler _api = new APIHandler(config);
             await _api.CheckForAlgorithms(userData);
 
             await indexDB.LoadObjects(localStorage);

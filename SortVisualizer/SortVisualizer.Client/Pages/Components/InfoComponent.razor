@@ -1,5 +1,6 @@
 ﻿@inject UserDataStorage userData
 @inject NavigationManager navigationManager
+@inject IConfiguration config
 
 @rendermode InteractiveWebAssembly
 
@@ -42,14 +43,14 @@
     [Parameter]
     public SortAlgorithm Algorithm { get; set; } = null!;
 
-    private APIHandler _api = new();
-
     private bool _isHidden = true;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            APIHandler _api = new APIHandler(config);
+
             await _api.CheckForAlgorithms(userData, navigationManager);
 
             StateHasChanged();
