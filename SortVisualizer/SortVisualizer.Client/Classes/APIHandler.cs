@@ -4,10 +4,9 @@ using System.Net.Http.Json;
 
 public class APIHandler
 {
-    private const string HTTP_PATH = "http://localhost:5000/";
-    private const string HTTPS_PATH = "https://localhost:5001";
+    private const string HTTP_PATH = "http://46.32.185.2:5000/";
 
-    private HttpClient _httpClient = new HttpClient() { BaseAddress = new Uri(HTTPS_PATH) };
+    private HttpClient _httpClient = new HttpClient() { BaseAddress = new Uri(HTTP_PATH) };
 
     public async Task CheckForAlgorithms (UserDataStorage userData, NavigationManager navigationManager)
     {
@@ -38,25 +37,15 @@ public class APIHandler
         }
         else
         {
-            await TryGetAlgorithms(userData);
+            await GetAlgorithms(_httpClient, userData);
         }
     }
 
     public async Task<AlgorithmModel> TryGetAlgorithmsWithSelected (UserDataStorage userData, NavigationManager navigationManager)
     {
         AlgorithmModel? selectedAlgorithm = new AlgorithmModel() { Name = "", Description = "", CodeName = "" };
-
-        try // PEREDELAT
-        {
-            selectedAlgorithm = await GetAlgorithmsWithSelected(_httpClient, userData, navigationManager);
-        }
-        catch
-        {
-            _httpClient = new HttpClient();
-            _httpClient.BaseAddress = new Uri(HTTP_PATH);
-
-            selectedAlgorithm = await GetAlgorithmsWithSelected(_httpClient, userData, navigationManager);
-        }
+        
+        selectedAlgorithm = await GetAlgorithmsWithSelected(_httpClient, userData, navigationManager);
 
         return selectedAlgorithm;
     }
@@ -67,26 +56,12 @@ public class APIHandler
         {
             userData.SetAlgorithms(await httpClient.GetFromJsonAsync<List<AlgorithmModel>>("api/algorithms"));
         }
+
         string relativePath = navigationManager.ToBaseRelativePath(navigationManager.Uri);
 
         var selectedAlgorithm = userData.Algorithms.FirstOrDefault(a => a.CodeName == relativePath);
 
         return selectedAlgorithm;
-    }
-
-    public async Task TryGetAlgorithms(UserDataStorage userData)
-    {
-        try // PEREDELAT
-        {
-            await GetAlgorithms(_httpClient, userData);
-        }
-        catch
-        {
-            _httpClient = new HttpClient();
-            _httpClient.BaseAddress = new Uri(HTTP_PATH);
-
-            await GetAlgorithms(_httpClient, userData);
-        }
     }
 
     private async Task GetAlgorithms(HttpClient httpClient, UserDataStorage userData)
