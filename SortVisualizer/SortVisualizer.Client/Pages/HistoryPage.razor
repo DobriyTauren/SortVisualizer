@@ -89,6 +89,11 @@
         }
     }
 
+    protected override void OnInitialized()
+    {
+        userData.ClearSelected();
+    }
+
     private void ClearAllFilters()
     {
         _algDropdown.ClearSelection();
