@@ -11,7 +11,7 @@
 {
     <div class="block-bg-color p-3 bdr">
         <div class="table-responsive">
-            <table class="table table-hover table-dark">
+            <table class="@($"{_tableClass}")">
                 <thead>
                     <tr>
                         <th scope="col">#</th>
@@ -96,6 +96,8 @@
     [Parameter]
     public bool IsHistorySmall { get; set; }
 
+    private string _tableClass = "";
+
     private List<HistoryModel> _histories = new List<HistoryModel>();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -112,12 +114,16 @@
             {
                 userData.SetSmallHistory(indexDB.ObjectManager.History);
                 _histories = userData.SmallHistory;
+
+                _tableClass = "table table-hover table-dark";
             }
             else
             {
                 userData.SetFullHistory(indexDB.ObjectManager.History);
                 userData.SetFilteredHistory(indexDB.ObjectManager.History);
                 _histories = userData.FilteredHistory;
+
+                _tableClass = "table table-dark";
 
                 if (_histories.Count == 0)
                 {
