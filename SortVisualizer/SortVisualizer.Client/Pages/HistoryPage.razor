@@ -87,6 +87,11 @@
 
             StateHasChanged();
         }
+
+        if (userData.FilteredHistory.Count > 0)
+        {
+            StateHasChanged();
+        }
     }
 
     private void ClearAllFilters()
