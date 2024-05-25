@@ -17,14 +17,25 @@
         </span>
     </div>
 
-    <p hidden="@_isHidden">
+    <pre hidden="@_isHidden">
         @if (userData.CurrentAlgorithm != null)
         {
             @userData.CurrentAlgorithm.Description
         }
-    </p>
+    </pre>
 </div>
 
+<style>
+  pre {
+    max-width: 100%; /* Задайте нужное значение */
+    white-space: pre-wrap; /* Позволяет переносу текста на новую строку внутри элемента  */
+    word-wrap: break-word; /* Позволяет переносу длинных слов на новую строку */
+    font-family: "Roboto", sans-serif;
+    font-size: 13pt;
+
+    overflow: auto; /* Добавляет прокрутку, если содержимое превышает максимальную ширину */
+  }
+</style>
 
 @code
 {

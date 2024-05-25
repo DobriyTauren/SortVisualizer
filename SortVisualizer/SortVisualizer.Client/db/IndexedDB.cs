@@ -8,7 +8,7 @@ public class IndexedDB
     {
         ObjectManager.History.Add(historyModel);
 
-        await localStorage.SetItemAsync("objectManager", ObjectManager); // Сохраняем объект и текущий максимальный ID
+        await localStorage.SetItemAsync("objectManager", ObjectManager); 
     }
 
     public async Task LoadObjects(ILocalStorageService localStorage)
