@@ -116,6 +116,9 @@ window.renderCharts = (dataArrays, algorithmNames) => {
             enabled: true,
             itemStyle: {
                 color: '#ffffff'
+            },
+            itemHoverStyle: {
+                color: '#cccccc' // Чуть темнее белого
             }
         },
         navigation: {
