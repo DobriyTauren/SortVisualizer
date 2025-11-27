@@ -1,0 +1,15 @@
+﻿@page "/fast"
+@using SortVisualizer.Client.Pages.Components
+
+<PageTitle>Быстрая сортировка</PageTitle>
+
+<InfoComponent Algorithm="_quick" />
+
+<ChooseTypeVisualization Algorithm="_quick" />
+
+<HistoryComponent IsHistorySmall="true" />
+
+@code 
+{
+    private Quick _quick = new();
+}

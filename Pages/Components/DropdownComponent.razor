@@ -1,0 +1,112 @@
+﻿@using SortVisualizer.Client.Classes;
+
+@inject IJSRuntime JS
+@inject UserDataStorage userData
+
+<div class="dropdown d-inline-block mt-2 mx-1">
+    <button class="btn dropdown-toggle border border-primary" type="button" id="dropdownMenuButton" @onclick="ToggleDropdown">
+        @(SelectedItem ?? ToolTip)
+    </button>
+    <div class="@_dropdownCssClass" aria-labelledby="dropdownMenuButton">
+        @foreach (var item in Items)
+        {
+            if (item != SelectedItem)
+            {
+                <a class="dropdown-item" @onclick="() => OnItemSelected(item)">
+                    @item
+                </a>
+            }
+        }
+    </div>
+</div>
+
+<style>
+    .dropdown-menu {
+        background-color: #27188d; 
+        color: #ffffff; 
+    }
+
+        .dropdown-menu a.dropdown-item {
+            color: #ffffff; 
+        }
+
+            .dropdown-menu a.dropdown-item:hover {
+                background-color: rgba(255, 255, 255, 0.2);
+                user-select: none;
+                cursor: pointer;
+            }
+
+    .dropdown-toggle {
+        background-color: #27188d; 
+        color: #ffffff;
+        border: 1px solid #1f146d;
+    }
+
+        .dropdown-toggle:hover {
+            background-color: #3a29c6; 
+        }
+</style>
+
+@code {
+    [Parameter]
+    public string ToolTip { get; set; }
+
+    [Parameter]
+    public List<string> Items { get; set; } = new List<string>();
+
+    [Parameter]
+    public EventCallback<string> OnSelectionChanged { get; set; }
+
+    private string? SelectedItem { get; set; }
+
+    private bool _isDropdownOpen = false;
+
+    private string _dropdownCssClass => _isDropdownOpen ? "dropdown-menu show" : "dropdown-menu";
+
+    private DotNetObjectReference<DropdownComponent>? _dotNetObjectReference;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _dotNetObjectReference = DotNetObjectReference.Create(this);
+            JS.InvokeVoidAsync("addClickOutsideEventListener", _dotNetObjectReference);
+        }
+    }
+
+    [JSInvokable]
+    public void CloseDropdown()
+    {
+        _isDropdownOpen = false;
+        StateHasChanged();
+    }
+
+    private void ToggleDropdown()
+    {
+        _isDropdownOpen = !_isDropdownOpen;
+    }
+
+    public void ClearSelection()
+    {
+        SelectedItem = null;
+    }
+
+    private async Task OnItemSelected(string item)
+    {
+        SelectedItem = item;
+        _isDropdownOpen = false;
+
+        userData.ClearSelected();
+
+        if (OnSelectionChanged.HasDelegate)
+        {
+            await OnSelectionChanged.InvokeAsync(item);
+        }
+    }
+
+    public void Dispose()
+    {
+        JS.InvokeVoidAsync("removeClickOutsideEventListener", _dotNetObjectReference);
+        _dotNetObjectReference?.Dispose();
+    }
+}

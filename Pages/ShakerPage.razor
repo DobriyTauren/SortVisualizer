@@ -1,0 +1,15 @@
+﻿@page "/shaker"
+@using SortVisualizer.Client.Pages.Components
+
+<PageTitle>Сортировка перемешиванием</PageTitle>
+
+<InfoComponent Algorithm="_shaker" />
+
+<ChooseTypeVisualization Algorithm="_shaker" />
+
+<HistoryComponent IsHistorySmall="true" />
+
+@code 
+{
+    private Shaker _shaker = new();
+}

@@ -1,0 +1,15 @@
+﻿@page "/bubble"
+@using SortVisualizer.Client.Pages.Components
+
+<PageTitle>Пузырьковая сортировка</PageTitle>
+
+<InfoComponent Algorithm="_bubble" />
+
+<ChooseTypeVisualization Algorithm="_bubble"/>
+
+<HistoryComponent IsHistorySmall="true"/>
+
+@code 
+{
+    private Bubble _bubble = new Bubble();
+}

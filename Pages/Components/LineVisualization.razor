@@ -1,0 +1,139 @@
+﻿@using Blazored.LocalStorage
+
+@inject UserDataStorage userData
+@inject ILocalStorageService localStorage
+@inject IndexedDB indexDB
+
+<div class="main-container bdr block-bg-color mb-3">
+    <div class="sort-block-container">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm mb-2 mx-2 info-control-color rounded">
+                    <p class="text-center my-auto">Обращений к массиву: @SortAlgorithm.ArrayAccessCount</p>
+                </div>
+                <div class="col mb-2 mx-2 info-control-color rounded">
+                    <p class="text-center my-auto">Перестановок: @SortAlgorithm.MoveCount</p>
+                </div>
+                <div class="col mb-2 mx-2 info-control-color rounded">
+                    <p class="text-center my-auto">Время: @($"{_sortTimer.ElapsedTime:mm\\:ss}")</p>
+                </div>
+            </div>
+        </div>
+
+        <svg width="100%" height="60vh" class="mx-2 svg-container">
+            @foreach (var line in _arrayElements)
+            {
+                <line x1="@($"{line.StartPoint.X}%".Replace(",", "."))" y1="@($"{line.StartPoint.Y}%".Replace(",", "."))" x2="@($"{line.EndPoint.X}%".Replace(",", "."))" y2="@($"{line.EndPoint.Y}%".Replace(",", "."))" stroke-width="@($"{_generator.LineWidthPercentage}%".Replace(",","."))" stroke="@line.Color">
+                
+                </line>
+            }
+        </svg>
+
+        <div class="row btn-container">
+            <div class="col-auto">
+                <button class="btn" @onclick="GenerateArray" disabled="@_isSorting">Сгенерировать</button>
+            </div>
+            <div class="col-auto mb-2">
+                <button class="btn" @onclick="SortArray" disabled="@(_isEmpty || _isSorting || _isSorted)">Сортировать</button>
+            </div>
+            
+            <div class="col-auto pt-2">
+                <p class="text-center">Задержка (мс)</p>
+            </div>
+            <div class="col-auto mb-2 w-7">
+                <input @bind="SortAlgorithm.Delay" disabled="@_isSorting" type="text" class="form-control" id="inlineFormInputGroup" placeholder="Задержка">
+            </div>
+            
+            <div class="col-auto pt-2">
+                <p class="text-center">Элементов</p>
+            </div>
+            <div class="col-auto mb-4 w-7">
+                <input @bind="@userData.ItemsCount" disabled="@_isSorting" type="text" class="form-control" id="inlineFormInputGroup" placeholder="Элементов">
+            </div>
+        </div>
+    </div>
+</div>
+
+@code
+{
+    [Inject]
+    private IJSRuntime JSRuntime { get; set; }
+
+    [Parameter]
+    public SortAlgorithm SortAlgorithm { get; set; }
+
+    [Parameter]
+    public EventCallback IsSortingCallback { get; set; }
+
+    private Generator _generator = new Generator();
+    private SortTimer _sortTimer = new SortTimer();
+
+    private List<SvgLine> _arrayElements = new List<SvgLine>();
+
+    private bool _isSorting = false;
+    private bool _isSorted = false;
+    private bool _isEmpty = true;
+
+    private int _algorithmId = 0;
+
+    protected override void OnInitialized()
+    {
+        SortAlgorithm.SortService.StyleChanged += HandleStateChanged;
+    }
+
+    private async Task GenerateArray()
+    {
+        _arrayElements.Clear();
+
+        _generator.ContainerWidth = await JSRuntime.InvokeAsync<int>("svgInterop.getSvgWidth", 0);
+        _generator.ContainerHeight = await JSRuntime.InvokeAsync<int>("svgInterop.getSvgHeight", 0);
+
+        _arrayElements = _generator.GenerateLines(userData.ItemsCount);
+
+        _isEmpty = false;
+        _isSorted = false;
+    }
+
+    private async Task SortArray()
+    {
+        IsSortingCallback.InvokeAsync();
+        _algorithmId = userData.CurrentAlgorithm.Id;
+
+        _isSorting = true;
+
+        _sortTimer.Start();
+        await SortAlgorithm.Sort(_arrayElements);
+
+        _sortTimer.Stop();
+
+        HistoryModel historyModel = new HistoryModel()
+        {
+            Id = ++indexDB.ObjectManager.CurrentMaxId,
+            AlgorithmId = _algorithmId,
+            ArrayAccessCount = SortAlgorithm.ArrayAccessCount,
+            Delay = SortAlgorithm.Delay,
+            MoveCount = SortAlgorithm.MoveCount,
+            ElementsCount = _arrayElements.Count,
+            TimeWasted = _sortTimer.ElapsedTime.ToString(),
+            VisualizationType = VisualizationType.Line
+        };
+
+        await userData.AddHistory(historyModel, localStorage, indexDB);
+
+        _isSorting = false;
+        _isSorted = true;
+
+        IsSortingCallback.InvokeAsync();
+        StateHasChanged();
+    }
+
+    private void HandleStateChanged(object sender, EventArgs e)
+    {
+        StateHasChanged(); 
+    }
+
+    public void Dispose()
+    {
+        _sortTimer.Stop(); // Остановка таймера при уничтожении компонента
+    }
+}

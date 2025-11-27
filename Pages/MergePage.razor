@@ -1,0 +1,15 @@
+﻿@page "/merge"
+@using SortVisualizer.Client.Pages.Components
+
+<PageTitle>Сортировка слиянием</PageTitle>
+
+<InfoComponent Algorithm="_merge" />
+
+<ChooseTypeVisualization Algorithm="_merge"/>
+
+<HistoryComponent IsHistorySmall="true" />
+
+@code 
+{
+    private Merge _merge = new();
+}

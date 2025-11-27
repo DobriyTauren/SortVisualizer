@@ -1,0 +1,15 @@
+﻿@page "/insert"
+@using SortVisualizer.Client.Pages.Components
+
+<PageTitle>Сортировка вставками</PageTitle>
+
+<InfoComponent Algorithm="_insert" />
+
+<ChooseTypeVisualization Algorithm="_insert"/>
+
+<HistoryComponent IsHistorySmall="true" />
+
+@code
+{
+    private Insert _insert = new();
+}

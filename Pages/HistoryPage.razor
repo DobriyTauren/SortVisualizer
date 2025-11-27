@@ -1,0 +1,185 @@
+﻿@page "/history"
+@using SortVisualizer.Client.Pages.Components
+@using Blazored.LocalStorage
+
+@inject ILocalStorageService localStorage
+@inject UserDataStorage userData
+@inject IndexedDB indexDB
+
+<PageTitle>История</PageTitle>
+
+<div class="block-bg-color bdr h-auto w-100 top-block" style="min-height:400px; ">
+    <div class="d-flex align-items-center mx-3 mt-1">
+        <div class="row">
+            <div class="col-auto">
+                <DropdownComponent @ref="_algDropdown" Items="_algorithmNames" ToolTip="Алгоритм сортировки" OnSelectionChanged="HandleAlgChanged" />
+                <DropdownComponent @ref="_visDropdown" Items="_visTypes" ToolTip="Тип виз." OnSelectionChanged="HandleTypeChanged" />
+            </div>
+            <div class="col-auto ">
+                <button class="btn mt-2 mx-1 w-auto h-auto" @onclick="ClearAllFilters" disabled ="@(_lastSelectedAlg == null && _lastSelectedType == null)">Отменить фильтрацию</button>
+                <button class="btn mt-2 mx-1 w-auto h-auto" @onclick="async () => await userData.DeleteSelectedRecords(localStorage, indexDB)" disabled="@(userData.SelectedHistory.Count == 0)">Удалить выбранное</button>
+                <button class="btn red-button mt-2 mx-1 w-auto h-auto" @onclick="ShowDeleteModal" disabled="@(userData.FilteredHistory.Count == 0)">Очистить историю</button>
+            </div>
+        </div>
+
+    </div>
+
+    <HistoryComponent IsHistorySmall="false" />
+</div>
+
+@if (isDeletelVisible)
+{
+    <ModalComponent Title="Полная очистка истории" Ok="Очистить" Cancel="Отмена" OnClose="HandleDeleteModalClose">
+        <Body>
+            <p>Вы действительно хотите полностью очистить историю?</p>
+        </Body>
+    </ModalComponent>
+}
+
+@code
+{
+    #region delete modal window
+
+    private bool isDeletelVisible = false;
+
+    private void ShowDeleteModal()
+    {
+        isDeletelVisible = true;
+    }
+
+    private async Task HandleDeleteModalClose(bool result)
+    {
+        isDeletelVisible = false;
+
+        if (result)
+        {
+            await userData.DeleteAllRecords(localStorage, indexDB);
+        }
+    }
+
+    #endregion
+
+    private DropdownComponent _algDropdown;
+    private DropdownComponent _visDropdown;
+
+    private List<string> _algorithmNames = new List<string>();
+    private List<string> _visTypes = new List<string>()
+    {
+        "Линия", "Круг", "Все типы"
+    };
+
+    private string _lastSelectedAlg = null;
+    private string _lastSelectedType = null;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            userData.HistoryChanged += HandleStateChanged;
+
+            _algorithmNames = userData.Algorithms.Select(a => a.Name).ToList();
+
+            StateHasChanged();
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        userData.ClearSelected();
+    }
+
+    private void ClearAllFilters()
+    {
+        _algDropdown.ClearSelection();
+        _visDropdown.ClearSelection();
+
+        _lastSelectedAlg = null;
+        _lastSelectedType = null;
+
+        userData.SetFilteredHistory(userData.FullHistory);
+    }
+
+    private void HandleStateChanged(object sender, EventArgs e)
+    {
+        StateHasChanged();
+    }
+
+    private void HandleAlgChanged(string selectedAlgorithm)
+    {
+        List<HistoryModel> history = null;
+
+        if (_lastSelectedType != null)
+        {
+            FilterByType(_lastSelectedType, ref history);
+        }
+
+        FilterByAlg(selectedAlgorithm, ref history);
+
+        userData.SetFilteredHistory(history);
+    }
+
+    private void HandleTypeChanged(string selectedType)
+    {
+        List<HistoryModel> history = null;
+
+        if (_lastSelectedAlg != null)
+        {
+            FilterByAlg(_lastSelectedAlg, ref history);
+        }
+
+        FilterByType(selectedType, ref history);
+
+        userData.SetFilteredHistory(history);
+    }
+
+    private void FilterByType(string selectedType, ref List<HistoryModel> history)
+    {
+        var usingHistory = new List<HistoryModel>();
+
+        if (history == null)
+        {
+            usingHistory = userData.FullHistory;
+        }
+        else
+        {
+            usingHistory = history;
+        }
+
+        switch (selectedType)
+        {
+            case var visType when visType == _visTypes[0]:
+
+                history = usingHistory.Where(h => h.VisualizationType == VisualizationType.Line).ToList();
+                break;
+            case var visType when visType == _visTypes[1]:
+
+                history = usingHistory.Where(h => h.VisualizationType == VisualizationType.Circle).ToList();
+                break;
+            default:
+
+                history = usingHistory;
+                break;
+        }
+
+        _lastSelectedType = selectedType;
+    }
+
+    private void FilterByAlg(string selectedAlgorithm, ref List<HistoryModel> history)
+    {
+        var usingHistory = new List<HistoryModel>();
+
+        if (history == null)
+        {
+            usingHistory = userData.FullHistory;
+        }
+        else
+        {
+            usingHistory = history;
+        }
+
+        history = usingHistory.Where(h => h.AlgorithmId == _algorithmNames.IndexOf(selectedAlgorithm) + 1).ToList();
+
+        _lastSelectedAlg = selectedAlgorithm;
+    }
+
+}

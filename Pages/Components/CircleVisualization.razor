@@ -1,0 +1,190 @@
+﻿@using SortVisualizer.Client.Classes
+@using SortVisualizer.Client.Classes.SortElements
+@using Blazored.LocalStorage
+
+@inject UserDataStorage userData
+@inject ILocalStorageService localStorage
+@inject IndexedDB indexDB
+
+<div class="main-container bdr block-bg-color mb-3">
+    <div class="sort-block-container">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm mb-2 mx-2 info-control-color rounded">
+                    <p class="text-center my-auto">Обращений к массиву: @SortAlgorithm.ArrayAccessCount</p>
+                </div>
+                <div class="col mb-2 mx-2 info-control-color rounded">
+                    <p class="text-center my-auto">Перестановок: @SortAlgorithm.MoveCount</p>
+                </div>
+                <div class="col mb-2 mx-2 info-control-color rounded">
+                    <p class="text-center my-auto">Время: @($"{_sortTimer.ElapsedTime:mm\\:ss}")</p>
+                </div>
+            </div>
+        </div>
+
+        <svg width="100%" height="60vh" class="svg-container">
+            @foreach (var point in _points)
+            {
+                <circle class="@_elementClass" id="movingCircle" cx="@($"{point.Center.X}%".Replace(",", "."))" cy="@($"{point.Center.Y}%".Replace(",", "."))" r="2%" fill="@point.Color">
+
+                </circle>
+            }
+        </svg>
+
+        <div class="row btn-container">
+            <div class="col-auto">
+                <button class="btn" @onclick="GenerateArray" disabled="@_isSorting">Сгенерировать</button>
+            </div>
+            <div class="col-auto mb-2">
+                <button class="btn" @onclick="SortArray" disabled="@(_isEmpty || _isSorting || _isSorted)">Сортировать</button>
+            </div>
+
+            <div class="col-auto pt-2">
+                <p class="text-center">Задержка (мс)</p>
+            </div>
+            <div class="col-auto mb-2 w-7">
+                <input @bind="SortAlgorithm.Delay" disabled="@_isSorting" type="text" class="form-control" id="inlineFormInputGroup" placeholder="Кол-во">
+            </div>
+
+            <div class="col-auto pt-2">
+                <p class="text-center">Элементов</p>
+            </div>
+            <div class="col-auto mb-4 w-7">
+                <input @bind="userData.ItemsCount" disabled="@_isSorting" type="text" class="form-control" id="inlineFormInputGroup" placeholder="Кол-во">
+            </div>
+        </div>
+    </div>
+</div>
+
+@code
+{
+    [Inject]
+    private IJSRuntime JSRuntime { get; set; }
+
+    [Parameter]
+    public SortAlgorithm SortAlgorithm { get; set; }
+
+    [Parameter]
+    public EventCallback IsSortingCallback { get; set; }
+
+    private Generator _generator = new Generator();
+    private SortTimer _sortTimer = new SortTimer();
+
+    private List<SvgCircle> _points = new List<SvgCircle>();
+
+    private bool _isSorting = false;
+    private bool _isEmpty = true;
+    private bool _isSorted = false;
+
+    private int _algorithmId = 0;
+
+    private string _elementClass = "circle";
+
+    protected override void OnInitialized()
+    {
+        SortAlgorithm.SortService.StyleChanged += HandleStateChanged;
+    }
+
+    private async Task GenerateArray()
+    {
+        _points.Clear();
+
+        GetContainerSize();
+
+        try // cringe moment
+        {
+            _points = _generator.GenerateCircles(userData.ItemsCount);
+        }
+        catch
+        {
+            await Task.Delay(300);
+            GetContainerSize();
+            _points = _generator.GenerateCircles(userData.ItemsCount);
+        }
+
+        _isEmpty = false;
+        _isSorted = false;
+    }
+
+    private async Task GetContainerSize() // HITROST
+    {
+        _generator.ContainerWidth = await JSRuntime.InvokeAsync<int>("svgInterop.getSvgWidth", 1);
+        _generator.ContainerHeight = await JSRuntime.InvokeAsync<int>("svgInterop.getSvgHeight", 1);
+    }
+
+    private async Task SortArray()
+    {
+        IsSortingCallback.InvokeAsync();
+        _algorithmId = userData.CurrentAlgorithm.Id;
+
+        _isSorting = true;
+
+        #region circles position calculating
+
+        var radius = 4000;
+
+        var centerXPercentage = 50; // Пример процентного значения центра по X
+        var centerYPercentage = 50; // Пример процентного значения центра по Y
+
+        var xOffset = _generator.ContainerWidth * centerXPercentage / 100;
+        var yOffset = _generator.ContainerHeight * centerYPercentage / 100;
+
+        var relation = _generator.ContainerWidth / _generator.ContainerHeight;
+
+        for (int i = 0; i < _points.Count; i++)
+        {
+            var angle = 2 * Math.PI * i / _points.Count;
+
+            // координаты центра круга в процентах относительно ширины и высоты контейнера
+            double centerX = ((xOffset / _generator.ContainerWidth * 100) + radius * Math.Cos(angle) / 100);
+            double centerY = ((yOffset / _generator.ContainerHeight * 100) + radius * Math.Sin(angle) / 100);
+
+            Point center = new Point(centerX, centerY);
+
+            _points[i].Center = center;
+            _points[i].FixedCenter = center;
+
+            StateHasChanged();
+        }
+
+        await Task.Delay(1900);
+        #endregion
+
+        _sortTimer.Start();
+        _elementClass = "";
+
+        await SortAlgorithm.Sort(_points);
+
+        _elementClass = "circle";
+        _sortTimer.Stop();
+
+        HistoryModel historyModel = new HistoryModel()
+            {
+                Id = ++indexDB.ObjectManager.CurrentMaxId,
+                AlgorithmId = _algorithmId,
+                ArrayAccessCount = SortAlgorithm.ArrayAccessCount,
+                Delay = SortAlgorithm.Delay,
+                MoveCount = SortAlgorithm.MoveCount,
+                ElementsCount = _points.Count,
+                TimeWasted = _sortTimer.ElapsedTime.ToString(),
+                VisualizationType = VisualizationType.Circle
+            };
+
+        await userData.AddHistory(historyModel, localStorage, indexDB);
+
+        _isSorted = true;
+        _isSorting = false;
+
+        IsSortingCallback.InvokeAsync();
+    }
+
+    private void HandleStateChanged(object sender, EventArgs e)
+    {
+        StateHasChanged(); 
+    }
+
+    public void Dispose()
+    {
+        _sortTimer.Stop(); // Остановка таймера при уничтожении компонента
+    }
+}

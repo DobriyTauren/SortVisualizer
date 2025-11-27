@@ -1,0 +1,15 @@
+﻿@page "/heap"
+@using SortVisualizer.Client.Pages.Components
+
+<PageTitle>Сортировка кучей</PageTitle>
+
+<InfoComponent Algorithm="_heap" />
+
+<ChooseTypeVisualization Algorithm="_heap"/>
+
+<HistoryComponent IsHistorySmall="true" />
+
+@code 
+{
+    private Heap _heap = new();
+}

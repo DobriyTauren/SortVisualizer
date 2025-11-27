@@ -1,0 +1,62 @@
+﻿@inject UserDataStorage userData
+@inject NavigationManager navigationManager
+
+<div class="component-container bdr block-bg-color pt-4 px-3 pb-3 top-block">
+    <div role="button" class="row user-select-none" @onclick="@(() => {_isHidden = !_isHidden;})">
+        <h3 class="col">
+            @if (userData.CurrentAlgorithm != null)
+            {
+                @userData.CurrentAlgorithm.Name
+            }
+        </h3>
+
+        <span style="color:lightgray;" class="col-6 align-self-center text-end">
+            @(_isHidden ? "(Нажмите, чтобы развернуть)" : "(Нажмите, чтобы свернуть)")
+        </span>
+    </div>
+
+    <pre hidden="@_isHidden">
+        @if (userData.CurrentAlgorithm != null)
+        {
+            @userData.CurrentAlgorithm.Description
+        }
+    </pre>
+</div>
+
+<style>
+  pre {
+    max-width: 100%; /* Задайте нужное значение */
+    white-space: pre-wrap; /* Позволяет переносу текста на новую строку внутри элемента  */
+    word-wrap: break-word; /* Позволяет переносу длинных слов на новую строку */
+    font-family: "Roboto", sans-serif;
+    font-size: 13pt;
+
+    overflow: auto; /* Добавляет прокрутку, если содержимое превышает максимальную ширину */
+  }
+</style>
+
+@code
+{
+    [Parameter]
+    public SortAlgorithm Algorithm { get; set; } = null!;
+
+    private bool _isHidden = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            string relativePath = navigationManager.ToBaseRelativePath(navigationManager.Uri);
+
+            var _selectedAlgorithm = userData.Algorithms.FirstOrDefault(a => a.CodeName == relativePath);
+
+            if (_selectedAlgorithm != null)
+            {
+                userData.CurrentAlgorithm = _selectedAlgorithm;
+            }
+
+
+            StateHasChanged();
+        }
+    }
+}

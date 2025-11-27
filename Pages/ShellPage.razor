@@ -1,0 +1,15 @@
+﻿@page "/shell"
+@using SortVisualizer.Client.Pages.Components
+
+<PageTitle>Сортировка Шелла</PageTitle>
+
+<InfoComponent Algorithm="_shell" />
+
+<ChooseTypeVisualization Algorithm="_shell" />
+
+<HistoryComponent IsHistorySmall="true" />
+
+@code 
+{
+    private Shell _shell = new();
+}
