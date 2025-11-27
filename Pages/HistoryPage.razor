@@ -177,7 +177,9 @@
             usingHistory = history;
         }
 
-        history = usingHistory.Where(h => h.AlgorithmId == _algorithmNames.IndexOf(selectedAlgorithm) + 1).ToList();
+        var algId = userData.Algorithms.FirstOrDefault(a => a.Name == selectedAlgorithm)?.Id;
+
+        history = usingHistory.Where(h => h.AlgorithmId == algId).ToList();
 
         _lastSelectedAlg = selectedAlgorithm;
     }
