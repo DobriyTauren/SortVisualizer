@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SortVisualizer.Client</title>
+    <base href="/SortVisualizer/"/>
+
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link href="SortVisualizer.Client.styles.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="app.css" />
+    <link rel="stylesheet" href="SortVisualizer.styles.css" />
+
+    <link rel="icon" type="image/svg" href="filter-right.svg" />
+
+    <script src="js/svgInterop.js"></script>
+    <script src="js/chartInterop.js" charset="utf-8"></script>
+    <script src="js/dropdownInterop.js" charset="utf-8"></script>
+
+    <script src="js/highcharts.js"></script>
+    <script src="js/highcharts-exporting.js"></script>
+    <script src="js/highcharts-export-data.js"></script>
+</head>
+
+<body>
+    <!-- Экран загрузки -->
+    <div id="loading-container"
+         class="d-flex align-items-center justify-content-center min-vh-100"
+         style="background-color: #1d333d;">
+
+        <div class="d-flex flex-column align-items-center justify-content-center bg-opacity-75 rounded p-4 shadow"
+             style="background-color: #2A3A47;">
+
+            <!-- Круговой индикатор -->
+            <div class="position-relative mb-3" style="width: 100px; height: 100px;">
+                <svg class="w-100 h-100" style="transform: rotate(-90deg);" viewBox="0 0 100 100">
+                    <!-- Фон круга -->
+                    <circle cx="50" cy="50" r="45" stroke="#e5e7eb" stroke-width="10" fill="none" />
+                    <!-- Прогресс -->
+                    <circle id="progress-circle" cx="50" cy="50" r="45" stroke="#4DA6FF" stroke-width="10" fill="none"
+                            stroke-linecap="round" stroke-dasharray="282.6" stroke-dashoffset="282.6" />
+                </svg>
+            </div>
+
+            <!-- Текст загрузки -->
+            <div id="loading-text" class="fw-semibold fs-5" style="color: #E1E8ED;">Загрузка приложения...</div>
+        </div>
+    </div>
+
+    <!-- Основное приложение -->
+    <div id="app" class="d-none"></div>
+
+    <script src="_framework/blazor.webassembly.js"></script>
+
+    <script>
+        const loadingContainer = document.getElementById('loading-container');
+        const text = document.getElementById("loading-text");
+
+        const circle = document.getElementById("progress-circle");
+        const radius = 45;
+        const circumference = 2 * Math.PI * radius;
+
+        function setProgress(percent) {
+            const offset = circumference - (percent / 100) * circumference;
+            circle.style.strokeDashoffset = offset;
+        }
+
+        let progress = 0;
+        let blazorLoaded = false;
+
+        function updateProgress() {
+            if (progress < 80) {
+                progress += Math.random() * 3;
+                text.innerText = `Загрузка приложения... ${Math.floor(progress)}%`;
+                setProgress(progress);
+                requestAnimationFrame(updateProgress);
+            } else if (blazorLoaded) {
+                progress = 100;
+                text.innerText = `Загрузка приложения... 100%`;
+                setProgress(progress);
+                setTimeout(() => {
+                    loadingContainer.classList.remove("d-flex");
+                    loadingContainer.style.display = "none";
+                    document.getElementById("app").classList.remove("d-none");
+                }, 300);
+            } else {
+                requestAnimationFrame(updateProgress);
+            }
+        }
+
+        updateProgress();
+
+        window.addEventListener('load', () => {
+            blazorLoaded = true;
+        });
+    </script>
+</body>
+
+
+
+</html>
