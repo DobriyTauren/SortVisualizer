@@ -20,9 +20,7 @@
 
 ## 📸 Скриншоты
 
-<img src="docs/screenshot-first.png" width="800"/> 
-
-<img src="docs/screenshot-second.png" width="800"/>
+<img src="docs/screenshot-first.png" width="400"/> <img src="docs/screenshot-second.png" width="400"/>
 
 ---
 
