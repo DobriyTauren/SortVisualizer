@@ -20,11 +20,7 @@
 
 ## 📸 Скриншоты
 
-### Светлая тема
-<img src="docs/screenshot-light.png" width="400"/> <img src="docs/screenshot-first.png" width="400"/>
-
-### Тёмная тема
-<img src="docs/screenshot-dark.png" width="400"/> <img src="docs/screenshot-second.png" width="400"/>
+<img src="docs/screenshot-first.png" width="400"/> <img src="docs/screenshot-second.png" width="400"/>
 
 ---
 
