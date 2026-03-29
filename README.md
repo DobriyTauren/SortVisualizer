@@ -18,7 +18,7 @@ The application runs directly in the browser and is deployed via **GitHub Pages*
 
 ---
 
-## Технологии
+## Technologies
 
 - Blazor WebAssembly  
 - Bootstrap 5  
