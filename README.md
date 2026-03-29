@@ -1,20 +1,20 @@
 # SortVisualizer
 
-Веб-приложение для демонстрации работы алгоритмов сортировки данных.  
-Приложение работает прямо в браузере и развернуто на **GitHub Pages**.
+A web application for demonstrating how data sorting algorithms work.\
+The application runs directly in the browser and is deployed via **GitHub Pages**.
 
-🔗 [Попробовать приложение](https://dobriytauren.github.io/SortVisualizer/)
+🔗 [Try the application](https://dobriytauren.github.io/SortVisualizer/)
 
 ---
 
-## Возможности 
+## Features
 
--  Демонстрация алгоритмов сортировки: пузырьковая, вставками, быстрая, перемешиванием, слиянием, кучей, Шелла  
--  Два вида визуализации: линейная (столбцы) и цветные шарики (по цветам радуги)  
--  Настройка задержки сортировки и количества элементов  
--  Статистика времени выполнения сортировок с графиками (Highcharts)  
--  История сортировок сохраняется локально через Blazored.LocalStorage / IndexedDB  
--  SPA с боковым меню и адаптивным интерфейсом, работает без перезагрузки страниц  
+- Demonstration of sorting algorithms: bubble sort, insertion sort, quick sort, shuffle sort, merge sort, heap sort, Shell sort
+- Two types of visualization: linear (bars) and colored balls (rainbow-based)
+- Adjustable sorting delay and number of elements
+- Sorting performance statistics with charts (Highcharts)
+- Sorting history is stored locally using Blazored.LocalStorage / IndexedDB
+- SPA with a sidebar menu and responsive interface, works without page reloads  
 
 ---
 
