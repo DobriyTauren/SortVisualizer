@@ -8,6 +8,7 @@ public class HistoryModel
     public required int ArrayAccessCount { get; set; }
     public required int MoveCount { get; set; }
     public required string TimeWasted { get; set; }
+    public double SortTimeMs { get; set; }
     public required int Delay { get; set; }
     public required int ElementsCount { get; set; }
 }

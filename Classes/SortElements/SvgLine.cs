@@ -35,4 +35,29 @@ public class SvgLine : SvgShape, ISvgElement
     {
         return FixedStartPoint;
     }
+
+    public ElementState Capture()
+    {
+        return new ElementState(StartPoint.X, StartPoint.Y, EndPoint.X, EndPoint.Y, Color);
+    }
+
+    public void Apply(ElementState state)
+    {
+        StartPoint = new Point(state.P1X, state.P1Y);
+        EndPoint = new Point(state.P2X, state.P2Y);
+        Color = state.Color;
+    }
+
+    public SvgLine Clone()
+    {
+        return new SvgLine
+        {
+            Id = Id,
+            Value = Value,
+            Color = Color,
+            StartPoint = new Point(StartPoint.X, StartPoint.Y),
+            EndPoint = new Point(EndPoint.X, EndPoint.Y),
+            FixedStartPoint = new Point(FixedStartPoint.X, FixedStartPoint.Y),
+        };
+    }
 }

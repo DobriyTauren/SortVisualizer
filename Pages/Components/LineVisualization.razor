@@ -1,8 +1,11 @@
-﻿@using Blazored.LocalStorage
+@using Blazored.LocalStorage
+@using SortVisualizer.Client.Classes
+@using SortVisualizer.Client.Classes.SortElements
 
 @inject UserDataStorage userData
 @inject ILocalStorageService localStorage
 @inject IndexedDB indexDB
+@implements IDisposable
 
 <div class="main-container bdr block-bg-color mb-3">
     <div class="sort-block-container">
@@ -15,40 +18,73 @@
                     <p class="text-center my-auto">Перестановок: @SortAlgorithm.MoveCount</p>
                 </div>
                 <div class="col mb-2 mx-2 info-control-color rounded">
-                    <p class="text-center my-auto">Время: @($"{_sortTimer.ElapsedTime:mm\\:ss}")</p>
+                    <p class="text-center my-auto">Время: @FormatMs(_computeMs)</p>
                 </div>
             </div>
         </div>
 
-        <svg width="100%" height="60vh" class="mx-2 svg-container">
+        <svg width="100%" height="58vh" shape-rendering="@BarShapeRendering" class="mx-2 svg-container bars-svg @(BarGlow ? "bars-glow" : null)">
             @foreach (var line in _arrayElements)
             {
-                <line x1="@($"{line.StartPoint.X}%".Replace(",", "."))" y1="@($"{line.StartPoint.Y}%".Replace(",", "."))" x2="@($"{line.EndPoint.X}%".Replace(",", "."))" y2="@($"{line.EndPoint.Y}%".Replace(",", "."))" stroke-width="@($"{_generator.LineWidthPercentage}%".Replace(",","."))" stroke="@line.Color">
-                
+                <line x1="@($"{line.StartPoint.X}%".Replace(",", "."))" y1="@($"{line.StartPoint.Y}%".Replace(",", "."))" x2="@($"{line.EndPoint.X}%".Replace(",", "."))" y2="@($"{line.EndPoint.Y}%".Replace(",", "."))" stroke-width="@($"{_generator.LineWidthPercentage * BarWidthFactor}%".Replace(",","."))" stroke="@line.Color" stroke-linecap="@BarCap">
+
                 </line>
             }
         </svg>
 
+        @if (_isPreparing)
+        {
+            <div class="preparing mx-2 mb-3"><span class="prep-spinner"></span> Подготовка анимации…</div>
+        }
+
+        @if (_player != null)
+        {
+            <div class="transport mx-2 mb-3">
+                <button class="tbtn" title="В начало" @onclick="Restart" disabled="@_player.IsAtStart">
+                    <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M4 4a.5.5 0 0 1 1 0v3.248l6.267-3.636c.54-.313 1.232.066 1.232.696v7.384c0 .63-.692 1.01-1.232.697L5 8.752V12a.5.5 0 0 1-1 0z"/></svg>
+                </button>
+                <button class="tbtn" title="Шаг назад" @onclick="StepBack" disabled="@_player.IsAtStart">
+                    <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M3.86 8.753l5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z"/></svg>
+                </button>
+                <button class="tbtn tbtn-main" title="@(_player.IsPlaying ? "Пауза" : "Воспроизвести")" @onclick="TogglePlay">
+                    @if (_player.IsPlaying)
+                    {
+                        <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5m5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5"/></svg>
+                    }
+                    else
+                    {
+                        <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor"><path d="m11.596 8.697-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/></svg>
+                    }
+                </button>
+                <button class="tbtn" title="Шаг вперёд" @onclick="StepForward" disabled="@_player.IsFinished">
+                    <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M12.14 8.753 6.658 13.549c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/></svg>
+                </button>
+
+                <input type="range" class="progress-range" min="0" max="@_player.Total" value="@_player.Index" @oninput="OnSeek" />
+                <span class="frame-counter">@_player.Index / @_player.Total</span>
+
+                <select class="speed-select" @bind="SpeedMs" title="Скорость анимации">
+                    @foreach (var p in _speedPresets)
+                    {
+                        <option value="@p.Ms">@p.Label</option>
+                    }
+                </select>
+            </div>
+        }
+
         <div class="row btn-container">
             <div class="col-auto">
-                <button class="btn" @onclick="GenerateArray" disabled="@_isSorting">Сгенерировать</button>
+                <button class="btn" @onclick="GenerateArray" disabled="@IsBusy">Сгенерировать</button>
             </div>
             <div class="col-auto mb-2">
-                <button class="btn" @onclick="SortArray" disabled="@(_isEmpty || _isSorting || _isSorted)">Сортировать</button>
+                <button class="btn" @onclick="SortArray" disabled="@(_isEmpty || _isRecorded || IsBusy)">Сортировать</button>
             </div>
-            
-            <div class="col-auto pt-2">
-                <p class="text-center">Задержка (мс)</p>
-            </div>
-            <div class="col-auto mb-2 w-7">
-                <input @bind="SortAlgorithm.Delay" disabled="@_isSorting" type="text" class="form-control" id="inlineFormInputGroup" placeholder="Задержка">
-            </div>
-            
+
             <div class="col-auto pt-2">
                 <p class="text-center">Элементов</p>
             </div>
             <div class="col-auto mb-4 w-7">
-                <input @bind="@userData.ItemsCount" disabled="@_isSorting" type="text" class="form-control" id="inlineFormInputGroup" placeholder="Элементов">
+                <input @bind="@userData.ItemsCount" disabled="@(_isRecorded || IsBusy)" type="text" class="form-control" placeholder="Элементов">
             </div>
         </div>
     </div>
@@ -66,23 +102,76 @@
     public EventCallback IsSortingCallback { get; set; }
 
     private Generator _generator = new Generator();
-    private SortTimer _sortTimer = new SortTimer();
 
     private List<SvgLine> _arrayElements = new List<SvgLine>();
+    private SortPlayer? _player;
 
-    private bool _isSorting = false;
-    private bool _isSorted = false;
     private bool _isEmpty = true;
-
+    private bool _isRecorded = false;
+    private bool _isPreparing = false;
     private int _algorithmId = 0;
 
-    protected override void OnInitialized()
+    private bool IsBusy => _isPreparing || (_player != null && _player.IsPlaying);
+
+    // real algorithm time (ms), measured by Stopwatch on a recording-free pass
+    private double _computeMs;
+
+    private string FormatMs(double ms)
     {
-        SortAlgorithm.SortService.StyleChanged += HandleStateChanged;
+        var ci = System.Globalization.CultureInfo.InvariantCulture;
+        if (ms <= 0) return "0 мс";
+        if (ms < 1) return ms.ToString("0.000", ci) + " мс";
+        if (ms < 100) return ms.ToString("0.00", ci) + " мс";
+        return ms.ToString("0", ci) + " мс";
+    }
+
+    // Bars get denser/cleaner as the count grows: thick rounded glowing bars when few,
+    // thin contiguous flat bars (no glow, pixel-snapped) when many — avoids the moiré shimmer.
+    private int BarCount => _arrayElements.Count;
+    private double BarWidthFactor => BarCount <= 30 ? 0.62 : (BarCount <= 200 ? 0.82 : 1.0);
+    private string BarCap => BarCount > 200 ? "butt" : "round";
+    private bool BarGlow => BarCount <= 30;
+    private string BarShapeRendering => BarCount > 200 ? "crispEdges" : "geometricPrecision";
+
+    // delay (ms) between animation frames; lower = faster
+    private int _speedMs = 30;
+
+    private readonly (string Label, int Ms)[] _speedPresets =
+    {
+        ("0.25×", 120),
+        ("0.5×", 60),
+        ("1×", 30),
+        ("2×", 15),
+        ("4×", 8),
+        ("8×", 3),
+    };
+
+    private int SpeedMs
+    {
+        get => _player?.Delay ?? _speedMs;
+        set
+        {
+            _speedMs = value;
+            if (_player != null) _player.Delay = value;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // auto-generate the starting array as soon as the page opens (bars are visible by default)
+        if (firstRender && _isEmpty)
+        {
+            await GenerateArray();
+            StateHasChanged();
+        }
     }
 
     private async Task GenerateArray()
     {
+        if (_player != null) _player.Pause();
+        _player = null;
+        _isRecorded = false;
+
         _arrayElements.Clear();
 
         _generator.ContainerWidth = await JSRuntime.InvokeAsync<int>("svgInterop.getSvgWidth", 0);
@@ -91,49 +180,113 @@
         _arrayElements = _generator.GenerateLines(userData.ItemsCount);
 
         _isEmpty = false;
-        _isSorted = false;
     }
 
     private async Task SortArray()
     {
-        IsSortingCallback.InvokeAsync();
         _algorithmId = userData.CurrentAlgorithm.Id;
 
-        _isSorting = true;
+        // show the "preparing" state and let it paint before the heavy recording starts
+        _isPreparing = true;
+        StateHasChanged();
+        await Task.Yield();
 
-        _sortTimer.Start();
+        // Keep a clone of the original (unsorted) data for an isolated timing pass below.
+        var timingClone = _arrayElements.Select(e => e.Clone()).ToList();
+
+        // 1. Record the whole sort on the real elements (yields to the UI periodically).
+        //    This also warms up the sort code path before we measure it.
+        SortAlgorithm.SortService.StartRecording(_arrayElements.Cast<ISvgElement>());
         await SortAlgorithm.Sort(_arrayElements);
+        SortAlgorithm.SortService.EndRecording();
 
-        _sortTimer.Stop();
+        var frames = SortAlgorithm.SortService.Frames;
 
+        // 2. Build the player and rewind to the starting arrangement.
+        _player = new SortPlayer(
+            _arrayElements.Cast<ISvgElement>().ToList(),
+            SortAlgorithm.SortService.InitialStates,
+            frames,
+            _speedMs);
+
+        _isPreparing = false;
+        _isRecorded = true;
+        StateHasChanged();
+
+        // 3. Timing pass: pure algorithm on the untouched clone, recording disabled,
+        //    so the Stopwatch measures the real sort cost (not the recorder's diff work).
+        SortAlgorithm.SortService.Silent = true;
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        await SortAlgorithm.Sort(timingClone);
+        sw.Stop();
+        SortAlgorithm.SortService.Silent = false;
+        _computeMs = sw.Elapsed.TotalMilliseconds;
+
+        // 4. Persist run stats — TimeWasted/SortTimeMs hold the real measured compute time.
         HistoryModel historyModel = new HistoryModel()
         {
             Id = ++indexDB.ObjectManager.CurrentMaxId,
             AlgorithmId = _algorithmId,
             ArrayAccessCount = SortAlgorithm.ArrayAccessCount,
-            Delay = SortAlgorithm.Delay,
+            Delay = _speedMs,
             MoveCount = SortAlgorithm.MoveCount,
             ElementsCount = _arrayElements.Count,
-            TimeWasted = _sortTimer.ElapsedTime.ToString(),
+            TimeWasted = FormatMs(_computeMs),
+            SortTimeMs = _computeMs,
             VisualizationType = VisualizationType.Line
         };
 
         await userData.AddHistory(historyModel, localStorage, indexDB);
 
-        _isSorting = false;
-        _isSorted = true;
+        // 4. Play it back.
+        await Play();
+    }
 
-        IsSortingCallback.InvokeAsync();
+    private async Task Play()
+    {
+        if (_player == null) return;
+
+        await IsSortingCallback.InvokeAsync();
+        await _player.Play(() => InvokeAsync(StateHasChanged));
+        await IsSortingCallback.InvokeAsync();
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task TogglePlay()
+    {
+        if (_player == null) return;
+
+        if (_player.IsPlaying)
+            _player.Pause();
+        else
+            await Play();
+    }
+
+    private void StepForward() => _player?.StepForward(() => InvokeAsync(StateHasChanged));
+
+    private void StepBack() => _player?.StepBack(() => InvokeAsync(StateHasChanged));
+
+    private void Restart()
+    {
+        _player?.Pause();
+        _player?.Reset();
         StateHasChanged();
     }
 
-    private void HandleStateChanged(object sender, EventArgs e)
+    private void OnSeek(ChangeEventArgs e)
     {
-        StateHasChanged(); 
+        if (_player == null) return;
+
+        _player.Pause();
+        if (int.TryParse(e.Value?.ToString(), out var target))
+            _player.SeekTo(target);
+
+        StateHasChanged();
     }
 
     public void Dispose()
     {
-        _sortTimer.Stop(); // Остановка таймера при уничтожении компонента
+        _player?.Pause();
     }
 }

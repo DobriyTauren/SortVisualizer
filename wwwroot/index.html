@@ -11,8 +11,7 @@
     <link href="SortVisualizer.Client.styles.css" rel="stylesheet" />
 
     <link rel="stylesheet" href="bootstrap/bootstrap.min.css" />
-    <link rel="stylesheet" href="app.css" />
-    <link rel="stylesheet" href="SortVisualizer.styles.css" />
+    <link rel="stylesheet" href="css/app.css?v=1" />
 
     <link rel="icon" type="image/svg" href="filter-right.svg" />
 
@@ -29,24 +28,34 @@
     <!-- Экран загрузки -->
     <div id="loading-container"
          class="d-flex align-items-center justify-content-center min-vh-100"
-         style="background-color: #1d333d;">
+         style="background:
+            radial-gradient(60vw 60vw at 12% -10%, rgba(99,102,241,0.30), transparent 60%),
+            radial-gradient(55vw 55vw at 100% 0%, rgba(34,211,238,0.22), transparent 55%),
+            radial-gradient(70vw 70vw at 80% 110%, rgba(139,92,246,0.20), transparent 60%),
+            #0B0E17;">
 
-        <div class="d-flex flex-column align-items-center justify-content-center bg-opacity-75 rounded p-4 shadow"
-             style="background-color: #2A3A47;">
+        <div class="d-flex flex-column align-items-center justify-content-center p-4"
+             style="background: rgba(22,28,44,0.55); -webkit-backdrop-filter: blur(18px) saturate(140%); backdrop-filter: blur(18px) saturate(140%); border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; box-shadow: 0 18px 50px rgba(0,0,0,0.55);">
 
             <!-- Круговой индикатор -->
             <div class="position-relative mb-3" style="width: 100px; height: 100px;">
                 <svg class="w-100 h-100" style="transform: rotate(-90deg);" viewBox="0 0 100 100">
+                    <defs>
+                        <linearGradient id="progress-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#6366F1" />
+                            <stop offset="100%" stop-color="#22D3EE" />
+                        </linearGradient>
+                    </defs>
                     <!-- Фон круга -->
-                    <circle cx="50" cy="50" r="45" stroke="#e5e7eb" stroke-width="10" fill="none" />
+                    <circle cx="50" cy="50" r="45" stroke="rgba(255,255,255,0.10)" stroke-width="10" fill="none" />
                     <!-- Прогресс -->
-                    <circle id="progress-circle" cx="50" cy="50" r="45" stroke="#4DA6FF" stroke-width="10" fill="none"
+                    <circle id="progress-circle" cx="50" cy="50" r="45" stroke="url(#progress-grad)" stroke-width="10" fill="none"
                             stroke-linecap="round" stroke-dasharray="282.6" stroke-dashoffset="282.6" />
                 </svg>
             </div>
 
             <!-- Текст загрузки -->
-            <div id="loading-text" class="fw-semibold fs-5" style="color: #E1E8ED;">Загрузка приложения...</div>
+            <div id="loading-text" class="fw-semibold fs-5" style="color: #E6EDF8;">Загрузка приложения...</div>
         </div>
     </div>
 

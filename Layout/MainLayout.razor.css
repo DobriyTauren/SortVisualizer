@@ -9,7 +9,11 @@ main {
 }
 
 .sidebar {
-    background: #030b12;
+    background: linear-gradient(180deg, rgba(14, 19, 32, 0.92) 0%, rgba(8, 11, 20, 0.92) 100%);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    border-right: 1px solid rgba(255, 255, 255, 0.07);
+    box-shadow: 1px 0 24px rgba(0, 0, 0, 0.35);
 }
 
 .top-row {

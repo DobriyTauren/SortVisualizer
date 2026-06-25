@@ -42,6 +42,7 @@ public class Generator
 
             var line = new SvgLine
             {
+                Id = i,
                 StartPoint = startPoint,
                 FixedStartPoint = startPoint,
                 EndPoint = new Point(x, MAX_VALUE - values[i]),
@@ -77,6 +78,7 @@ public class Generator
 
             var point = new SvgCircle
             {
+                Id = i,
                 Value = value,
                 Center = center,
                 FixedCenter = center,

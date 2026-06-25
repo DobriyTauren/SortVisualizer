@@ -22,28 +22,41 @@
 
 <style>
     .dropdown-menu {
-        background-color: #27188d; 
-        color: #ffffff; 
+        background: rgba(17, 21, 31, 0.92);
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 14px;
+        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+        padding: 6px;
+        color: #E6EDF8;
     }
 
         .dropdown-menu a.dropdown-item {
-            color: #ffffff; 
+            color: #E6EDF8;
+            border-radius: 9px;
+            padding: 8px 12px;
+            transition: background 0.15s ease, color 0.15s ease;
         }
 
             .dropdown-menu a.dropdown-item:hover {
-                background-color: rgba(255, 255, 255, 0.2);
+                background: linear-gradient(135deg, rgba(99,102,241,0.25), rgba(34,211,238,0.18));
+                color: #ffffff;
                 user-select: none;
                 cursor: pointer;
             }
 
-    .dropdown-toggle {
-        background-color: #27188d; 
-        color: #ffffff;
-        border: 1px solid #1f146d;
+    .dropdown-toggle.btn {
+        background: rgba(8, 12, 22, 0.7) !important;
+        color: #E6EDF8 !important;
+        border: 1px solid rgba(255, 255, 255, 0.16) !important;
+        box-shadow: none;
+        font-weight: 500;
     }
 
-        .dropdown-toggle:hover {
-            background-color: #3a29c6; 
+        .dropdown-toggle.btn:hover {
+            border-color: rgba(99, 102, 241, 0.6) !important;
+            box-shadow: 0 0 16px rgba(99, 102, 241, 0.22);
         }
 </style>
 

@@ -1,15 +1,10 @@
 window.renderCharts = (dataArrays, algorithmNames) => {
     const seriesData = dataArrays.map((dataItems, index) => {
         const datetimeData = dataItems.map(item => {
-            const timeParts = item.timeWasted.split(':');
-            const hours = parseInt(timeParts[0]);
-            const minutes = parseInt(timeParts[1]);
-            const seconds = parseInt(timeParts[2]);
-            const totalSeconds = hours * 3600 + minutes * 60 + seconds; // переводим время в секунды
             return {
                 x: item.elementsCount,
-                y: totalSeconds, // используем время в качестве значения оси y
-                algorithmName: algorithmNames[index] // Добавляем имя алгоритма к данным точек
+                y: typeof item.sortTimeMs === 'number' ? item.sortTimeMs : 0, // реальное время вычисления (мс)
+                algorithmName: algorithmNames[index]
             };
         });
 
@@ -53,18 +48,21 @@ window.renderCharts = (dataArrays, algorithmNames) => {
                 }
             }
         },
+        colors: ['#22D3EE', '#818CF8', '#A78BFA', '#34D399', '#F471B5', '#FBBF24', '#60A5FA', '#FB7185'],
         chart: {
             type: 'spline',
-            backgroundColor: '#030b12',
+            backgroundColor: 'transparent',
             style: {
-                fontFamily: '"Arial", sans-serif',
-                color: '#e0e0e0'
+                fontFamily: '"Inter", "Roboto", sans-serif',
+                color: '#9DA9C2'
             }
         },
         title: {
-            text: 'Время затраченное на сортировку по количеству элементов',
+            text: 'Реальное время вычисления по количеству элементов',
             style: {
-                color: '#ffffff'
+                color: '#F4F8FF',
+                fontFamily: '"Space Grotesk", "Inter", sans-serif',
+                fontWeight: '600'
             }
         },
         xAxis: {
@@ -72,40 +70,48 @@ window.renderCharts = (dataArrays, algorithmNames) => {
             title: {
                 text: 'Количество элементов',
                 style: {
-                    color: '#ffffff'
+                    color: '#C7D2E5'
                 }
             },
             labels: {
                 style: {
-                    color: '#e0e0e0'
+                    color: '#9DA9C2'
                 }
             },
-            lineColor: '#707070',
-            tickColor: '#707070'
+            lineColor: 'rgba(255, 255, 255, 0.15)',
+            tickColor: 'rgba(255, 255, 255, 0.15)'
         },
         yAxis: {
             title: {
-                text: 'Время затраченное на сорт. (в сек.)',
+                text: 'Время вычисления (мс)',
                 style: {
-                    color: '#ffffff'
+                    color: '#C7D2E5'
                 }
             },
             labels: {
                 format: '{value}',
                 style: {
-                    color: '#ffffff'
+                    color: '#9DA9C2'
                 }
             },
-            gridLineColor: '#707070'
+            gridLineColor: 'rgba(255, 255, 255, 0.07)'
+        },
+        plotOptions: {
+            spline: {
+                lineWidth: 3,
+                marker: { radius: 4, symbol: 'circle', lineWidth: 0 },
+                states: { hover: { lineWidth: 4 } }
+            }
         },
         tooltip: {
             formatter: function () {
-                return '<span style="color:' + this.point.color + '">\u25CF</span>' + ' <b>' + this.point.algorithmName + '</b><br />' + ' Время: <b>' + Highcharts.dateFormat('%H:%M:%S', this.y * 1000) + '</b><br/>Количество элементов: <b>' + this.x + '</b>';
+                return '<span style="color:' + this.point.color + '">\u25CF</span>' + ' <b>' + this.point.algorithmName + '</b><br />' + ' Время: <b>' + Highcharts.numberFormat(this.y, 3) + ' мс</b><br/>Количество элементов: <b>' + this.x + '</b>';
             },
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-            borderColor: '#707070',
+            backgroundColor: 'rgba(17, 21, 31, 0.92)',
+            borderColor: 'rgba(99, 102, 241, 0.45)',
+            borderRadius: 12,
             style: {
-                color: '#e0e0e0'
+                color: '#E6EDF8'
             }
         },
         series: seriesData,
@@ -115,10 +121,10 @@ window.renderCharts = (dataArrays, algorithmNames) => {
         legend: {
             enabled: true,
             itemStyle: {
-                color: '#ffffff'
+                color: '#C7D2E5'
             },
             itemHoverStyle: {
-                color: '#cccccc' // Чуть темнее белого
+                color: '#ffffff'
             }
         },
         navigation: {
