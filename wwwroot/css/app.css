@@ -524,6 +524,15 @@ table tr td, table tr th {
     transition: stroke 0.12s linear;
 }
 
+/* smooth movement during playback (duration synced to playback speed via --move-dur) */
+.svg-container line.bar-move {
+    transition: transform var(--move-dur, 30ms) linear, stroke 0.12s linear;
+}
+
+.svg-container circle.circle-move {
+    transition: cx var(--move-dur, 30ms) linear, cy var(--move-dur, 30ms) linear;
+}
+
 /* neon glow only for sparse bar counts (overlapping halos shimmer when dense) */
 .bars-glow line {
     filter: drop-shadow(0 0 1px rgba(34, 211, 238, 0.35));

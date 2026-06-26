@@ -26,6 +26,40 @@ namespace SortVisualizer.Client.Classes
             }
         }
 
+        private const string PlaybackSpeedKey = "playbackSpeedMs";
+        private int _playbackSpeedMs = 30;
+        private bool _speedLoaded;
+
+        // Animation delay (ms) between playback frames; remembered across pages and reloads.
+        public int PlaybackSpeedMs
+        {
+            get => _playbackSpeedMs;
+            set => _playbackSpeedMs = value < 1 ? 1 : value;
+        }
+
+        public async Task LoadPlaybackSpeed(ILocalStorageService localStorage)
+        {
+            if (_speedLoaded) return;
+            _speedLoaded = true;
+
+            try
+            {
+                var saved = await localStorage.GetItemAsync<int?>(PlaybackSpeedKey);
+                if (saved.HasValue && saved.Value > 0)
+                    _playbackSpeedMs = saved.Value;
+            }
+            catch { /* ignore storage errors, keep default */ }
+        }
+
+        public async Task SavePlaybackSpeed(ILocalStorageService localStorage)
+        {
+            try
+            {
+                await localStorage.SetItemAsync(PlaybackSpeedKey, _playbackSpeedMs);
+            }
+            catch { /* ignore storage errors */ }
+        }
+
         public AlgorithmModel CurrentAlgorithm { get; set; }
         public List<AlgorithmModel> Algorithms { get; private set; } = new List<AlgorithmModel> 
         {

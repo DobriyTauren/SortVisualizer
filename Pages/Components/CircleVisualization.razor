@@ -23,7 +23,7 @@
             </div>
         </div>
 
-        <svg width="100%" height="60vh" class="svg-container">
+        <svg width="100%" height="60vh" class="svg-container" style="--move-dur: @(userData.PlaybackSpeedMs)ms;">
             @foreach (var point in _points)
             {
                 <circle class="@_elementClass" cx="@($"{point.Center.X}%".Replace(",", "."))" cy="@($"{point.Center.Y}%".Replace(",", "."))" r="2%" fill="@point.Color">
@@ -63,7 +63,7 @@
                 <input type="range" class="progress-range" min="0" max="@_player.Total" value="@_player.Index" @oninput="OnSeek" />
                 <span class="frame-counter">@_player.Index / @_player.Total</span>
 
-                <select class="speed-select" @bind="SpeedMs" title="Скорость анимации">
+                <select class="speed-select" @bind="SpeedMs" @bind:after="SaveSpeed" title="Скорость анимации">
                     @foreach (var p in _speedPresets)
                     {
                         <option value="@p.Ms">@p.Label</option>
@@ -106,10 +106,13 @@
     private List<SvgCircle> _points = new List<SvgCircle>();
     private SortPlayer? _player;
 
+    private const int AnimateMaxCount = 150;
+
     private bool _isEmpty = true;
     private bool _isRecorded = false;
     private bool _isPreparing = false;
     private bool _autoGenBusy = false;
+    private bool _animate = false;
     private int _algorithmId = 0;
 
     private string _elementClass = "circle";
@@ -128,9 +131,6 @@
         return ms.ToString("0", ci) + " мс";
     }
 
-    // delay (ms) between animation frames; lower = faster
-    private int _speedMs = 30;
-
     private readonly (string Label, int Ms)[] _speedPresets =
     {
         ("0.25×", 120),
@@ -141,18 +141,24 @@
         ("8×", 3),
     };
 
+    // playback speed is remembered in UserDataStorage (and persisted to localStorage)
     private int SpeedMs
     {
-        get => _player?.Delay ?? _speedMs;
+        get => _player?.Delay ?? userData.PlaybackSpeedMs;
         set
         {
-            _speedMs = value;
+            userData.PlaybackSpeedMs = value;
             if (_player != null) _player.Delay = value;
         }
     }
 
+    private async Task SaveSpeed() => await userData.SavePlaybackSpeed(localStorage);
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (firstRender)
+            await userData.LoadPlaybackSpeed(localStorage);
+
         // circles are hidden by default (svg width 0); auto-generate the first time the
         // view actually becomes visible so the user lands on a ready-made array.
         if (_isEmpty && !_autoGenBusy && !_isPreparing)
@@ -161,7 +167,7 @@
             try
             {
                 var width = await JSRuntime.InvokeAsync<int>("svgInterop.getSvgWidth", 1);
-                if (width > 0)
+                if (width > 50)
                 {
                     await GenerateArray();
                     StateHasChanged();
@@ -253,7 +259,7 @@
             _points.Cast<ISvgElement>().ToList(),
             SortAlgorithm.SortService.InitialStates,
             frames,
-            _speedMs);
+            userData.PlaybackSpeedMs);
 
         _isRecorded = true;
         _isPreparing = false;
@@ -273,7 +279,7 @@
             Id = ++indexDB.ObjectManager.CurrentMaxId,
             AlgorithmId = _algorithmId,
             ArrayAccessCount = SortAlgorithm.ArrayAccessCount,
-            Delay = _speedMs,
+            Delay = userData.PlaybackSpeedMs,
             MoveCount = SortAlgorithm.MoveCount,
             ElementsCount = _points.Count,
             TimeWasted = FormatMs(_computeMs),
@@ -291,10 +297,17 @@
     {
         if (_player == null) return;
 
+        // enable speed-synced gliding (only for sparse arrays); apply it before centers move
+        _animate = _points.Count <= AnimateMaxCount;
+        _elementClass = _animate ? "circle-move" : "";
+        StateHasChanged();
+        await Task.Yield();
+
         await IsSortingCallback.InvokeAsync();
         await _player.Play(() => InvokeAsync(StateHasChanged));
         await IsSortingCallback.InvokeAsync();
 
+        _animate = false;
         await InvokeAsync(StateHasChanged);
     }
 
@@ -308,12 +321,28 @@
             await Play();
     }
 
-    private void StepForward() => _player?.StepForward(() => InvokeAsync(StateHasChanged));
+    // stepping / scrubbing should be instant, not tweened
+    private void StopAnimating()
+    {
+        _animate = false;
+        _elementClass = "";
+    }
 
-    private void StepBack() => _player?.StepBack(() => InvokeAsync(StateHasChanged));
+    private void StepForward()
+    {
+        StopAnimating();
+        _player?.StepForward(() => InvokeAsync(StateHasChanged));
+    }
+
+    private void StepBack()
+    {
+        StopAnimating();
+        _player?.StepBack(() => InvokeAsync(StateHasChanged));
+    }
 
     private void Restart()
     {
+        StopAnimating();
         _player?.Pause();
         _player?.Reset();
         StateHasChanged();
@@ -323,6 +352,7 @@
     {
         if (_player == null) return;
 
+        StopAnimating();
         _player.Pause();
         if (int.TryParse(e.Value?.ToString(), out var target))
             _player.SeekTo(target);

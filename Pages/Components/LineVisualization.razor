@@ -23,10 +23,14 @@
             </div>
         </div>
 
-        <svg width="100%" height="58vh" shape-rendering="@BarShapeRendering" class="mx-2 svg-container bars-svg @(BarGlow ? "bars-glow" : null)">
+        <svg width="100%" height="58vh" shape-rendering="@BarShapeRendering" class="mx-2 svg-container bars-svg @(BarGlow ? "bars-glow" : null)" style="--move-dur: @(userData.PlaybackSpeedMs)ms;">
             @foreach (var line in _arrayElements)
             {
-                <line x1="@($"{line.StartPoint.X}%".Replace(",", "."))" y1="@($"{line.StartPoint.Y}%".Replace(",", "."))" x2="@($"{line.EndPoint.X}%".Replace(",", "."))" y2="@($"{line.EndPoint.Y}%".Replace(",", "."))" stroke-width="@($"{_generator.LineWidthPercentage * BarWidthFactor}%".Replace(",","."))" stroke="@line.Color" stroke-linecap="@BarCap">
+                <line class="@(_animate ? "bar-move" : null)"
+                      x1="@($"{BarX(line)}%".Replace(",", "."))" y1="@($"{line.StartPoint.Y}%".Replace(",", "."))"
+                      x2="@($"{BarX(line)}%".Replace(",", "."))" y2="@($"{line.EndPoint.Y}%".Replace(",", "."))"
+                      stroke-width="@($"{_generator.LineWidthPercentage * BarWidthFactor}%".Replace(",","."))" stroke="@line.Color" stroke-linecap="@BarCap"
+                      style="@BarTransform(line)">
 
                 </line>
             }
@@ -63,7 +67,7 @@
                 <input type="range" class="progress-range" min="0" max="@_player.Total" value="@_player.Index" @oninput="OnSeek" />
                 <span class="frame-counter">@_player.Index / @_player.Total</span>
 
-                <select class="speed-select" @bind="SpeedMs" title="Скорость анимации">
+                <select class="speed-select" @bind="SpeedMs" @bind:after="SaveSpeed" title="Скорость анимации">
                     @foreach (var p in _speedPresets)
                     {
                         <option value="@p.Ms">@p.Label</option>
@@ -106,9 +110,13 @@
     private List<SvgLine> _arrayElements = new List<SvgLine>();
     private SortPlayer? _player;
 
+    private const int AnimateMaxCount = 150;
+
     private bool _isEmpty = true;
     private bool _isRecorded = false;
     private bool _isPreparing = false;
+    private bool _useTransform = false;  // bars positioned via transform (animatable layout)
+    private bool _animate = false;       // transition (gliding) currently enabled
     private int _algorithmId = 0;
 
     private bool IsBusy => _isPreparing || (_player != null && _player.IsPlaying);
@@ -133,8 +141,16 @@
     private bool BarGlow => BarCount <= 30;
     private string BarShapeRendering => BarCount > 200 ? "crispEdges" : "geometricPrecision";
 
-    // delay (ms) between animation frames; lower = faster
-    private int _speedMs = 30;
+    // While animating, bars sit at their home column and slide via transform (CSS-animatable).
+    // Otherwise they're drawn at the current column directly (keeps crispEdges pixel-snapping).
+    private double BarX(SvgLine line) => _useTransform ? line.FixedStartPoint.X : line.StartPoint.X;
+
+    private string? BarTransform(SvgLine line)
+    {
+        if (!_useTransform) return null;
+        var dx = (line.StartPoint.X - line.FixedStartPoint.X) * _generator.ContainerWidth / 100d;
+        return $"transform: translateX({dx.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture)}px);";
+    }
 
     private readonly (string Label, int Ms)[] _speedPresets =
     {
@@ -146,22 +162,29 @@
         ("8×", 3),
     };
 
+    // playback speed is remembered in UserDataStorage (and persisted to localStorage)
     private int SpeedMs
     {
-        get => _player?.Delay ?? _speedMs;
+        get => _player?.Delay ?? userData.PlaybackSpeedMs;
         set
         {
-            _speedMs = value;
+            userData.PlaybackSpeedMs = value;
             if (_player != null) _player.Delay = value;
         }
     }
 
+    private async Task SaveSpeed() => await userData.SavePlaybackSpeed(localStorage);
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        // auto-generate the starting array as soon as the page opens (bars are visible by default)
-        if (firstRender && _isEmpty)
+        if (firstRender)
         {
-            await GenerateArray();
+            await userData.LoadPlaybackSpeed(localStorage);
+
+            // auto-generate the starting array as soon as the page opens (bars visible by default)
+            if (_isEmpty)
+                await GenerateArray();
+
             StateHasChanged();
         }
     }
@@ -174,8 +197,20 @@
 
         _arrayElements.Clear();
 
-        _generator.ContainerWidth = await JSRuntime.InvokeAsync<int>("svgInterop.getSvgWidth", 0);
-        _generator.ContainerHeight = await JSRuntime.InvokeAsync<int>("svgInterop.getSvgHeight", 0);
+        // On a cold / direct page load the svg may not be laid out yet (width 0), which
+        // makes GenerateLines divide by zero and collapse every bar into one. Wait for a
+        // real width before generating.
+        int width = 0, height = 0;
+        for (int attempt = 0; attempt < 10; attempt++)
+        {
+            width = await JSRuntime.InvokeAsync<int>("svgInterop.getSvgWidth", 0);
+            height = await JSRuntime.InvokeAsync<int>("svgInterop.getSvgHeight", 0);
+            if (width > 50) break;
+            await Task.Delay(80);
+        }
+
+        _generator.ContainerWidth = width;
+        _generator.ContainerHeight = height;
 
         _arrayElements = _generator.GenerateLines(userData.ItemsCount);
 
@@ -207,7 +242,7 @@
             _arrayElements.Cast<ISvgElement>().ToList(),
             SortAlgorithm.SortService.InitialStates,
             frames,
-            _speedMs);
+            userData.PlaybackSpeedMs);
 
         _isPreparing = false;
         _isRecorded = true;
@@ -228,7 +263,7 @@
             Id = ++indexDB.ObjectManager.CurrentMaxId,
             AlgorithmId = _algorithmId,
             ArrayAccessCount = SortAlgorithm.ArrayAccessCount,
-            Delay = _speedMs,
+            Delay = userData.PlaybackSpeedMs,
             MoveCount = SortAlgorithm.MoveCount,
             ElementsCount = _arrayElements.Count,
             TimeWasted = FormatMs(_computeMs),
@@ -246,10 +281,22 @@
     {
         if (_player == null) return;
 
+        // enable speed-synced sliding (only for sparse arrays), in two steps so switching
+        // bars to the transform layout doesn't itself trigger a spurious glide:
+        var animate = _arrayElements.Count <= AnimateMaxCount;
+        _useTransform = animate;            // 1) lay bars out via transform (no transition yet)
+        StateHasChanged();
+        await Task.Yield();
+        _animate = animate;                 // 2) now turn the transition on (transform unchanged)
+        StateHasChanged();
+        await Task.Yield();
+
         await IsSortingCallback.InvokeAsync();
         await _player.Play(() => InvokeAsync(StateHasChanged));
         await IsSortingCallback.InvokeAsync();
 
+        _animate = false;
+        _useTransform = false;
         await InvokeAsync(StateHasChanged);
     }
 
@@ -263,12 +310,27 @@
             await Play();
     }
 
-    private void StepForward() => _player?.StepForward(() => InvokeAsync(StateHasChanged));
+    private void StopAnimating()
+    {
+        _animate = false;
+        _useTransform = false;
+    }
 
-    private void StepBack() => _player?.StepBack(() => InvokeAsync(StateHasChanged));
+    private void StepForward()
+    {
+        StopAnimating();
+        _player?.StepForward(() => InvokeAsync(StateHasChanged));
+    }
+
+    private void StepBack()
+    {
+        StopAnimating();
+        _player?.StepBack(() => InvokeAsync(StateHasChanged));
+    }
 
     private void Restart()
     {
+        StopAnimating();
         _player?.Pause();
         _player?.Reset();
         StateHasChanged();
@@ -278,6 +340,7 @@
     {
         if (_player == null) return;
 
+        StopAnimating();
         _player.Pause();
         if (int.TryParse(e.Value?.ToString(), out var target))
             _player.SeekTo(target);
